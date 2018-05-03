@@ -1,0 +1,68 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
+
+project.ext {
+    supportLibsVersion = "27.1.1"
+    constraintLayoutVersion = "1.1.0"
+    daggerVersion = "2.13"
+
+    junitVersion = "4.12"
+    mockitoVersion = "2.13.0"
+    mockitoKotlinVersion = "1.5.0"
+    robolectricVersion = "3.6.1"
+}
+
+android {
+    compileSdkVersion 27
+    defaultConfig {
+        applicationId "com.jakdor.geosave"
+        minSdkVersion 21
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    //APP
+
+    //Support libs
+    implementation "com.android.support:appcompat-v7:$project.supportLibsVersion"
+    implementation "com.android.support:support-v4:$project.supportLibsVersion"
+    implementation "com.android.support:design:$project.supportLibsVersion"
+    implementation "com.android.support.constraint:constraint-layout:$project.constraintLayoutVersion"
+
+    //Dagger core
+    kapt "com.google.dagger:dagger-compiler:$project.daggerVersion"
+    implementation "com.google.dagger:dagger:$project.daggerVersion"
+
+    //Dagger Android
+    kapt "com.google.dagger:dagger-android-processor:$project.daggerVersion"
+    implementation "com.google.dagger:dagger-android-support:$project.daggerVersion"
+
+    //TESTS LOCAL
+
+    //jUnit
+    testImplementation "junit:junit:$project.junitVersion"
+
+    //Mockito
+    testImplementation "org.mockito:mockito-core:$project.mockitoVersion"
+
+    //MockitoKotlin
+    testImplementation "com.nhaarman:mockito-kotlin:$project.mockitoKotlinVersion"
+
+    //Robolectric
+    testImplementation "org.robolectric:robolectric:$project.robolectricVersion"
+}

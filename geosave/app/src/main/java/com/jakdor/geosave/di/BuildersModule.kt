@@ -2,6 +2,7 @@ package com.jakdor.geosave.di
 
 import com.jakdor.geosave.main.MainActivity
 import com.jakdor.geosave.main.MainModule
+import com.jakdor.geosave.main.MainViewModule
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
@@ -11,7 +12,9 @@ import dagger.android.ContributesAndroidInjector
 @Module
 abstract class BuildersModule {
 
-    @ContributesAndroidInjector(modules = [MainModule::class])
+    @ContributesAndroidInjector(modules = [
+        MainModule::class,
+        MainViewModule::class])
     abstract fun bindMainActivity(): MainActivity
 
 }

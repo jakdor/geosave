@@ -5,8 +5,12 @@ import android.support.design.widget.BottomNavigationView
 import com.jakdor.geosave.R
 import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
+import javax.inject.Inject
 
-class MainActivity : DaggerAppCompatActivity() {
+class MainActivity : DaggerAppCompatActivity(), MainContract.MainView {
+
+    @Inject
+    lateinit var presenter: MainPresenter
 
     private val mOnNavigationItemSelectedListener
             = BottomNavigationView.OnNavigationItemSelectedListener { item ->

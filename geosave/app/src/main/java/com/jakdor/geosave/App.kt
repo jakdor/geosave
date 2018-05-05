@@ -1,28 +1,14 @@
 package com.jakdor.geosave
 
-import android.app.Activity
-import android.app.Application
 import com.jakdor.geosave.di.DaggerAppComponent
 import dagger.android.AndroidInjector
-import dagger.android.DispatchingAndroidInjector
-import dagger.android.HasActivityInjector
-import javax.inject.Inject
+import dagger.android.support.DaggerApplication
 
-class App : Application(), HasActivityInjector{
+class App : DaggerApplication() {
 
-    @Inject
-    lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Activity>
-
-    override fun onCreate() {
-        super.onCreate()
-        DaggerAppComponent
-                .builder()
-                .application(this)
-                .build()
-                .inject(this)
-    }
-
-    override fun activityInjector(): AndroidInjector<Activity> {
-        return dispatchingAndroidInjector
+    override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
+        val appComponent = DaggerAppComponent.builder().application(this).build()
+        appComponent.inject(this)
+        return appComponent
     }
 }

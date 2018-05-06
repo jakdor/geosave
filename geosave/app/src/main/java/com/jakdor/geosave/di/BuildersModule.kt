@@ -1,5 +1,6 @@
 package com.jakdor.geosave.di
 
+import com.jakdor.geosave.main.GpsInfoFragmentProvider
 import com.jakdor.geosave.main.MainActivity
 import com.jakdor.geosave.main.MainModule
 import com.jakdor.geosave.main.MainViewModule
@@ -14,7 +15,8 @@ abstract class BuildersModule {
 
     @ContributesAndroidInjector(modules = [
         MainModule::class,
-        MainViewModule::class])
+        MainViewModule::class,
+        GpsInfoFragmentProvider::class])
     abstract fun bindMainActivity(): MainActivity
 
 }

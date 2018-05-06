@@ -5,7 +5,9 @@ package com.jakdor.geosave.main
  */
 interface MainContract {
 
-    interface MainView
+    interface MainView{
+        fun switchToGpsInfoFragment()
+    }
 
     interface MainPresenter
 }

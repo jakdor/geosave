@@ -3,6 +3,7 @@ package com.jakdor.geosave.main
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import com.jakdor.geosave.R
+import com.jakdor.geosave.gpsinfo.GpsInfoFragment
 import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
@@ -36,5 +37,14 @@ class MainActivity : DaggerAppCompatActivity(), MainContract.MainView {
         setContentView(R.layout.activity_main)
 
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+
+        presenter.start()
+    }
+
+    override fun switchToGpsInfoFragment() {
+        supportFragmentManager
+                .beginTransaction()
+                .add(R.id.mainFragmentLayout, GpsInfoFragment.newInstance())
+                .commit()
     }
 }

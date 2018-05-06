@@ -4,4 +4,10 @@ import com.jakdor.geosave.mvp.BasePresenter
 
 class MainPresenter(view: MainContract.MainView):
         BasePresenter<MainContract.MainView>(view),
-        MainContract.MainPresenter
+        MainContract.MainPresenter{
+
+    override fun start() {
+        super.start()
+        view?.switchToGpsInfoFragment()
+    }
+}

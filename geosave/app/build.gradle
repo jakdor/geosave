@@ -2,11 +2,15 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'io.fabric'
 
 project.ext {
     supportLibsVersion = "27.1.1"
     constraintLayoutVersion = "1.1.0"
+    firebaseCoreVersion = "15.0.2"
+    crashlyticsVersion = "2.9.2"
     daggerVersion = "2.13"
+    timberVersion = "4.7.0"
 
     junitVersion = "4.12"
     mockitoVersion = "2.13.0"
@@ -22,6 +26,7 @@ android {
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
+        manifestPlaceholders = [crashlytics:getApiKey("crashlytics.key")]
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -44,6 +49,10 @@ dependencies {
     implementation "com.android.support:design:$project.supportLibsVersion"
     implementation "com.android.support.constraint:constraint-layout:$project.constraintLayoutVersion"
 
+    //Firebase
+    implementation "com.google.firebase:firebase-core:$project.firebaseCoreVersion"
+    implementation "com.crashlytics.sdk.android:crashlytics:$project.crashlyticsVersion"
+
     //Dagger core
     kapt "com.google.dagger:dagger-compiler:$project.daggerVersion"
     implementation "com.google.dagger:dagger:$project.daggerVersion"
@@ -51,6 +60,9 @@ dependencies {
     //Dagger Android
     kapt "com.google.dagger:dagger-android-processor:$project.daggerVersion"
     implementation "com.google.dagger:dagger-android-support:$project.daggerVersion"
+
+    //Timber logger
+    implementation "com.jakewharton.timber:timber:$project.timberVersion"
 
     //TESTS LOCAL
 
@@ -65,4 +77,17 @@ dependencies {
 
     //Robolectric
     testImplementation "org.robolectric:robolectric:$project.robolectricVersion"
+}
+
+apply plugin: 'com.google.gms.google-services'
+
+def getApiKey(String propertyName) {
+    def propsFile = rootProject.file('apikeys.properties')
+    if (propsFile.exists()) {
+        def props = new Properties()
+        props.load(new FileInputStream(propsFile))
+        return props[propertyName]
+    } else {
+        return ""
+    }
 }

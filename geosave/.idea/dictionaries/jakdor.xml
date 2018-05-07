@@ -2,6 +2,9 @@
   <dictionary name="jakdor">
     <words>
       <w>binded</w>
+      <w>crashlytics</w>
+      <w>firebase</w>
+      <w>robolectric</w>
     </words>
   </dictionary>
 </component>

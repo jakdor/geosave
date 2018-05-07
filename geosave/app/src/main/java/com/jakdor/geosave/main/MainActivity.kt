@@ -8,6 +8,11 @@ import com.jakdor.geosave.gpsinfo.GpsInfoFragment
 import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
+import com.crashlytics.android.Crashlytics
+import com.jakdor.geosave.utils.AppLogger
+import io.fabric.sdk.android.Fabric
+import timber.log.Timber
+
 
 class MainActivity : DaggerAppCompatActivity(), MainContract.MainView {
 
@@ -35,6 +40,7 @@ class MainActivity : DaggerAppCompatActivity(), MainContract.MainView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Fabric.with(this, Crashlytics()) //todo move to splash
         setContentView(R.layout.activity_main)
 
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
@@ -52,13 +58,13 @@ class MainActivity : DaggerAppCompatActivity(), MainContract.MainView {
                     .add(R.id.mainFragmentLayout, //todo check add vs replace
                             GpsInfoFragment.newInstance(), GpsInfoFragment.CLASS_TAG)
                     .commit()
-            Log.i(CLASS_TAG, "Created " + GpsInfoFragment.CLASS_TAG)
+            Timber.i("Created %s", GpsInfoFragment.CLASS_TAG)
         } else {
             supportFragmentManager
                     .beginTransaction()
                     .attach(supportFragmentManager.findFragmentByTag(GpsInfoFragment.CLASS_TAG))
                     .commit()
-            Log.i(CLASS_TAG, "Reattached " + GpsInfoFragment.CLASS_TAG)
+            Timber.i("Reattached %s", GpsInfoFragment.CLASS_TAG)
         }
     }
 
@@ -66,10 +72,5 @@ class MainActivity : DaggerAppCompatActivity(), MainContract.MainView {
     }
 
     override fun switchToLocationsFragment() {
-    }
-
-    companion object {
-
-        const val CLASS_TAG = "MainActivity"
     }
 }

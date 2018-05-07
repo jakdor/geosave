@@ -2,12 +2,19 @@
 
 buildscript {
     ext.kotlin_version = '1.2.41'
+    ext.gms_version = '3.2.1'
+    ext.fabric_version = '1.25.1'
     repositories {
         google()
         jcenter()
+        maven {
+            url 'https://maven.fabric.io/public'
+        }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.1.2'
+        classpath "com.google.gms:google-services:$gms_version"
+        classpath "io.fabric.tools:gradle:$fabric_version"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
         // NOTE: Do not place your application dependencies here; they belong
@@ -19,6 +26,9 @@ allprojects {
     repositories {
         google()
         jcenter()
+        maven {
+            url 'https://maven.fabric.io/public'
+        }
     }
 }
 

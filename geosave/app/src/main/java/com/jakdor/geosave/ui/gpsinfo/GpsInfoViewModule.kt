@@ -1,4 +1,4 @@
-package com.jakdor.geosave.gpsinfo
+package com.jakdor.geosave.ui.gpsinfo
 
 import dagger.Binds
 import dagger.Module

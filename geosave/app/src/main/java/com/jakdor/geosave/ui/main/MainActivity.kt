@@ -1,15 +1,13 @@
-package com.jakdor.geosave.main
+package com.jakdor.geosave.ui.main
 
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
-import android.util.Log
 import com.jakdor.geosave.R
-import com.jakdor.geosave.gpsinfo.GpsInfoFragment
+import com.jakdor.geosave.ui.gpsinfo.GpsInfoFragment
 import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 import com.crashlytics.android.Crashlytics
-import com.jakdor.geosave.utils.AppLogger
 import io.fabric.sdk.android.Fabric
 import timber.log.Timber
 

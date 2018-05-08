@@ -1,4 +1,4 @@
-package com.jakdor.geosave.gpsinfo
+package com.jakdor.geosave.ui.gpsinfo
 
 import com.jakdor.geosave.mvp.BasePresenter
 

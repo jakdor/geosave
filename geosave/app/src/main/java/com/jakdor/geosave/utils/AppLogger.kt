@@ -22,11 +22,15 @@ object AppLogger {
 
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
+        } else {
+            Timber.plant(CrashlyticsTree())
         }
-        Timber.plant(CrashlyticsTree())
     }
 
-    class CrashlyticsTree : Timber.Tree() {
+    /**
+     * Log tree for production crash reporting via Crashlytics
+     */
+    private class CrashlyticsTree : Timber.Tree() {
 
         override fun log(priority: Int, @Nullable tag: String?,
                          @Nullable message: String, @Nullable t: Throwable?) {

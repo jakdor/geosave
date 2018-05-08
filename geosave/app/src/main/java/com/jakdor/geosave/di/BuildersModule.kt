@@ -1,9 +1,9 @@
 package com.jakdor.geosave.di
 
-import com.jakdor.geosave.main.GpsInfoFragmentProvider
-import com.jakdor.geosave.main.MainActivity
-import com.jakdor.geosave.main.MainModule
-import com.jakdor.geosave.main.MainViewModule
+import com.jakdor.geosave.ui.main.GpsInfoFragmentProvider
+import com.jakdor.geosave.ui.main.MainActivity
+import com.jakdor.geosave.ui.main.MainModule
+import com.jakdor.geosave.ui.main.MainViewModule
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 

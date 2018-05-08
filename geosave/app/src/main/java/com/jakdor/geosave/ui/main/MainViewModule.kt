@@ -1,4 +1,4 @@
-package com.jakdor.geosave.main
+package com.jakdor.geosave.ui.main
 
 import dagger.Binds
 import dagger.Module

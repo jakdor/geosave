@@ -1,4 +1,4 @@
-package com.jakdor.geosave.gpsinfo
+package com.jakdor.geosave.ui.gpsinfo
 
 import android.os.Bundle
 import android.view.LayoutInflater

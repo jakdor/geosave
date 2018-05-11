@@ -23,6 +23,12 @@
             </intent-filter>
         </activity>
 
+        <service android:name=".service.gps.GpsService"
+            android:description="@string/gps_service_desc" />
+
+        <service android:name=".service.gps.GpsListenerService"
+            android:description="@string/gps_service_desc"/>
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="${crashlytics}" />

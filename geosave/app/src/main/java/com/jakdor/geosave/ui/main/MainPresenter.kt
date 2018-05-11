@@ -1,12 +1,16 @@
 package com.jakdor.geosave.ui.main
 
 import com.jakdor.geosave.mvp.BasePresenter
+import com.jakdor.geosave.service.gps.GpsListenerService
+import timber.log.Timber
 
 class MainPresenter(view: MainContract.MainView):
         BasePresenter<MainContract.MainView>(view),
         MainContract.MainPresenter{
 
     private var currentTab = -1
+
+    private var gpsListenerService: GpsListenerService? = null
 
     override fun start() {
         super.start()
@@ -42,5 +46,22 @@ class MainPresenter(view: MainContract.MainView):
             view?.switchToLocationsFragment()
             currentTab = 2
         }
+    }
+
+    /**
+     * Attach [GpsListenerService] to presenter
+     */
+    override fun attachService(gpsListenerService: GpsListenerService) {
+        this.gpsListenerService = gpsListenerService
+        Timber.i("attached GpsListenerService")
+        gpsListenerService.test()
+    }
+
+    /**
+     * Detach [GpsListenerService] form presenter
+     */
+    override fun detachService() {
+        gpsListenerService = null
+        Timber.i("detached GpsListenerService")
     }
 }

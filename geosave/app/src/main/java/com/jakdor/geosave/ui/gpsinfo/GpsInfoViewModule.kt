@@ -7,5 +7,5 @@ import dagger.Module
 abstract class GpsInfoViewModule {
 
     @Binds
-    abstract fun provideGpsInfoView(gpsInfoFragment: GpsInfoFragment): GpsInfoContract.GpsInfoView
+    abstract fun bindGpsInfoView(gpsInfoFragment: GpsInfoFragment): GpsInfoContract.GpsInfoView
 }

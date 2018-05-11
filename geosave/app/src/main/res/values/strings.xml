@@ -1,5 +1,7 @@
 <resources>
-    <string name="app_name">Geosave</string>
+    <string name="app_name">GeoSave</string>
+
+    <string name="gps_service_desc">GeoSave app location service</string>
 
     <string name="title_gps_info">Gps info</string>
     <string name="title_map">Map</string>

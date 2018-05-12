@@ -11,6 +11,7 @@ interface MainContract {
         fun switchToGpsInfoFragment()
         fun switchToMapFragment()
         fun switchToLocationsFragment()
+        fun getLocationPermission()
     }
 
     interface MainPresenter {
@@ -19,5 +20,7 @@ interface MainContract {
         fun onLocationsTabClicked()
         fun attachService(gpsListenerService: GpsListenerService)
         fun detachService()
+        fun isServiceAttached(): Boolean
+        fun gpsPermissionStatus(granted: Boolean)
     }
 }

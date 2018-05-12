@@ -11,6 +11,7 @@ class MainPresenter(view: MainContract.MainView):
     private var currentTab = -1
 
     private var gpsListenerService: GpsListenerService? = null
+    private var gpsPermission: Boolean = false
 
     override fun start() {
         super.start()
@@ -54,14 +55,28 @@ class MainPresenter(view: MainContract.MainView):
     override fun attachService(gpsListenerService: GpsListenerService) {
         this.gpsListenerService = gpsListenerService
         Timber.i("attached GpsListenerService")
-        gpsListenerService.test()
+        view?.getLocationPermission()
     }
 
     /**
-     * Detach [GpsListenerService] form presenter
+     * Detach [GpsListenerService] from presenter
      */
     override fun detachService() {
         gpsListenerService = null
         Timber.i("detached GpsListenerService")
+    }
+
+    override fun isServiceAttached(): Boolean {
+        return gpsListenerService != null
+    }
+
+    override fun gpsPermissionStatus(granted: Boolean) {
+        gpsPermission = granted
+        if(gpsPermission){
+            Timber.i("GPS permission confirmed")
+            gpsListenerService?.locationManagerSetup()
+            gpsListenerService?.checkGps()
+            gpsListenerService?.startLocationUpdates()
+        }
     }
 }

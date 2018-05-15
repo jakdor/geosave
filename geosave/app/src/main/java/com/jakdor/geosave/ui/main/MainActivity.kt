@@ -1,6 +1,7 @@
 package com.jakdor.geosave.ui.main
 
 import android.Manifest
+import android.app.AlertDialog
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -9,6 +10,7 @@ import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.os.Bundle
 import android.os.IBinder
+import android.provider.Settings
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
@@ -22,6 +24,9 @@ import com.jakdor.geosave.service.gps.GpsListenerService
 import com.jakdor.geosave.service.gps.GpsService
 import io.fabric.sdk.android.Fabric
 import timber.log.Timber
+import android.content.DialogInterface
+import android.widget.Toast
+
 
 class MainActivity : DaggerAppCompatActivity(), MainContract.MainView, ServiceConnection {
 
@@ -65,8 +70,12 @@ class MainActivity : DaggerAppCompatActivity(), MainContract.MainView, ServiceCo
 
     override fun onStop() {
         super.onStop()
-        if(serviceBound){
-            unbindService(this)
+        try {
+            if (serviceBound) {
+                unbindService(this)
+            }
+        } catch (e: Exception){
+           Timber.e("GpsLocationService: %s", e.message)
         }
     }
 
@@ -115,7 +124,45 @@ class MainActivity : DaggerAppCompatActivity(), MainContract.MainView, ServiceCo
     private fun startGpsListener(){
         gpsListenerService.locationManager =
                 getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        checkGps()
         presenter.gpsPermissionStatus(true)
+    }
+
+    var gpsDialogListener: DialogInterface.OnClickListener
+            = DialogInterface.OnClickListener { _, which ->
+        when (which) {
+            DialogInterface.BUTTON_POSITIVE -> {
+                turnGpsIntent()
+            }
+            DialogInterface.BUTTON_NEGATIVE -> {
+                Timber.wtf("User is a god damn moron")
+                Toast.makeText(this, getString(R.string.gps_dialog_no_toast),
+                        Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    /**
+     * Check GPS enabled, handle situation if gps offline
+     */
+    fun checkGps(){
+        if (!gpsListenerService.locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            Timber.e("GPS turned off")
+            val gpsDialogBuilder = AlertDialog.Builder(this)
+            gpsDialogBuilder.setMessage(getString(R.string.gps_dialog_msg))
+                    .setPositiveButton(getString(R.string.gps_dialog_yes), gpsDialogListener)
+                    .setNegativeButton(getString(R.string.gps_dialog_no), gpsDialogListener)
+                    .show()
+        }
+    }
+
+    /**
+     * Lunch GPS settings
+     */
+    fun turnGpsIntent(){
+        Timber.i("Lunching GPS settings")
+        val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+        startActivity(intent)
     }
 
     /**

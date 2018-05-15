@@ -37,15 +37,6 @@ class GpsListenerService: Service(), LocationListener {
     }
 
     /**
-     * Check GPS enabled, handle situation if gps offline
-     */
-    fun checkGps(){
-        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            //prompt user about gps turned off
-        }
-    }
-
-    /**
      * Start receiving location updates
      */
     fun startLocationUpdates() {
@@ -82,7 +73,6 @@ class GpsListenerService: Service(), LocationListener {
     private val localBinder: LocalBinder = LocalBinder()
 
     override fun onBind(p0: Intent?): IBinder {
-        checkGps()
         return localBinder
     }
 

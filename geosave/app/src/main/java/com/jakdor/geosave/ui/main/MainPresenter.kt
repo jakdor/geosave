@@ -75,7 +75,6 @@ class MainPresenter(view: MainContract.MainView):
         if(gpsPermission){
             Timber.i("GPS permission confirmed")
             gpsListenerService?.locationManagerSetup()
-            gpsListenerService?.checkGps()
             gpsListenerService?.startLocationUpdates()
         }
     }

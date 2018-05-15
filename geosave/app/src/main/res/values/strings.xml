@@ -6,4 +6,8 @@
     <string name="title_gps_info">Gps info</string>
     <string name="title_map">Map</string>
     <string name="title_locations">Saved locations</string>
+    <string name="gps_dialog_msg">GPS is turned off. Display setting page to turn it on?</string>
+    <string name="gps_dialog_yes">Yes</string>
+    <string name="gps_dialog_no">No</string>
+    <string name="gps_dialog_no_toast">Your location is not updated without GPS turned on!</string>
 </resources>

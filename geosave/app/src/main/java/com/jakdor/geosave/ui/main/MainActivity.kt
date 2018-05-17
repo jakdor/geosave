@@ -124,7 +124,6 @@ class MainActivity : DaggerAppCompatActivity(), MainContract.MainView, ServiceCo
     private fun startGpsListener(){
         gpsListenerService.locationManager =
                 getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        checkGps()
         presenter.gpsPermissionStatus(true)
     }
 
@@ -132,12 +131,10 @@ class MainActivity : DaggerAppCompatActivity(), MainContract.MainView, ServiceCo
             = DialogInterface.OnClickListener { _, which ->
         when (which) {
             DialogInterface.BUTTON_POSITIVE -> {
-                turnGpsIntent()
+                presenter.gpsDialogUserResponse(true)
             }
             DialogInterface.BUTTON_NEGATIVE -> {
-                Timber.wtf("User is a god damn moron")
-                Toast.makeText(this, getString(R.string.gps_dialog_no_toast),
-                        Toast.LENGTH_LONG).show()
+                presenter.gpsDialogUserResponse(false)
             }
         }
     }
@@ -145,7 +142,7 @@ class MainActivity : DaggerAppCompatActivity(), MainContract.MainView, ServiceCo
     /**
      * Check GPS enabled, handle situation if gps offline
      */
-    fun checkGps(){
+    override fun checkGps(){
         if (!gpsListenerService.locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             Timber.e("GPS turned off")
             val gpsDialogBuilder = AlertDialog.Builder(this)
@@ -159,10 +156,16 @@ class MainActivity : DaggerAppCompatActivity(), MainContract.MainView, ServiceCo
     /**
      * Lunch GPS settings
      */
-    fun turnGpsIntent(){
+    override fun turnGpsIntent(){
         Timber.i("Lunching GPS settings")
         val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
         startActivity(intent)
+    }
+
+    override fun gpsDialogNoResponse() {
+        Timber.wtf("User is a god damn moron")
+        Toast.makeText(this, getString(R.string.gps_dialog_no_toast),
+                Toast.LENGTH_LONG).show()
     }
 
     /**

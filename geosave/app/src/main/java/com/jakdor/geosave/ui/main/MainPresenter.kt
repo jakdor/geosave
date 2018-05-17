@@ -70,12 +70,26 @@ class MainPresenter(view: MainContract.MainView):
         return gpsListenerService != null
     }
 
+    /**
+     * Handle gps permission status received from activity
+     */
     override fun gpsPermissionStatus(granted: Boolean) {
         gpsPermission = granted
         if(gpsPermission){
             Timber.i("GPS permission confirmed")
+            view?.checkGps()
             gpsListenerService?.locationManagerSetup()
             gpsListenerService?.startLocationUpdates()
+        }
+    }
+
+    /**
+     * Handle user action in gps turn on dialog
+     */
+    override fun gpsDialogUserResponse(response: Boolean) {
+        when(response){
+            true -> view?.turnGpsIntent()
+            false -> view?.gpsDialogNoResponse()
         }
     }
 }

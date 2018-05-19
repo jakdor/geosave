@@ -3,7 +3,6 @@ package com.jakdor.geosave.ui.main
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
-import android.location.Location
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import com.jakdor.geosave.R
@@ -14,24 +13,23 @@ import javax.inject.Inject
 import com.crashlytics.android.Crashlytics
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
-import com.google.android.gms.location.LocationListener
 import io.fabric.sdk.android.Fabric
 import timber.log.Timber
 import android.support.v4.app.ActivityCompat
 import android.content.pm.PackageManager
 import android.support.v4.content.ContextCompat
 import android.widget.Toast
-import com.google.android.gms.location.LocationSettingsStatusCodes
 import android.content.IntentSender
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.LocationSettingsRequest
-import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.location.*
+import com.google.android.gms.common.api.ResolvableApiException
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationCallback
 
 class MainActivity : DaggerAppCompatActivity(),
         MainContract.MainView,
         GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,
-        LocationListener{
+        GoogleApiClient.OnConnectionFailedListener{
 
     @Inject
     lateinit var presenter: MainPresenter
@@ -67,6 +65,16 @@ class MainActivity : DaggerAppCompatActivity(),
 
         presenter.start()
         googleApiClient.connect()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        presenter.pause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        presenter.resume()
     }
 
     /**
@@ -112,14 +120,6 @@ class MainActivity : DaggerAppCompatActivity(),
 
     override fun onConnectionFailed(p0: ConnectionResult) {
         presenter.gmsFailed()
-    }
-
-    /**
-     * Received new location update
-     */
-    override fun onLocationChanged(p0: Location?) {
-        Timber.i(p0.toString())
-        presenter.gmsLocationChanged()
     }
 
     /**
@@ -170,34 +170,64 @@ class MainActivity : DaggerAppCompatActivity(),
                 locationRequest.interval = 3000
                 locationRequest.fastestInterval = 3000
                 locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+
+                LocationServices.getFusedLocationProviderClient(this)
+                        .requestLocationUpdates(locationRequest, locationCallback, null)
+
+                Timber.i("add location callback")
+
+                presenter.gmsLocationUpdatesActive()
+
                 val builder = LocationSettingsRequest.Builder()
                         .addLocationRequest(locationRequest)
                 builder.setAlwaysShow(true)
-                LocationServices.FusedLocationApi
-                        .requestLocationUpdates(googleApiClient, locationRequest, this)
-                val result = LocationServices.SettingsApi
-                        .checkLocationSettings(googleApiClient, builder.build())
-                result.setResultCallback({
-                    val status = it.status
-                    when (status.statusCode) {
-                        LocationSettingsStatusCodes.SUCCESS -> {
-                            Timber.i("Location updates init")
-                            ContextCompat.checkSelfPermission(this@MainActivity,
-                                    Manifest.permission.ACCESS_FINE_LOCATION)
-                        }
-                        LocationSettingsStatusCodes.RESOLUTION_REQUIRED ->
-                            try { //Enable GPS automatically
-                                status.startResolutionForResult(this@MainActivity,
-                                        REQUEST_CHECK_SETTINGS_GPS)
-                            } catch (e: IntentSender.SendIntentException) {
-                                Timber.e("User declined GPS enable dialog")
-                            }
+                val result = LocationServices.getSettingsClient(this).checkLocationSettings(builder.build())
 
-                        LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE -> {
-                            Timber.e("Unable to turn on GPS automatically")
+                result.addOnCompleteListener({
+                    try {
+                        Timber.i("Location updates init")
+                        ContextCompat.checkSelfPermission(this@MainActivity,
+                                    Manifest.permission.ACCESS_FINE_LOCATION)
+                        it.getResult(ApiException::class.java)
+                    } catch (e: ApiException){
+                        when (e.statusCode) {
+                            LocationSettingsStatusCodes.RESOLUTION_REQUIRED ->
+                                try { //Enable GPS automatically
+                                    val resolvable = e as ResolvableApiException
+                                    resolvable.startResolutionForResult(this@MainActivity,
+                                            REQUEST_CHECK_SETTINGS_GPS)
+                                } catch (e: IntentSender.SendIntentException) {
+                                    Timber.e("User declined GPS enable dialog")
+                                }
+
+                            LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE -> {
+                                Timber.e("Unable to turn on GPS automatically")
+                            }
                         }
+                    } catch (e: Exception) {
+                        Timber.wtf(e)
                     }
                 })
+            }
+        }
+    }
+
+    /**
+     * Remove location callback
+     */
+    override fun stopLocationUpdates() {
+        LocationServices.getFusedLocationProviderClient(this).removeLocationUpdates(locationCallback)
+        Timber.i("Removed location callback")
+    }
+
+    /**
+     * GMS new location callback
+     */
+    private val locationCallback = object : LocationCallback() {
+        override fun onLocationResult(locationResult: LocationResult?) {
+            for (location in locationResult!!.locations) {
+                Timber.i(location.toString())
+                presenter.gmsLocationChanged()
             }
         }
     }

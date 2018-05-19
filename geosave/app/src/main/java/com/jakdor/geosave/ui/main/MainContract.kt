@@ -13,6 +13,7 @@ interface MainContract {
         fun checkPermissions()
 
         fun gmsSetupLocationUpdates()
+        fun stopLocationUpdates()
 
         fun displayToast(strId: Int)
     }
@@ -26,6 +27,7 @@ interface MainContract {
         fun gmsSuspended()
         fun gmsFailed()
         fun gmsLocationChanged()
+        fun gmsLocationUpdatesActive()
 
         fun permissionsGranted(status: Boolean)
         fun gpsEnableDialog(result: Boolean)

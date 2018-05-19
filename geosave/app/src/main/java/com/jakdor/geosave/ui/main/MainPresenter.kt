@@ -9,10 +9,26 @@ class MainPresenter(view: MainContract.MainView):
 
     private var currentTab = -1
 
+    private var locationUpdates = false
+
     override fun start() {
         super.start()
         view?.switchToGpsInfoFragment()
         currentTab = 0
+    }
+
+    override fun pause() {
+        super.pause()
+        if(locationUpdates){
+            view?.stopLocationUpdates()
+        }
+    }
+
+    override fun resume() {
+        super.resume()
+        if(locationUpdates){
+            view?.gmsSetupLocationUpdates()
+        }
     }
 
     /**
@@ -63,7 +79,7 @@ class MainPresenter(view: MainContract.MainView):
      * Called on GMS connection failed
      */
     override fun gmsFailed() {
-        //todo implement offline native gps listener
+
     }
 
     /**
@@ -71,6 +87,13 @@ class MainPresenter(view: MainContract.MainView):
      */
     override fun gmsLocationChanged() {
 
+    }
+
+    /**
+     * Called on GMS location callback add
+     */
+    override fun gmsLocationUpdatesActive() {
+        locationUpdates = true
     }
 
     /**

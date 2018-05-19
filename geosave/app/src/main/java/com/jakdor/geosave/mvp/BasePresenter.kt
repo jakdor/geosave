@@ -37,6 +37,11 @@ abstract class BasePresenter<View> protected constructor(protected var view: Vie
     open fun pause() {}
 
     /**
+     * Resume state forwarded from view layer
+     */
+    open fun resume() {}
+
+    /**
      * Stop state forwarded from view layer
      */
     open fun stop() {}

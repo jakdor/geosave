@@ -11,6 +11,7 @@ project.ext {
     crashlyticsVersion = "2.9.2"
     daggerVersion = "2.13"
     timberVersion = "4.7.0"
+    gmsVersion = "15.0.1"
 
     junitVersion = "4.12"
     mockitoVersion = "2.13.0"
@@ -63,6 +64,9 @@ dependencies {
 
     //Timber logger
     implementation "com.jakewharton.timber:timber:$project.timberVersion"
+
+    //Google Play Services
+    implementation "com.google.android.gms:play-services-location:$project.gmsVersion"
 
     //TESTS LOCAL
 

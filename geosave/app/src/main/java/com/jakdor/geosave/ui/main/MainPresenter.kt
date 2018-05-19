@@ -1,5 +1,6 @@
 package com.jakdor.geosave.ui.main
 
+import com.jakdor.geosave.R
 import com.jakdor.geosave.mvp.BasePresenter
 
 class MainPresenter(view: MainContract.MainView):
@@ -41,6 +42,54 @@ class MainPresenter(view: MainContract.MainView):
         if(currentTab != 2){
             view?.switchToLocationsFragment()
             currentTab = 2
+        }
+    }
+
+    /**
+     * Called on GMS connection established
+     */
+    override fun gmsConnected() {
+        view?.checkPermissions()
+    }
+
+    /**
+     * Called on GMS connection suspended
+     */
+    override fun gmsSuspended() {
+
+    }
+
+    /**
+     * Called on GMS connection failed
+     */
+    override fun gmsFailed() {
+        //todo implement offline native gps listener
+    }
+
+    /**
+     * Called on GMS locationChangedListener called
+     */
+    override fun gmsLocationChanged() {
+
+    }
+
+    /**
+     * Handle permissions status
+     */
+    override fun permissionsGranted(status: Boolean) {
+        when(status){
+            true -> view?.gmsSetupLocationUpdates()
+            false -> view?.displayToast(R.string.gps_permissions_declined)
+        }
+    }
+
+    /**
+     * Handle gps enable dialog
+     */
+    override fun gpsEnableDialog(result: Boolean) {
+        when(result){
+            true -> view?.gmsSetupLocationUpdates()
+            false -> view?.displayToast(R.string.gps_enable_declined)
         }
     }
 }

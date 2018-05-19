@@ -4,4 +4,6 @@
     <string name="title_gps_info">Gps info</string>
     <string name="title_map">Map</string>
     <string name="title_locations">Saved locations</string>
+    <string name="gps_permissions_declined">GPS permissions are required for basic app functionality</string>
+    <string name="gps_enable_declined">Enable GPS for high accurancy reading</string>
 </resources>

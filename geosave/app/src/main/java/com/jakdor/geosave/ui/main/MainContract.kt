@@ -16,6 +16,9 @@ interface MainContract {
         fun stopLocationUpdates()
 
         fun displayToast(strId: Int)
+
+        fun fallbackCheckGps()
+        fun fallbackTurnGpsIntent()
     }
 
     interface MainPresenter {
@@ -30,6 +33,9 @@ interface MainContract {
         fun gmsLocationUpdatesActive()
 
         fun permissionsGranted(status: Boolean)
-        fun gpsEnableDialog(result: Boolean)
+        fun gmsGpsEnableDialog(result: Boolean)
+
+        fun fallbackGpsAutoEnableFailed()
+        fun fallbackGpsDialogUserResponse(response: Boolean)
     }
 }

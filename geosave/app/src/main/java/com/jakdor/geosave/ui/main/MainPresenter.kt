@@ -109,10 +109,27 @@ class MainPresenter(view: MainContract.MainView):
     /**
      * Handle gps enable dialog
      */
-    override fun gpsEnableDialog(result: Boolean) {
+    override fun gmsGpsEnableDialog(result: Boolean) {
         when(result){
             true -> view?.gmsSetupLocationUpdates()
             false -> view?.displayToast(R.string.gps_enable_declined)
+        }
+    }
+
+    /**
+     * Fallback for GMS GPS auto enable fail
+     */
+    override fun fallbackGpsAutoEnableFailed() {
+       view?.fallbackCheckGps()
+    }
+
+    /**
+     * Handle user action in fallback gps turn on dialog
+     */
+    override fun fallbackGpsDialogUserResponse(response: Boolean) {
+        when(response){
+            true -> view?.fallbackTurnGpsIntent()
+            false -> view?.displayToast(R.string.gps_fallback_dialog_no_toast)
         }
     }
 }

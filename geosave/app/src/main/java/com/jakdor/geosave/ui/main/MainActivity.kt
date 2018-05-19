@@ -2,6 +2,9 @@ package com.jakdor.geosave.ui.main
 
 import android.Manifest
 import android.app.Activity
+import android.app.AlertDialog
+import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
@@ -20,6 +23,8 @@ import android.content.pm.PackageManager
 import android.support.v4.content.ContextCompat
 import android.widget.Toast
 import android.content.IntentSender
+import android.location.LocationManager
+import android.provider.Settings
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.location.*
 import com.google.android.gms.common.api.ResolvableApiException
@@ -202,10 +207,12 @@ class MainActivity : DaggerAppCompatActivity(),
 
                             LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE -> {
                                 Timber.e("Unable to turn on GPS automatically")
+                                presenter.fallbackGpsAutoEnableFailed()
                             }
                         }
                     } catch (e: Exception) {
                         Timber.wtf(e)
+                        presenter.fallbackGpsAutoEnableFailed()
                     }
                 })
             }
@@ -239,11 +246,50 @@ class MainActivity : DaggerAppCompatActivity(),
         when(requestCode){
             REQUEST_CHECK_SETTINGS_GPS -> {
                 when(resultCode){
-                    Activity.RESULT_OK -> presenter.gpsEnableDialog(true)
-                    Activity.RESULT_CANCELED -> presenter.gpsEnableDialog(false)
+                    Activity.RESULT_OK -> presenter.gmsGpsEnableDialog(true)
+                    Activity.RESULT_CANCELED -> presenter.gmsGpsEnableDialog(false)
                 }
             }
         }
+    }
+
+    /**
+     * Fallback GPS enable dialog listener
+     */
+    private val fallbackGpsDialogListener: DialogInterface.OnClickListener
+            = DialogInterface.OnClickListener { _, which ->
+        when (which) {
+            DialogInterface.BUTTON_POSITIVE -> {
+                presenter.fallbackGpsDialogUserResponse(true)
+            }
+            DialogInterface.BUTTON_NEGATIVE -> {
+                presenter.fallbackGpsDialogUserResponse(false)
+            }
+        }
+    }
+
+    /**
+     * GMS connection fail - check GPS enabled, handle situation if gps offline
+     */
+    override fun fallbackCheckGps(){
+        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            Timber.e("GPS turned off")
+            val gpsDialogBuilder = AlertDialog.Builder(this)
+            gpsDialogBuilder.setMessage(getString(R.string.gps_fallback_dialog_msg))
+                    .setPositiveButton(getString(R.string.gps_fallback_dialog_yes), fallbackGpsDialogListener)
+                    .setNegativeButton(getString(R.string.gps_fallback_dialog_no), fallbackGpsDialogListener)
+                    .show()
+        }
+    }
+
+    /**
+     * GMS connection fail - lunch GPS settings
+     */
+    override fun fallbackTurnGpsIntent(){
+        Timber.i("Lunching GPS settings")
+        val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+        startActivity(intent)
     }
 
     companion object {

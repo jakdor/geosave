@@ -10,15 +10,18 @@ interface MainContract {
         fun switchToMapFragment()
         fun switchToLocationsFragment()
 
+        fun displayToast(strId: Int)
+
         fun checkPermissions()
 
         fun gmsSetupLocationUpdates()
         fun stopLocationUpdates()
 
-        fun displayToast(strId: Int)
-
         fun fallbackCheckGps()
         fun fallbackTurnGpsIntent()
+        fun fallbackLocationManagerSetup()
+        fun fallbackStartLocationUpdates()
+        fun fallbackStopLocationUpdates()
     }
 
     interface MainPresenter {
@@ -26,10 +29,10 @@ interface MainContract {
         fun onMapTabClicked()
         fun onLocationsTabClicked()
 
+        fun locationChanged()
         fun gmsConnected()
         fun gmsSuspended()
         fun gmsFailed()
-        fun gmsLocationChanged()
         fun gmsLocationUpdatesActive()
 
         fun permissionsGranted(status: Boolean)

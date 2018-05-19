@@ -10,6 +10,8 @@ class MainPresenter(view: MainContract.MainView):
     private var currentTab = -1
 
     private var locationUpdates = false
+    private var fallBackMode = false
+    private var fallbackLocationUpdates = false
 
     override fun start() {
         super.start()
@@ -21,6 +23,8 @@ class MainPresenter(view: MainContract.MainView):
         super.pause()
         if(locationUpdates){
             view?.stopLocationUpdates()
+        } else if (fallbackLocationUpdates){
+            view?.fallbackStopLocationUpdates()
         }
     }
 
@@ -28,6 +32,8 @@ class MainPresenter(view: MainContract.MainView):
         super.resume()
         if(locationUpdates){
             view?.gmsSetupLocationUpdates()
+        } else if (fallbackLocationUpdates){
+            view?.fallbackStartLocationUpdates()
         }
     }
 
@@ -79,13 +85,14 @@ class MainPresenter(view: MainContract.MainView):
      * Called on GMS connection failed
      */
     override fun gmsFailed() {
-
+        fallBackMode = true
+        view?.checkPermissions()
     }
 
     /**
      * Called on GMS locationChangedListener called
      */
-    override fun gmsLocationChanged() {
+    override fun locationChanged() {
 
     }
 
@@ -101,7 +108,15 @@ class MainPresenter(view: MainContract.MainView):
      */
     override fun permissionsGranted(status: Boolean) {
         when(status){
-            true -> view?.gmsSetupLocationUpdates()
+            true -> {
+                if(!fallBackMode){
+                    view?.gmsSetupLocationUpdates()
+                } else {
+                    view?.fallbackLocationManagerSetup()
+                    view?.fallbackCheckGps()
+                    view?.fallbackStartLocationUpdates()
+                }
+            }
             false -> view?.displayToast(R.string.gps_permissions_declined)
         }
     }
@@ -120,6 +135,7 @@ class MainPresenter(view: MainContract.MainView):
      * Fallback for GMS GPS auto enable fail
      */
     override fun fallbackGpsAutoEnableFailed() {
+       view?.fallbackLocationManagerSetup()
        view?.fallbackCheckGps()
     }
 

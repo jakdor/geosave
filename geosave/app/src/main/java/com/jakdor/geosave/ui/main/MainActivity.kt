@@ -23,6 +23,9 @@ import android.content.pm.PackageManager
 import android.support.v4.content.ContextCompat
 import android.widget.Toast
 import android.content.IntentSender
+import android.location.Criteria
+import android.location.Location
+import android.location.LocationListener
 import android.location.LocationManager
 import android.provider.Settings
 import com.google.android.gms.common.api.ApiException
@@ -34,13 +37,17 @@ import com.google.android.gms.location.LocationCallback
 class MainActivity : DaggerAppCompatActivity(),
         MainContract.MainView,
         GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener{
+        GoogleApiClient.OnConnectionFailedListener,
+        LocationListener{
 
     @Inject
     lateinit var presenter: MainPresenter
 
     @Inject
     lateinit var googleApiClient: GoogleApiClient
+
+    private lateinit var fallbackLocationManager: LocationManager
+    private var fallbackLocationProvider: String? = null
 
     private val mOnNavigationItemSelectedListener
             = BottomNavigationView.OnNavigationItemSelectedListener { item ->
@@ -124,6 +131,7 @@ class MainActivity : DaggerAppCompatActivity(),
     }
 
     override fun onConnectionFailed(p0: ConnectionResult) {
+        Timber.wtf("GMS failed to connect")
         presenter.gmsFailed()
     }
 
@@ -181,8 +189,6 @@ class MainActivity : DaggerAppCompatActivity(),
 
                 Timber.i("add location callback")
 
-                presenter.gmsLocationUpdatesActive()
-
                 val builder = LocationSettingsRequest.Builder()
                         .addLocationRequest(locationRequest)
                 builder.setAlwaysShow(true)
@@ -194,6 +200,9 @@ class MainActivity : DaggerAppCompatActivity(),
                         ContextCompat.checkSelfPermission(this@MainActivity,
                                     Manifest.permission.ACCESS_FINE_LOCATION)
                         it.getResult(ApiException::class.java)
+
+                        presenter.gmsLocationUpdatesActive()
+
                     } catch (e: ApiException){
                         when (e.statusCode) {
                             LocationSettingsStatusCodes.RESOLUTION_REQUIRED ->
@@ -234,7 +243,7 @@ class MainActivity : DaggerAppCompatActivity(),
         override fun onLocationResult(locationResult: LocationResult?) {
             for (location in locationResult!!.locations) {
                 Timber.i(location.toString())
-                presenter.gmsLocationChanged()
+                presenter.locationChanged()
             }
         }
     }
@@ -272,8 +281,7 @@ class MainActivity : DaggerAppCompatActivity(),
      * GMS connection fail - check GPS enabled, handle situation if gps offline
      */
     override fun fallbackCheckGps(){
-        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+        if (!fallbackLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             Timber.e("GPS turned off")
             val gpsDialogBuilder = AlertDialog.Builder(this)
             gpsDialogBuilder.setMessage(getString(R.string.gps_fallback_dialog_msg))
@@ -290,6 +298,51 @@ class MainActivity : DaggerAppCompatActivity(),
         Timber.i("Lunching GPS settings")
         val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
         startActivity(intent)
+    }
+
+    /**
+     * Fallback native LocationManager location updates
+     */
+    override fun onLocationChanged(p0: Location?) {
+        Timber.i(p0.toString())
+        presenter.locationChanged()
+    }
+
+    override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {
+    }
+
+    override fun onProviderEnabled(p0: String?) {
+    }
+
+    override fun onProviderDisabled(p0: String?) {
+    }
+
+    /**
+     * Fallback GMS connection fail - setup LocationManager
+     */
+    override fun fallbackLocationManagerSetup() {
+        fallbackLocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        fallbackLocationProvider = fallbackLocationManager.getBestProvider(Criteria(), false)
+    }
+
+    /**
+     * Fallback GMS connection fail - start location updates
+     */
+    override fun fallbackStartLocationUpdates() {
+        try {
+            //location update if min 2m distance
+            fallbackLocationManager.requestLocationUpdates(
+                    fallbackLocationProvider, 3000, 2.0f, this)
+        } catch (e: SecurityException){
+            Timber.e("Unauthorised call for location updates request")
+        }
+    }
+
+    /**
+     * Fallback GMS connection fail - stop location updates
+     */
+    override fun fallbackStopLocationUpdates() {
+        fallbackLocationManager.removeUpdates(this)
     }
 
     companion object {

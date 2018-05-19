@@ -1,13 +1,7 @@
 <resources>
-    <string name="app_name">GeoSave</string>
-
-    <string name="gps_service_desc">GeoSave app location service</string>
+    <string name="app_name">Geosave</string>
 
     <string name="title_gps_info">Gps info</string>
     <string name="title_map">Map</string>
     <string name="title_locations">Saved locations</string>
-    <string name="gps_dialog_msg">GPS is turned off. Display setting page to turn it on?</string>
-    <string name="gps_dialog_yes">Yes</string>
-    <string name="gps_dialog_no">No</string>
-    <string name="gps_dialog_no_toast">Your location is not updated without GPS turned on!</string>
 </resources>

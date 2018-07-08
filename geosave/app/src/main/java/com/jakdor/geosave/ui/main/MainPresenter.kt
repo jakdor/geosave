@@ -1,6 +1,7 @@
 package com.jakdor.geosave.ui.main
 
 import com.jakdor.geosave.R
+import com.jakdor.geosave.common.model.UserLocation
 import com.jakdor.geosave.mvp.BasePresenter
 
 class MainPresenter(view: MainContract.MainView):
@@ -92,8 +93,7 @@ class MainPresenter(view: MainContract.MainView):
     /**
      * Called on GMS locationChangedListener called
      */
-    override fun locationChanged() {
-
+    override fun onLocationChanged(userLocation: UserLocation) {
     }
 
     /**

@@ -1,5 +1,7 @@
 package com.jakdor.geosave.ui.main
 
+import com.jakdor.geosave.common.model.UserLocation
+
 /**
  * Defines MainActivity behaviour
  */
@@ -29,7 +31,7 @@ interface MainContract {
         fun onMapTabClicked()
         fun onLocationsTabClicked()
 
-        fun locationChanged()
+        fun onLocationChanged(userLocation: UserLocation)
         fun gmsConnected()
         fun gmsSuspended()
         fun gmsFailed()

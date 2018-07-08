@@ -33,6 +33,7 @@ import com.google.android.gms.location.*
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationCallback
+import com.jakdor.geosave.common.model.UserLocation
 
 class MainActivity : DaggerAppCompatActivity(),
         MainContract.MainView,
@@ -194,11 +195,11 @@ class MainActivity : DaggerAppCompatActivity(),
                 builder.setAlwaysShow(true)
                 val result = LocationServices.getSettingsClient(this).checkLocationSettings(builder.build())
 
-                result.addOnCompleteListener({
+                result.addOnCompleteListener {
                     try {
                         Timber.i("Location updates init")
                         ContextCompat.checkSelfPermission(this@MainActivity,
-                                    Manifest.permission.ACCESS_FINE_LOCATION)
+                                Manifest.permission.ACCESS_FINE_LOCATION)
                         it.getResult(ApiException::class.java)
 
                         presenter.gmsLocationUpdatesActive()
@@ -223,7 +224,7 @@ class MainActivity : DaggerAppCompatActivity(),
                         Timber.wtf(e)
                         presenter.fallbackGpsAutoEnableFailed()
                     }
-                })
+                }
             }
         }
     }
@@ -243,7 +244,7 @@ class MainActivity : DaggerAppCompatActivity(),
         override fun onLocationResult(locationResult: LocationResult?) {
             for (location in locationResult!!.locations) {
                 Timber.i(location.toString())
-                presenter.locationChanged()
+                presenter.onLocationChanged(UserLocation(location))
             }
         }
     }
@@ -304,8 +305,12 @@ class MainActivity : DaggerAppCompatActivity(),
      * Fallback native LocationManager location updates
      */
     override fun onLocationChanged(p0: Location?) {
-        Timber.i(p0.toString())
-        presenter.locationChanged()
+        if(p0 != null) {
+            Timber.i(p0.toString())
+            presenter.onLocationChanged(UserLocation(p0))
+        } else {
+            Timber.e("onLocationChanged() location is null")
+        }
     }
 
     override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {

@@ -2,6 +2,7 @@ package com.jakdor.geosave.ui.main
 
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationServices
+import com.jakdor.geosave.common.repository.GpsInfoRepository
 import dagger.Module
 import dagger.Provides
 
@@ -9,8 +10,9 @@ import dagger.Provides
 class MainModule {
 
     @Provides
-    fun provideMainPresenter(mainView: MainContract.MainView): MainPresenter {
-        return MainPresenter(mainView)
+    fun provideMainPresenter(mainView: MainContract.MainView,
+                             gpsInfoRepository: GpsInfoRepository): MainPresenter {
+        return MainPresenter(mainView, gpsInfoRepository)
     }
 
     @Provides

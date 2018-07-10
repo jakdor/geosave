@@ -8,6 +8,9 @@ import com.jakdor.geosave.R
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
 
+/**
+ * Fragment displaying GPS info
+ */
 class GpsInfoFragment: DaggerFragment(), GpsInfoContract.GpsInfoView {
 
     @Inject
@@ -15,7 +18,18 @@ class GpsInfoFragment: DaggerFragment(), GpsInfoContract.GpsInfoView {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+        presenter.start()
         return inflater.inflate(R.layout.fragment_gps_info, container, false)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        presenter.pause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        presenter.resume()
     }
 
     companion object {

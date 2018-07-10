@@ -2,9 +2,10 @@ package com.jakdor.geosave.ui.main
 
 import com.jakdor.geosave.R
 import com.jakdor.geosave.common.model.UserLocation
+import com.jakdor.geosave.common.repository.GpsInfoRepository
 import com.jakdor.geosave.mvp.BasePresenter
 
-class MainPresenter(view: MainContract.MainView):
+class MainPresenter(view: MainContract.MainView, private val gpsInfoRepository: GpsInfoRepository):
         BasePresenter<MainContract.MainView>(view),
         MainContract.MainPresenter{
 
@@ -18,6 +19,7 @@ class MainPresenter(view: MainContract.MainView):
         super.start()
         view?.switchToGpsInfoFragment()
         currentTab = 0
+        gpsInfoRepository.test()
     }
 
     override fun pause() {
@@ -91,7 +93,7 @@ class MainPresenter(view: MainContract.MainView):
     }
 
     /**
-     * Called on GMS locationChangedListener called
+     * Called on GMS locationChangedListener() / native LocationManager onLocationChanged() called
      */
     override fun onLocationChanged(userLocation: UserLocation) {
     }

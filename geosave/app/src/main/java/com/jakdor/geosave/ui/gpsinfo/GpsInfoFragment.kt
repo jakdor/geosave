@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import kotlinx.android.synthetic.main.fragment_gps_info.*
 import com.jakdor.geosave.R
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
@@ -30,6 +31,14 @@ class GpsInfoFragment: DaggerFragment(), GpsInfoContract.GpsInfoView {
     override fun onResume() {
         super.onResume()
         presenter.resume()
+    }
+
+    override fun setPositionTextView(posStr: String) {
+        pos.text = posStr
+    }
+
+    override fun setPositionTextView(resId: Int) {
+        pos.setText(resId)
     }
 
     companion object {

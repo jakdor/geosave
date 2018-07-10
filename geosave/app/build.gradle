@@ -50,6 +50,7 @@ dependencies {
     implementation "com.android.support:appcompat-v7:$project.supportLibsVersion"
     implementation "com.android.support:support-v4:$project.supportLibsVersion"
     implementation "com.android.support:design:$project.supportLibsVersion"
+    implementation "com.android.support:cardview-v7:$project.supportLibsVersion"
     implementation "com.android.support.constraint:constraint-layout:$project.constraintLayoutVersion"
 
     //Firebase

@@ -19,7 +19,6 @@ class MainPresenter(view: MainContract.MainView, private val gpsInfoRepository: 
         super.start()
         view?.switchToGpsInfoFragment()
         currentTab = 0
-        gpsInfoRepository.test()
     }
 
     override fun pause() {
@@ -96,6 +95,7 @@ class MainPresenter(view: MainContract.MainView, private val gpsInfoRepository: 
      * Called on GMS locationChangedListener() / native LocationManager onLocationChanged() called
      */
     override fun onLocationChanged(userLocation: UserLocation) {
+        gpsInfoRepository.next(userLocation)
     }
 
     /**

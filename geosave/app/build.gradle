@@ -10,6 +10,8 @@ project.ext {
     firebaseCoreVersion = "16.0.1"
     crashlyticsVersion = "2.9.4"
     daggerVersion = "2.13"
+    rxKotlinVersion = "2.2.0"
+    rxAndroidVersion = "2.0.1"
     timberVersion = "4.7.0"
     gmsVersion = "15.0.1"
 
@@ -61,6 +63,10 @@ dependencies {
     //Dagger Android
     kapt "com.google.dagger:dagger-android-processor:$project.daggerVersion"
     implementation "com.google.dagger:dagger-android-support:$project.daggerVersion"
+
+    //RxKotlin
+    implementation "io.reactivex.rxjava2:rxkotlin:$project.rxKotlinVersion"
+    implementation "io.reactivex.rxjava2:rxandroid:$project.rxAndroidVersion"
 
     //Timber logger
     implementation "com.jakewharton.timber:timber:$project.timberVersion"

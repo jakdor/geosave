@@ -26,8 +26,7 @@ class GpsInfoPresenter(view: GpsInfoContract.GpsInfoView,
 
     override fun resume() {
         super.resume()
-        view?.setPositionTitleTextView(R.string.pos_title)
-        view?.setAltitudeTileTextView(R.string.altitude_title)
+        setTitles()
         compositeDisposable.add(gpsInfoRepository.subscribe(DataObserver()))
     }
 
@@ -37,16 +36,48 @@ class GpsInfoPresenter(view: GpsInfoContract.GpsInfoView,
     }
 
     /**
+     * Set cards titles
+     */
+    fun setTitles(){
+        view?.setPositionTitle(R.string.pos_title)
+        view?.setAltitudeTile(R.string.altitude_title)
+        view?.setAccuracyTitle(R.string.accuracy_title)
+        view?.setSpeedTitle(R.string.speed_title)
+        view?.setBearingTitle(R.string.bearing_title)
+        view?.setProviderTitle(R.string.provider_title)
+    }
+
+    /**
+     * Update meter with new data
+     */
+    fun update(loc: UserLocation){
+        val pos = String.format(Locale.US, "%f, %f", loc.latitude, loc.longitude)
+        view?.setPositionField(pos)
+
+        if(loc.altitude != 0.0){
+            val alt = String.format("%.2f m", loc.altitude)
+            view?.setAltitudeField(alt)
+            view?.setProviderField(R.string.provider_gps)
+        } else {
+            view?.setProviderField(R.string.provider_gsm)
+        }
+
+        val acc = String.format("%.2f m", loc.accuracy)
+        view?.setAccuracyField(acc)
+
+        val speed = String.format("%.2f m/s", loc.speed)
+        view?.setSpeedField(speed)
+
+        val bearing = String.format("%.2f\u00b0", loc.bearing)
+        view?.setBearingField(bearing)
+    }
+
+    /**
      * [UserLocationObserver] implementation
      */
     inner class DataObserver: UserLocationObserver() {
         override fun onNext(t: UserLocation) {
-            val pos = String.format(Locale.US, "%f, %f", t.latitude, t.longitude)
-            view?.setPositionFieldTextView(pos)
-            if(t.altitude != 0.0){
-                val alt = String.format(Locale.US, "%.2f m", t.altitude)
-                view?.setAltitudeFieldTextView(alt)
-            }
+            update(t)
         }
 
         override fun onError(e: Throwable) {

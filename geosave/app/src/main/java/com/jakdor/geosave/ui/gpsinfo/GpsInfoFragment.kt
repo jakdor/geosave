@@ -34,20 +34,52 @@ class GpsInfoFragment: DaggerFragment(), GpsInfoContract.GpsInfoView {
         presenter.resume()
     }
 
-    override fun setPositionTitleTextView(resId: Int) {
+    override fun setPositionTitle(resId: Int) {
         pos_info_card.title.setText(resId)
     }
 
-    override fun setPositionFieldTextView(posStr: String) {
+    override fun setPositionField(posStr: String) {
         pos_info_card.field.text = posStr
     }
 
-    override fun setAltitudeTileTextView(resId: Int) {
+    override fun setAltitudeTile(resId: Int) {
         altitude_info_card.title.setText(resId)
     }
 
-    override fun setAltitudeFieldTextView(altStr: String) {
+    override fun setAltitudeField(altStr: String) {
         altitude_info_card.field.text = altStr
+    }
+
+    override fun setAccuracyTitle(resId: Int) {
+        accuracy_info_card.title.setText(resId)
+    }
+
+    override fun setAccuracyField(accStr: String) {
+        accuracy_info_card.field.text = accStr
+    }
+
+    override fun setSpeedTitle(resId: Int) {
+        speed_info_card.title.setText(resId)
+    }
+
+    override fun setSpeedField(speedStr: String) {
+        speed_info_card.field.text = speedStr
+    }
+
+    override fun setBearingTitle(resId: Int) {
+        bearing_info_card.title.setText(resId)
+    }
+
+    override fun setBearingField(bearStr: String) {
+        bearing_info_card.field.text = bearStr
+    }
+
+    override fun setProviderTitle(resId: Int) {
+        provider_info_card.title.setText(resId)
+    }
+
+    override fun setProviderField(resId: Int) {
+        provider_info_card.field.setText(resId)
     }
 
     companion object {

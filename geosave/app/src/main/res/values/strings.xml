@@ -18,4 +18,10 @@
     <string name="copy_button_desc">copy button</string>
     <string name="value_unknown">-</string>
     <string name="altitude_title">Altitude</string>
+    <string name="accuracy_title">Accuracy</string>
+    <string name="speed_title">Speed</string>
+    <string name="bearing_title">Bearing</string>
+    <string name="provider_title">Provider</string>
+    <string name="provider_gps">GPS</string>
+    <string name="provider_gsm">GSM</string>
 </resources>

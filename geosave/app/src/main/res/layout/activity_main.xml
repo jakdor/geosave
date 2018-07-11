@@ -8,7 +8,7 @@
     tools:context=".ui.main.MainActivity">
 
     <FrameLayout
-        android:id="@+id/mainFragmentLayout"
+        android:id="@+id/main_fragment_layout"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="0dp"

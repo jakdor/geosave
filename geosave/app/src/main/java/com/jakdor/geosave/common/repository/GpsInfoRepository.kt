@@ -25,6 +25,6 @@ class GpsInfoRepository(private val schedulers: RxSchedulersFacade){
      * Subscribe to [BehaviorSubject] stream
      */
     fun subscribe(observer: UserLocationObserver): Disposable{
-        return stream.subscribeOn(schedulers.computation()).subscribeWith(observer)
+        return stream.subscribeOn(schedulers.ui()).subscribeWith(observer)
     }
 }

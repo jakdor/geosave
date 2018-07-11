@@ -26,7 +26,8 @@ class GpsInfoPresenter(view: GpsInfoContract.GpsInfoView,
 
     override fun resume() {
         super.resume()
-        view?.setPositionTextView(R.string.value_unknown)
+        view?.setPositionTitleTextView(R.string.pos_title)
+        view?.setAltitudeTileTextView(R.string.altitude_title)
         compositeDisposable.add(gpsInfoRepository.subscribe(DataObserver()))
     }
 
@@ -41,7 +42,11 @@ class GpsInfoPresenter(view: GpsInfoContract.GpsInfoView,
     inner class DataObserver: UserLocationObserver() {
         override fun onNext(t: UserLocation) {
             val pos = String.format(Locale.US, "%f, %f", t.latitude, t.longitude)
-            view?.setPositionTextView(pos)
+            view?.setPositionFieldTextView(pos)
+            if(t.altitude != 0.0){
+                val alt = String.format(Locale.US, "%.2f m", t.altitude)
+                view?.setAltitudeFieldTextView(alt)
+            }
         }
 
         override fun onError(e: Throwable) {

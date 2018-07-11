@@ -3,8 +3,10 @@ package com.jakdor.geosave.ui.gpsinfo
 interface GpsInfoContract {
 
     interface GpsInfoView{
-        fun setPositionTextView(posStr: String)
-        fun setPositionTextView(resId: Int)
+        fun setPositionTitleTextView(resId: Int)
+        fun setPositionFieldTextView(posStr: String)
+        fun setAltitudeTileTextView(resId: Int)
+        fun setAltitudeFieldTextView(altStr: String)
     }
 
     interface GpsInfoPresenter

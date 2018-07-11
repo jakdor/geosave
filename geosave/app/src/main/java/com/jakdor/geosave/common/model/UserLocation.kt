@@ -6,7 +6,8 @@ import android.location.Location
  * Location data model - platform independent geo data structure
  */
 data class UserLocation(val latitude: Double, val longitude: Double, val altitude: Double,
-                        val accuracy: Float, val provider: String, val speed: Float){
+                        val accuracy: Float, val provider: String, val speed: Float,
+                        val bearing: Float){
     constructor(location: Location): this(location.latitude, location.longitude, location.altitude,
-            location.accuracy, location.provider, location.speed)
+            location.accuracy, location.provider, location.speed, location.bearing)
 }

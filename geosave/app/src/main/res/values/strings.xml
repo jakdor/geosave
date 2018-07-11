@@ -17,4 +17,5 @@
     <string name="pos_placeholder">0.000000, 0.000000</string>
     <string name="copy_button_desc">copy button</string>
     <string name="value_unknown">-</string>
+    <string name="altitude_title">Altitude</string>
 </resources>

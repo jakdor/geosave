@@ -97,7 +97,7 @@ class MainActivity : DaggerAppCompatActivity(),
         if (supportFragmentManager.findFragmentByTag(GpsInfoFragment.CLASS_TAG) == null) {
             supportFragmentManager
                     .beginTransaction()
-                    .add(R.id.mainFragmentLayout, //todo check add vs replace
+                    .add(R.id.main_fragment_layout, //todo check add vs replace
                             GpsInfoFragment.newInstance(), GpsInfoFragment.CLASS_TAG)
                     .commit()
             Timber.i("Created %s", GpsInfoFragment.CLASS_TAG)

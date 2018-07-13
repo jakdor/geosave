@@ -48,7 +48,7 @@ class GpsInfoPresenter(view: GpsInfoContract.GpsInfoView,
     }
 
     /**
-     * Update meter with new data
+     * Update meters with new data
      */
     fun update(loc: UserLocation){
         val pos = String.format(Locale.US, "%f, %f", loc.latitude, loc.longitude)

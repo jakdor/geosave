@@ -35,7 +35,7 @@ class MainPresenter(view: MainContract.MainView, private val gpsInfoRepository: 
         if(locationUpdates){
             view?.gmsSetupLocationUpdates()
         } else if (fallbackLocationUpdates){
-            view?.fallbackStartLocationUpdates()
+            fallbackStartup()
         }
     }
 
@@ -114,9 +114,7 @@ class MainPresenter(view: MainContract.MainView, private val gpsInfoRepository: 
                 if(!fallBackMode){
                     view?.gmsSetupLocationUpdates()
                 } else {
-                    view?.fallbackLocationManagerSetup()
-                    view?.fallbackCheckGps()
-                    view?.fallbackStartLocationUpdates()
+                   fallbackStartup()
                 }
             }
             false -> view?.displayToast(R.string.gps_permissions_declined)
@@ -131,6 +129,15 @@ class MainPresenter(view: MainContract.MainView, private val gpsInfoRepository: 
             true -> view?.gmsSetupLocationUpdates()
             false -> view?.displayToast(R.string.gps_enable_declined)
         }
+    }
+
+    /**
+     * Setup and configure fallback location listener
+     */
+    override fun fallbackStartup() {
+        view?.fallbackLocationManagerSetup()
+        view?.fallbackCheckGps()
+        view?.fallbackStartLocationUpdates()
     }
 
     /**
@@ -149,5 +156,12 @@ class MainPresenter(view: MainContract.MainView, private val gpsInfoRepository: 
             true -> view?.fallbackTurnGpsIntent()
             false -> view?.displayToast(R.string.gps_fallback_dialog_no_toast)
         }
+    }
+
+    /**
+     * Called on fallback gps location callback add
+     */
+    override fun fallbackLocationUpdatesActive() {
+        fallbackLocationUpdates = true
     }
 }

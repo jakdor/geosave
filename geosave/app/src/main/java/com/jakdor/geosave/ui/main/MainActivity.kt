@@ -264,7 +264,7 @@ class MainActivity : DaggerAppCompatActivity(),
     }
 
     /**
-     * Fallback GPS enable dialog listener
+     * Fallback native GPS enable dialog listener
      */
     private val fallbackGpsDialogListener: DialogInterface.OnClickListener
             = DialogInterface.OnClickListener { _, which ->
@@ -293,7 +293,7 @@ class MainActivity : DaggerAppCompatActivity(),
     }
 
     /**
-     * GMS connection fail - lunch GPS settings
+     * GMS connection fail - lunch native GPS settings
      */
     override fun fallbackTurnGpsIntent(){
         Timber.i("Lunching GPS settings")
@@ -323,7 +323,7 @@ class MainActivity : DaggerAppCompatActivity(),
     }
 
     /**
-     * Fallback GMS connection fail - setup LocationManager
+     * Fallback GMS connection fail - setup native LocationManager
      */
     override fun fallbackLocationManagerSetup() {
         fallbackLocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -331,20 +331,21 @@ class MainActivity : DaggerAppCompatActivity(),
     }
 
     /**
-     * Fallback GMS connection fail - start location updates
+     * Fallback GMS connection fail - start native location updates
      */
     override fun fallbackStartLocationUpdates() {
         try {
             //location update if min 2m distance
             fallbackLocationManager.requestLocationUpdates(
                     fallbackLocationProvider, 3000, 2.0f, this)
+            presenter.fallbackLocationUpdatesActive()
         } catch (e: SecurityException){
             Timber.e("Unauthorised call for location updates request")
         }
     }
 
     /**
-     * Fallback GMS connection fail - stop location updates
+     * Fallback GMS connection fail - stop native location updates
      */
     override fun fallbackStopLocationUpdates() {
         fallbackLocationManager.removeUpdates(this)

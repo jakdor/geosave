@@ -40,7 +40,9 @@ interface MainContract {
         fun permissionsGranted(status: Boolean)
         fun gmsGpsEnableDialog(result: Boolean)
 
+        fun fallbackStartup()
         fun fallbackGpsAutoEnableFailed()
         fun fallbackGpsDialogUserResponse(response: Boolean)
+        fun fallbackLocationUpdatesActive()
     }
 }

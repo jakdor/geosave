@@ -3,12 +3,11 @@ package com.jakdor.geosave
 import com.jakdor.geosave.common.repository.GpsInfoRepository
 import com.jakdor.geosave.ui.main.MainActivity
 import com.jakdor.geosave.ui.main.MainPresenter
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.never
-import com.nhaarman.mockito_kotlin.verify
+import com.nhaarman.mockito_kotlin.*
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
+import org.mockito.InOrder
 import org.mockito.junit.MockitoJUnit
 
 class MainPresenterTest {
@@ -139,5 +138,159 @@ class MainPresenterTest {
         verify(view, never()).fallbackCheckGps()
         verify(view, never()).fallbackStartLocationUpdates()
         verify(view, never()).gmsSetupLocationUpdates()
+    }
+
+    /**
+     * Correct tab switching for GpsInfo tab
+     */
+    @Test
+    fun onGpsInfoTabClickedTest(){
+        mainPresenter.onGpsInfoTabClicked()
+        verify(view, times(1)).switchToGpsInfoFragment()
+
+        mainPresenter.onGpsInfoTabClicked()
+        verify(view, times(1)).switchToGpsInfoFragment()
+    }
+
+    /**
+     * Correct tab switching for Map tab
+     */
+    @Test
+    fun onMapTabClickedTest(){
+        mainPresenter.onMapTabClicked()
+        verify(view, times(1)).switchToMapFragment()
+
+        mainPresenter.onMapTabClicked()
+        verify(view, times(1)).switchToMapFragment()
+    }
+
+    /**
+     * Correct tab switching for Location tab
+     */
+    @Test
+    fun onLocationTabClickedTest(){
+        mainPresenter.onLocationsTabClicked()
+        verify(view, times(1)).switchToLocationsFragment()
+
+        mainPresenter.onLocationsTabClicked()
+        verify(view, times(1)).switchToLocationsFragment()
+    }
+
+    /**
+     * Test presenter response to Google Api/GMS connection established
+     */
+    @Test
+    fun gmsConnectedTest(){
+        mainPresenter.gmsConnected()
+
+        verify(view).checkPermissions()
+    }
+
+    /**
+     * Test presenter response to Google Api/GMS connection failed
+     */
+    @Test
+    fun gmsFailedTest(){
+        mainPresenter.gmsFailed()
+
+        verify(view).checkPermissions()
+    }
+
+    /**
+     * permissionsGranted() status = false
+     */
+    @Test
+    fun permissionsGrantedFalseTest(){
+        mainPresenter.permissionsGranted(false)
+
+        verify(view).displayToast(R.string.gps_permissions_declined)
+    }
+
+    /**
+     * permissionsGranted() status = true, GoogleApi/GMS
+     */
+    @Test
+    fun permissionsGrantedTrueGMSTest(){
+        mainPresenter.permissionsGranted(true)
+
+        verify(view).gmsSetupLocationUpdates()
+    }
+
+    /**
+     * permissionsGranted() status = true, fallback/native
+     */
+    @Test
+    fun permissionsGrantedTrueNativeTest(){
+        mainPresenter.gmsFailed()
+        mainPresenter.permissionsGranted(true)
+
+        verify(view).fallbackLocationManagerSetup()
+        verify(view).fallbackCheckGps()
+        verify(view).fallbackStartLocationUpdates()
+    }
+
+    /**
+     * GMS gps enable dialog, result = true
+     */
+    @Test
+    fun gmsGpsEnableDialogTrueTest(){
+        mainPresenter.gmsGpsEnableDialog(true)
+
+        verify(view).gmsSetupLocationUpdates()
+    }
+
+    /**
+     * GMS gps enable dialog, result = false
+     */
+    @Test
+    fun gmsGpsEnableDialogFalseTest(){
+        mainPresenter.gmsGpsEnableDialog(false)
+
+        verify(view).displayToast(R.string.gps_enable_declined)
+    }
+
+    /**
+     * Check correct execution order of setting up fallback/native location provider
+     */
+    @Test
+    fun fallbackStartupTest(){
+        mainPresenter.fallbackStartup()
+
+        val inOrder: InOrder = inOrder(view)
+        inOrder.verify(view).fallbackLocationManagerSetup()
+        inOrder.verify(view).fallbackCheckGps()
+        inOrder.verify(view).fallbackStartLocationUpdates()
+    }
+
+    /**
+     * Check correct execution order of GMS GPS auto-enable fail handling
+     */
+    @Test
+    fun fallbackGpsAutoEnableFailedTest(){
+        mainPresenter.fallbackGpsAutoEnableFailed()
+
+        val inOrder: InOrder = inOrder(view)
+        inOrder.verify(view).fallbackLocationManagerSetup()
+        inOrder.verify(view).fallbackCheckGps()
+    }
+
+    /**
+     * fallbackGpsDialogUserResponse(), response = true
+     */
+    @Test
+    fun fallbackGpsDialogUserResponseTrueTest(){
+        mainPresenter.fallbackGpsDialogUserResponse(true)
+
+        verify(view).fallbackTurnGpsIntent()
+    }
+
+    /**
+     * fallbackGpsDialogUserResponse(), response = false
+     */
+    @Test
+    fun fallbackGpsDialogUserResponseFalseTest(){
+        mainPresenter.fallbackGpsDialogUserResponse(false)
+
+        verify(view).displayToast(R.string.gps_fallback_dialog_no_toast)
     }
 }

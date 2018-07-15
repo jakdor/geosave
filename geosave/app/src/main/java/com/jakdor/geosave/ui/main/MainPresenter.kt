@@ -114,7 +114,7 @@ class MainPresenter(view: MainContract.MainView, private val gpsInfoRepository: 
                 if(!fallBackMode){
                     view?.gmsSetupLocationUpdates()
                 } else {
-                   fallbackStartup()
+                    fallbackStartup()
                 }
             }
             false -> view?.displayToast(R.string.gps_permissions_declined)
@@ -141,7 +141,7 @@ class MainPresenter(view: MainContract.MainView, private val gpsInfoRepository: 
     }
 
     /**
-     * Fallback for GMS GPS auto enable fail
+     * Fallback for GMS GPS auto-enable fail
      */
     override fun fallbackGpsAutoEnableFailed() {
        view?.fallbackLocationManagerSetup()

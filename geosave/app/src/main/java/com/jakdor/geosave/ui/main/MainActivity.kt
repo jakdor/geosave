@@ -71,8 +71,15 @@ class MainActivity : DaggerAppCompatActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Fabric.with(this, Crashlytics()) //todo move to splash
         setContentView(R.layout.activity_main)
+        setUp()
+    }
+
+    /**
+     * Separated from onCreate() for testing - call to super in onCreate() executes dagger injections
+     */
+    fun setUp(){
+        Fabric.with(this, Crashlytics()) //todo move to splash
 
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 

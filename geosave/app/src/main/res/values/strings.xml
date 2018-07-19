@@ -6,7 +6,7 @@
     <string name="title_locations">Saved locations</string>
 
     <string name="gps_permissions_declined">GPS permissions are required for basic app functionality</string>
-    <string name="gps_enable_declined">Enable GPS for high accurancy reading</string>
+    <string name="gps_enable_declined">Enable GPS for high accuracy reading</string>
 
     <string name="gps_fallback_dialog_msg">GPS is turned off. Display setting page to turn it on?</string>
     <string name="gps_fallback_dialog_yes">Yes</string>

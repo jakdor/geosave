@@ -16,7 +16,8 @@ abstract class BuildersModule {
     @ContributesAndroidInjector(modules = [
         MainModule::class,
         MainViewModule::class,
-        GpsInfoFragmentProvider::class])
+        GpsInfoFragmentProvider::class,
+        MainActivityMVVMFragmentBuilderModule::class])
     abstract fun bindMainActivity(): MainActivity
 
 }

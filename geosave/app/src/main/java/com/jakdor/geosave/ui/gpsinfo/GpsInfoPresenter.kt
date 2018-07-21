@@ -4,7 +4,7 @@ import com.jakdor.geosave.R
 import com.jakdor.geosave.common.model.UserLocation
 import com.jakdor.geosave.common.repository.GpsInfoRepository
 import com.jakdor.geosave.common.repository.UserLocationObserver
-import com.jakdor.geosave.mvp.BasePresenter
+import com.jakdor.geosave.arch.BasePresenter
 import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
 import java.util.*

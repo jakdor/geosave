@@ -1,5 +1,6 @@
 package com.jakdor.geosave.di
 
+import com.jakdor.geosave.ui.gpsinfo.GpsInfoViewModel
 import dagger.Subcomponent
 
 /**
@@ -14,5 +15,5 @@ interface ViewModelSubComponent {
         fun build(): ViewModelSubComponent
     }
 
-    //abstract fun mainViewModel(): MainViewModel
+    fun gpsInfoViewModel(): GpsInfoViewModel
 }

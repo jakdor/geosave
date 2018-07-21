@@ -4,6 +4,7 @@ import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 import android.util.ArrayMap
 import com.jakdor.geosave.di.ViewModelSubComponent
+import com.jakdor.geosave.ui.gpsinfo.GpsInfoViewModel
 
 import java.util.concurrent.Callable
 
@@ -25,7 +26,7 @@ constructor(viewModelSubComponent: ViewModelSubComponent) : ViewModelProvider.Fa
     private val creators: ArrayMap<Class<*>, Callable<out ViewModel>> = ArrayMap()
 
     init {
-        //creators[MainViewModel::class.java] = Callable { viewModelSubComponent.mainViewModel() }
+        creators[GpsInfoViewModel::class.java] = Callable { viewModelSubComponent.gpsInfoViewModel() }
     }
 
     /**

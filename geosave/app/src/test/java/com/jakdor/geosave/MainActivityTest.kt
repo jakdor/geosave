@@ -120,11 +120,12 @@ class MainActivityTest {
      */
     @Test
     fun reAttacheGpsInfoFragmentTest(){
-        Assert.assertEquals(1, mainActivity.supportFragmentManager.fragments.size)
+        //first in fragments list is SupportLifecycleFragmentImpl
+        Assert.assertEquals(2, mainActivity.supportFragmentManager.fragments.size)
 
         mainActivity.switchToGpsInfoFragment()
 
-        Assert.assertEquals(1, mainActivity.supportFragmentManager.fragments.size)
+        Assert.assertEquals(2, mainActivity.supportFragmentManager.fragments.size)
     }
 
     /**

@@ -1,19 +1,20 @@
 package com.jakdor.geosave.ui.gpsinfo
 
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_gps_info.*
 import com.jakdor.geosave.R
-import dagger.android.support.DaggerFragment
+import com.jakdor.geosave.di.InjectableFragment
 import kotlinx.android.synthetic.main.gps_info_card.view.*
 import javax.inject.Inject
 
 /**
  * Fragment displaying GPS info
  */
-class GpsInfoFragment: DaggerFragment(), GpsInfoContract.GpsInfoView {
+class GpsInfoFragment: Fragment(), InjectableFragment, GpsInfoContract.GpsInfoView {
 
     @Inject
     lateinit var presenter: GpsInfoPresenter

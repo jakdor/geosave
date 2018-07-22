@@ -15,6 +15,9 @@ import com.jakdor.geosave.common.model.UserLocation
 import com.jakdor.geosave.databinding.FragmentGpsInfoBinding
 import java.util.*
 import javax.inject.Inject
+import android.support.constraint.ConstraintLayout
+import android.databinding.BindingAdapter
+import android.support.constraint.Guideline
 
 /**
  * Fragment displaying GPS info
@@ -96,6 +99,17 @@ class GpsInfoFragment: Fragment(), InjectableFragment {
             val fragment = GpsInfoFragment()
             fragment.arguments = args
             return fragment
+        }
+
+        /**
+         * Binding adapter for dynamic guidelines percentage
+         */
+        @JvmStatic
+        @BindingAdapter("layout_constraintGuide_percent")
+        fun setLayoutConstraintGuidePercent(guideline: Guideline, percent: Float) {
+            val params = guideline.layoutParams as ConstraintLayout.LayoutParams
+            params.guidePercent = percent
+            guideline.layoutParams = params
         }
     }
 }

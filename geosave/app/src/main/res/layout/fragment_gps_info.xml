@@ -2,6 +2,8 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
+        <import type="com.jakdor.geosave.ui.gpsinfo.GpsInfoViewModel"/>
+        <variable name="viewModel" type="com.jakdor.geosave.ui.gpsinfo.GpsInfoViewModel"/>
         <variable name="position" type="String"/>
         <variable name="altitude" type="String"/>
         <variable name="accuracy" type="String"/>
@@ -27,6 +29,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:viewModel="@{viewModel}"
             app:data="@{position}"
             app:titleStr="@{@string/pos_title}"
             app:copyVisible="@{true}"/>
@@ -51,6 +54,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/guideline_main"
+            app:viewModel="@{viewModel}"
             app:data="@{altitude}"
             app:titleStr="@{@string/altitude_title}"
             app:copyVisible="@{true}"/>

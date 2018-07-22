@@ -19,7 +19,16 @@ constructor(application: Application,
             private val gpsInfoRepository: GpsInfoRepository):
         BaseViewModel(application, rxSchedulersFacade){
 
-    val userLocation = MutableLiveData<UserLocation>()
+    val location = MutableLiveData<UserLocation>()
+    val clipboardQueue = MutableLiveData<String>()
+
+    /**
+     * Handle copy button click
+     */
+    fun onCopyButtonClicked(data: String){
+        Timber.i("Copied to the clipboard: %s", data)
+        clipboardQueue.value = data
+    }
 
     /**
      * Observe [GpsInfoRepository] stream
@@ -33,7 +42,7 @@ constructor(application: Application,
      * Forward new [UserLocation] object to [MutableLiveData]
      */
     private fun userLocationUpdate(data: UserLocation){
-        userLocation.value = data
+        location.value = data
         loadingStatus.value = false
     }
 

@@ -15,9 +15,11 @@ import com.jakdor.geosave.common.model.UserLocation
 import com.jakdor.geosave.databinding.FragmentGpsInfoBinding
 import java.util.*
 import javax.inject.Inject
-import android.support.constraint.ConstraintLayout
-import android.databinding.BindingAdapter
-import android.support.constraint.Guideline
+import android.R.attr.label
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.widget.Toast
 
 /**
  * Fragment displaying GPS info
@@ -46,8 +48,10 @@ class GpsInfoFragment: Fragment(), InjectableFragment {
                     .get(GpsInfoViewModel::class.java)
         }
 
+        binding.viewModel = viewModel
         viewModel?.requestUserLocationUpdates()
         observeUserLocation()
+        observeClipboardQueue()
     }
 
     /**
@@ -67,7 +71,7 @@ class GpsInfoFragment: Fragment(), InjectableFragment {
      * Pass formatted String variables instead of model to layout for better testability
      */
     fun observeUserLocation(){
-        viewModel?.userLocation?.observe(this, Observer {
+        viewModel?.location?.observe(this, Observer {
             val pos = String.format(Locale.US, "%f, %f", it?.latitude, it?.longitude)
             binding.position = pos
 
@@ -90,6 +94,19 @@ class GpsInfoFragment: Fragment(), InjectableFragment {
         })
     }
 
+    /**
+     * Copy to clipboard string received from [GpsInfoViewModel] after user click on copy button
+     */
+    fun observeClipboardQueue(){
+        viewModel?.clipboardQueue?.observe(this, Observer {
+            val clipboard = activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clip = ClipData.newPlainText(getString(R.string.clipboard_label), it)
+            clipboard.primaryClip = clip
+
+            Toast.makeText(activity, getString(R.string.clipboard_toast), Toast.LENGTH_SHORT).show()
+        })
+    }
+
     companion object {
 
         const val CLASS_TAG = "GpsInfoFragment"
@@ -99,17 +116,6 @@ class GpsInfoFragment: Fragment(), InjectableFragment {
             val fragment = GpsInfoFragment()
             fragment.arguments = args
             return fragment
-        }
-
-        /**
-         * Binding adapter for dynamic guidelines percentage
-         */
-        @JvmStatic
-        @BindingAdapter("layout_constraintGuide_percent")
-        fun setLayoutConstraintGuidePercent(guideline: Guideline, percent: Float) {
-            val params = guideline.layoutParams as ConstraintLayout.LayoutParams
-            params.guidePercent = percent
-            guideline.layoutParams = params
         }
     }
 }

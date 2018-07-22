@@ -1,7 +1,9 @@
 package com.jakdor.geosave.di
 
+import android.arch.lifecycle.ViewModelProvider
 import android.content.Context
 import com.jakdor.geosave.App
+import com.jakdor.geosave.arch.ViewModelFactory
 import com.jakdor.geosave.common.repository.GpsInfoRepository
 import com.jakdor.geosave.utils.RxSchedulersFacade
 import dagger.Module
@@ -11,12 +13,19 @@ import javax.inject.Singleton
 /**
  * App-wide dependencies injections
  */
-@Module
+@Module(subcomponents = [ViewModelSubComponent::class])
 class AppModule {
 
     @Provides
     fun provideContext(app: App): Context{
         return app.applicationContext
+    }
+
+    @Singleton
+    @Provides
+    fun provideViewModelFactory(
+            viewModelBuilder: ViewModelSubComponent.Builder): ViewModelProvider.Factory {
+        return ViewModelFactory(viewModelBuilder.build())
     }
 
     @Provides

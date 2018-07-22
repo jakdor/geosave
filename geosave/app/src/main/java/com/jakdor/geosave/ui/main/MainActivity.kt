@@ -10,7 +10,6 @@ import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import com.jakdor.geosave.R
 import com.jakdor.geosave.ui.gpsinfo.GpsInfoFragment
-import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 import com.crashlytics.android.Crashlytics
@@ -28,18 +27,26 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.provider.Settings
+import android.support.v4.app.Fragment
+import android.support.v7.app.AppCompatActivity
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.location.*
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationCallback
 import com.jakdor.geosave.common.model.UserLocation
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.support.HasSupportFragmentInjector
 
-class MainActivity : DaggerAppCompatActivity(),
+class MainActivity : AppCompatActivity(),
+        HasSupportFragmentInjector,
         MainContract.MainView,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener{
+
+    @Inject
+    lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
 
     @Inject
     lateinit var presenter: MainPresenter
@@ -67,6 +74,10 @@ class MainActivity : DaggerAppCompatActivity(),
             }
         }
         false
+    }
+
+    override fun supportFragmentInjector(): DispatchingAndroidInjector<Fragment> {
+        return dispatchingAndroidInjector
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

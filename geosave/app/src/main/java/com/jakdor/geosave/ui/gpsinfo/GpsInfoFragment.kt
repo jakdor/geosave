@@ -1,85 +1,90 @@
 package com.jakdor.geosave.ui.gpsinfo
 
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProvider
+import android.arch.lifecycle.ViewModelProviders
+import android.databinding.DataBindingUtil
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import kotlinx.android.synthetic.main.fragment_gps_info.*
 import com.jakdor.geosave.R
-import dagger.android.support.DaggerFragment
-import kotlinx.android.synthetic.main.gps_info_card.view.*
+import com.jakdor.geosave.di.InjectableFragment
+import com.jakdor.geosave.common.model.UserLocation
+import com.jakdor.geosave.databinding.FragmentGpsInfoBinding
+import java.util.*
 import javax.inject.Inject
 
 /**
  * Fragment displaying GPS info
  */
-class GpsInfoFragment: DaggerFragment(), GpsInfoContract.GpsInfoView {
+class GpsInfoFragment: Fragment(), InjectableFragment {
 
     @Inject
-    lateinit var presenter: GpsInfoPresenter
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+
+    private var viewModel: GpsInfoViewModel? = null
+    private lateinit var binding: FragmentGpsInfoBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        presenter.start()
-        return inflater.inflate(R.layout.fragment_gps_info, container, false)
+        binding = DataBindingUtil.inflate(
+                inflater, R.layout.fragment_gps_info, container, false)
+        layoutInit()
+        return binding.root
     }
 
-    override fun onPause() {
-        super.onPause()
-        presenter.pause()
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        if(viewModel == null){
+            viewModel = ViewModelProviders.of(this, viewModelFactory)
+                    .get(GpsInfoViewModel::class.java)
+        }
+
+        viewModel?.requestUserLocationUpdates()
+        observeUserLocation()
     }
 
-    override fun onResume() {
-        super.onResume()
-        presenter.resume()
+    /**
+     * Set initial value for fields (can't be set in xml for some reason)
+     */
+    fun layoutInit(){
+        binding.position = getString(R.string.value_unknown)
+        binding.altitude = getString(R.string.value_unknown)
+        binding.accuracy = getString(R.string.value_unknown)
+        binding.speed = getString(R.string.value_unknown)
+        binding.bearing = getString(R.string.value_unknown)
+        binding.provider = getString(R.string.value_unknown)
     }
 
-    override fun setPositionTitle(resId: Int) {
-        pos_info_card.title.setText(resId)
-    }
+    /**
+     * Handle new [UserLocation] object
+     * Pass formatted String variables instead of model to layout for better testability
+     */
+    fun observeUserLocation(){
+        viewModel?.userLocation?.observe(this, Observer {
+            val pos = String.format(Locale.US, "%f, %f", it?.latitude, it?.longitude)
+            binding.position = pos
 
-    override fun setPositionField(posStr: String) {
-        pos_info_card.field.text = posStr
-    }
+            if(it?.altitude != 0.0){
+                val alt = String.format("%.2f m", it?.altitude)
+                binding.altitude = alt
+                binding.provider = getString(R.string.provider_gps)
+            } else {
+                binding.provider = getString(R.string.provider_gsm)
+            }
 
-    override fun setAltitudeTile(resId: Int) {
-        altitude_info_card.title.setText(resId)
-    }
+            val acc = String.format("%.2f m", it?.accuracy)
+            binding.accuracy = acc
 
-    override fun setAltitudeField(altStr: String) {
-        altitude_info_card.field.text = altStr
-    }
+            val speed = String.format("%.2f m/s", it?.speed)
+            binding.speed = speed
 
-    override fun setAccuracyTitle(resId: Int) {
-        accuracy_info_card.title.setText(resId)
-    }
-
-    override fun setAccuracyField(accStr: String) {
-        accuracy_info_card.field.text = accStr
-    }
-
-    override fun setSpeedTitle(resId: Int) {
-        speed_info_card.title.setText(resId)
-    }
-
-    override fun setSpeedField(speedStr: String) {
-        speed_info_card.field.text = speedStr
-    }
-
-    override fun setBearingTitle(resId: Int) {
-        bearing_info_card.title.setText(resId)
-    }
-
-    override fun setBearingField(bearStr: String) {
-        bearing_info_card.field.text = bearStr
-    }
-
-    override fun setProviderTitle(resId: Int) {
-        provider_info_card.title.setText(resId)
-    }
-
-    override fun setProviderField(resId: Int) {
-        provider_info_card.field.setText(resId)
+            val bearing = String.format("%.2f\u00b0", it?.bearing)
+            binding.bearing = bearing
+        })
     }
 
     companion object {

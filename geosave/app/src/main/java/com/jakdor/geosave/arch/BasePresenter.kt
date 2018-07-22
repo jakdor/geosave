@@ -1,4 +1,4 @@
-package com.jakdor.geosave.mvp
+package com.jakdor.geosave.arch
 
 /**
  * MVP presenter base class

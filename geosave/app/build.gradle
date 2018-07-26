@@ -46,6 +46,7 @@ android {
     testOptions{
         unitTests{
             includeAndroidResources true
+            returnDefaultValues true
         }
     }
 }
@@ -67,6 +68,7 @@ dependencies {
     kapt "android.arch.lifecycle:compiler:$project.archVersion"
     implementation "android.arch.lifecycle:extensions:$project.archVersion"
     implementation "android.arch.lifecycle:runtime:$project.archVersion"
+    implementation "android.arch.core:core-testing:$project.archVersion"
 
     //data binding
     kapt "com.android.databinding:compiler:$project.databindingCompilerVersion"

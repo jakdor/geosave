@@ -15,7 +15,6 @@ import com.jakdor.geosave.common.model.UserLocation
 import com.jakdor.geosave.databinding.FragmentGpsInfoBinding
 import java.util.*
 import javax.inject.Inject
-import android.R.attr.label
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context

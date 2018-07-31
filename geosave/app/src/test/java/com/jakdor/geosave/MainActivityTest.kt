@@ -27,10 +27,12 @@ import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.android.controller.ActivityController
+import org.robolectric.annotation.Config
 import org.robolectric.shadows.ShadowToast
 import java.util.*
 
 @RunWith(RobolectricTestRunner::class)
+@Config(application = App::class)
 class MainActivityTest {
 
     @get:Rule

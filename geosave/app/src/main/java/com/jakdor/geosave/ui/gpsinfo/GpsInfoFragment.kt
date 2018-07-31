@@ -1,5 +1,6 @@
 package com.jakdor.geosave.ui.gpsinfo
 
+import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
@@ -28,8 +29,8 @@ class GpsInfoFragment: Fragment(), InjectableFragment {
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private var viewModel: GpsInfoViewModel? = null
-    private lateinit var binding: FragmentGpsInfoBinding
+    var viewModel: GpsInfoViewModel? = null
+    lateinit var binding: FragmentGpsInfoBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -50,7 +51,7 @@ class GpsInfoFragment: Fragment(), InjectableFragment {
         binding.viewModel = viewModel
         viewModel?.requestUserLocationUpdates()
         observeUserLocation()
-        observeClipboardQueue()
+        observeClipboardCopyQueue()
     }
 
     /**
@@ -66,44 +67,58 @@ class GpsInfoFragment: Fragment(), InjectableFragment {
     }
 
     /**
-     * Handle new [UserLocation] object
-     * Pass formatted String variables instead of model to layout for better testability
+     * Observe [GpsInfoViewModel] for updates on location [MutableLiveData] stream
      */
     fun observeUserLocation(){
         viewModel?.location?.observe(this, Observer {
-            val pos = String.format(Locale.US, "%f, %f", it?.latitude, it?.longitude)
-            binding.position = pos
+            handleUserLocation(it)
+        })
+    }
 
-            if(it?.altitude != 0.0){
-                val alt = String.format("%.2f m", it?.altitude)
-                binding.altitude = alt
-                binding.provider = getString(R.string.provider_gps)
-            } else {
-                binding.provider = getString(R.string.provider_gsm)
-            }
+    /**
+     * Handle new [UserLocation] object
+     * Pass formatted String variables instead of model to layout for better testability
+     */
+    fun handleUserLocation(location: UserLocation?){
+        val pos = String.format(Locale.US, "%f, %f", location?.latitude, location?.longitude)
+        binding.position = pos
 
-            val acc = String.format("%.2f m", it?.accuracy)
-            binding.accuracy = acc
+        if(location?.altitude != 0.0){
+            val alt = String.format("%.2f m", location?.altitude)
+            binding.altitude = alt
+            binding.provider = getString(R.string.provider_gps)
+        } else {
+            binding.provider = getString(R.string.provider_gsm)
+        }
 
-            val speed = String.format("%.2f m/s", it?.speed)
-            binding.speed = speed
+        val acc = String.format("%.2f m", location?.accuracy)
+        binding.accuracy = acc
 
-            val bearing = String.format("%.2f\u00b0", it?.bearing)
-            binding.bearing = bearing
+        val speed = String.format("%.2f m/s", location?.speed)
+        binding.speed = speed
+
+        val bearing = String.format("%.2f\u00b0", location?.bearing)
+        binding.bearing = bearing
+    }
+
+    /**
+     * Observe [GpsInfoViewModel] for updates on clipboardCopyQueue [MutableLiveData] stream
+     */
+    fun observeClipboardCopyQueue(){
+        viewModel?.clipboardCopyQueue?.observe(this, Observer {
+           handleClipboardCopy(it)
         })
     }
 
     /**
      * Copy to clipboard string received from [GpsInfoViewModel] after user click on copy button
      */
-    fun observeClipboardQueue(){
-        viewModel?.clipboardQueue?.observe(this, Observer {
-            val clipboard = activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clip = ClipData.newPlainText(getString(R.string.clipboard_label), it)
-            clipboard.primaryClip = clip
+    fun handleClipboardCopy(text: String?){
+        val clipboard = activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText(getString(R.string.clipboard_label), text)
+        clipboard.primaryClip = clip
 
-            Toast.makeText(activity, getString(R.string.clipboard_toast), Toast.LENGTH_SHORT).show()
-        })
+        Toast.makeText(activity, getString(R.string.clipboard_toast), Toast.LENGTH_SHORT).show()
     }
 
     companion object {

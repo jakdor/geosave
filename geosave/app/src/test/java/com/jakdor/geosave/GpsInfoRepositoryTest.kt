@@ -18,7 +18,7 @@ class GpsInfoRepositoryTest{
     private val thrown = ExpectedException.none()
 
     private val rxSchedulersFacade = mock<RxSchedulersFacade> {
-        on { ui() }.thenReturn(Schedulers.computation())
+        on { computation() }.thenReturn(Schedulers.computation())
     }
 
     private val gpsInfoRepository = GpsInfoRepository(rxSchedulersFacade)

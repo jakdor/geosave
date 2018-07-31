@@ -20,14 +20,14 @@ constructor(application: Application,
         BaseViewModel(application, rxSchedulersFacade){
 
     val location = MutableLiveData<UserLocation>()
-    val clipboardQueue = MutableLiveData<String>()
+    val clipboardCopyQueue = MutableLiveData<String>()
 
     /**
      * Handle copy button click
      */
     fun onCopyButtonClicked(data: String){
         Timber.i("Copied to the clipboard: %s", data)
-        clipboardQueue.value = data
+        clipboardCopyQueue.value = data
     }
 
     /**

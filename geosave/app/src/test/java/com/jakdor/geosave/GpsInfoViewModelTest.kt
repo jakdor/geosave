@@ -25,7 +25,7 @@ class GpsInfoViewModelTest{
 
     private val app = mock<Application>()
     private val rxSchedulersFacade = mock<RxSchedulersFacade>{
-        on { ui() }.thenReturn(Schedulers.computation())
+        on { computation() }.thenReturn(Schedulers.computation())
     }
     private val gpsInfoRepository = mock<GpsInfoRepository>{
         on { subscribe(any()) }.thenReturn(com.nhaarman.mockito_kotlin.mock())
@@ -34,7 +34,7 @@ class GpsInfoViewModelTest{
     private var gpsInfoViewModel = GpsInfoViewModel(app, rxSchedulersFacade, gpsInfoRepository)
 
     /**
-     * Test if copy event String forwarded to clipboardQueue stream
+     * Test if copy event String forwarded to clipboardCopyQueue stream
      */
     @Test
     fun onCopyButtonClickedTest(){
@@ -42,7 +42,7 @@ class GpsInfoViewModelTest{
 
         gpsInfoViewModel.onCopyButtonClicked(testStr)
 
-        Assert.assertEquals(testStr, gpsInfoViewModel.clipboardQueue.value)
+        Assert.assertEquals(testStr, gpsInfoViewModel.clipboardCopyQueue.value)
     }
 
     /**

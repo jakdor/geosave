@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <import type="com.jakdor.geosave.ui.gpsinfo.GpsInfoViewModel"/>
+        <variable name="viewModel" type="com.jakdor.geosave.ui.gpsinfo.GpsInfoViewModel"/>
+        <variable name="position" type="String"/>
+        <variable name="altitude" type="String"/>
+        <variable name="accuracy" type="String"/>
+        <variable name="speed" type="String"/>
+        <variable name="bearing" type="String"/>
+        <variable name="provider" type="String"/>
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <include
+                android:id="@+id/position_info_card"
+                layout="@layout/gps_info_card"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/gps_info_landscape_card_height"
+                android:layout_marginBottom="4dp"
+                android:layout_marginEnd="4dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                app:layout_constraintEnd_toStartOf="@+id/altitude_info_card"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:data="@{position}"
+                app:titleStr="@{@string/position_title}"
+                app:copyVisible="@{true}"/>
+
+            <include
+                android:id="@+id/altitude_info_card"
+                layout="@layout/gps_info_card"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/gps_info_landscape_card_height"
+                android:layout_marginBottom="4dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/position_info_card"
+                app:layout_constraintTop_toTopOf="parent"
+                app:data="@{altitude}"
+                app:titleStr="@{@string/altitude_title}"
+                app:copyVisible="@{true}"/>
+
+            <include
+                android:id="@+id/accuracy_info_card"
+                layout="@layout/gps_info_card"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/gps_info_landscape_card_height"
+                android:layout_marginBottom="4dp"
+                android:layout_marginEnd="4dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                app:layout_constraintEnd_toStartOf="@+id/speed_info_card"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/position_info_card"
+                app:data="@{accuracy}"
+                app:titleStr="@{@string/accuracy_title}"
+                app:copyVisible="@{false}"/>
+
+            <include
+                android:id="@+id/speed_info_card"
+                layout="@layout/gps_info_card"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/gps_info_landscape_card_height"
+                android:layout_marginBottom="4dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/accuracy_info_card"
+                app:layout_constraintTop_toBottomOf="@+id/altitude_info_card"
+                app:data="@{speed}"
+                app:titleStr="@{@string/speed_title}"
+                app:copyVisible="@{false}"/>
+
+            <include
+                android:id="@+id/bearing_info_card"
+                layout="@layout/gps_info_card"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/gps_info_landscape_card_height"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="4dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/provider_info_card"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/accuracy_info_card"
+                app:data="@{bearing}"
+                app:titleStr="@{@string/bearing_title}"
+                app:copyVisible="@{false}"/>
+
+            <include
+                android:id="@+id/provider_info_card"
+                layout="@layout/gps_info_card"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/gps_info_landscape_card_height"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="4dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/bearing_info_card"
+                app:layout_constraintTop_toBottomOf="@+id/speed_info_card"
+                app:data="@{provider}"
+                app:titleStr="@{@string/provider_title}"
+                app:copyVisible="@{false}"/>
+
+        </android.support.constraint.ConstraintLayout>
+
+    </ScrollView>
+
+</layout>

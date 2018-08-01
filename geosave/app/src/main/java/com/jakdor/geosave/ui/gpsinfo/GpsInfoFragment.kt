@@ -129,6 +129,7 @@ class GpsInfoFragment: Fragment(), InjectableFragment {
             val args = Bundle()
             val fragment = GpsInfoFragment()
             fragment.arguments = args
+            fragment.retainInstance = true
             return fragment
         }
     }

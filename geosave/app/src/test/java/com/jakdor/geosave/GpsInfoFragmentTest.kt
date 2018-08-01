@@ -49,7 +49,7 @@ class GpsInfoFragmentTest {
 
         val view = gpsInfoFragment.view
         views = arrayOf(
-                view?.findViewById(R.id.pos_info_card),
+                view?.findViewById(R.id.position_info_card),
                 view?.findViewById(R.id.altitude_info_card),
                 view?.findViewById(R.id.accuracy_info_card),
                 view?.findViewById(R.id.speed_info_card),
@@ -67,7 +67,7 @@ class GpsInfoFragmentTest {
         Assert.assertNotNull(view)
 
         val titles: Array<String> = arrayOf(
-                gpsInfoFragment.getString(R.string.pos_title),
+                gpsInfoFragment.getString(R.string.position_title),
                 gpsInfoFragment.getString(R.string.altitude_title),
                 gpsInfoFragment.getString(R.string.accuracy_title),
                 gpsInfoFragment.getString(R.string.speed_title),

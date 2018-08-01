@@ -1,9 +1,11 @@
 package com.jakdor.geosave.arch
 
+import java.io.Serializable
+
 /**
  * MVP presenter base class
  */
-abstract class BasePresenter<View> protected constructor(protected var view: View?) {
+abstract class BasePresenter<View> protected constructor(protected var view: View?): Serializable {
 
     /**
      * attach view

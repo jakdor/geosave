@@ -13,8 +13,8 @@
     <string name="gps_fallback_dialog_no">No</string>
     <string name="gps_fallback_dialog_no_toast">Your location is not updated without GPS turned on!</string>
 
-    <string name="pos_title">Latitude / Longitude</string>
-    <string name="pos_placeholder">0.000000, 0.000000</string>
+    <string name="position_title">Latitude / Longitude</string>
+    <string name="position_placeholder">0.000000, 0.000000</string>
     <string name="copy_button_desc">copy button</string>
     <string name="value_unknown">-</string>
     <string name="altitude_title">Altitude</string>

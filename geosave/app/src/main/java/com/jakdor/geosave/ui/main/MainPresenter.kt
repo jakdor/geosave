@@ -17,8 +17,16 @@ class MainPresenter(view: MainContract.MainView, private val gpsInfoRepository: 
 
     override fun start() {
         super.start()
-        view?.switchToGpsInfoFragment()
-        currentTab = 0
+        if(currentTab == -1) { //first load
+            view?.switchToGpsInfoFragment()
+            currentTab = 0
+        } else { //presenter reattached after screen rotation
+            when (currentTab) {
+                0 -> view?.switchToGpsInfoFragment()
+                1 -> view?.switchToMapFragment()
+                2 -> view?.switchToLocationsFragment()
+            }
+        }
     }
 
     override fun pause() {

@@ -32,6 +32,7 @@
                 app:layout_constraintEnd_toStartOf="@+id/altitude_info_card"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                app:viewModel="@{viewModel}"
                 app:data="@{position}"
                 app:titleStr="@{@string/position_title}"
                 app:copyVisible="@{true}"/>
@@ -48,6 +49,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/position_info_card"
                 app:layout_constraintTop_toTopOf="parent"
+                app:viewModel="@{viewModel}"
                 app:data="@{altitude}"
                 app:titleStr="@{@string/altitude_title}"
                 app:copyVisible="@{true}"/>

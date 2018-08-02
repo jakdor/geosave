@@ -112,13 +112,19 @@ class GpsInfoFragment: Fragment(), InjectableFragment {
 
     /**
      * Copy to clipboard string received from [GpsInfoViewModel] after user click on copy button
+     * Set null value to clipboardCopyQueue [MutableLiveData] to prevent re-handling after
+     * screen rotation
      */
     fun handleClipboardCopy(text: String?){
-        val clipboard = activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        val clip = ClipData.newPlainText(getString(R.string.clipboard_label), text)
-        clipboard.primaryClip = clip
+        if(text != null) {
+            val clipboard = activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clip = ClipData.newPlainText(getString(R.string.clipboard_label), text)
+            clipboard.primaryClip = clip
 
-        Toast.makeText(activity, getString(R.string.clipboard_toast), Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, getString(R.string.clipboard_toast), Toast.LENGTH_SHORT).show()
+
+            viewModel?.clipboardCopyQueue?.value = null
+        }
     }
 
     companion object {
@@ -129,6 +135,7 @@ class GpsInfoFragment: Fragment(), InjectableFragment {
             val args = Bundle()
             val fragment = GpsInfoFragment()
             fragment.arguments = args
+            fragment.retainInstance = true
             return fragment
         }
     }

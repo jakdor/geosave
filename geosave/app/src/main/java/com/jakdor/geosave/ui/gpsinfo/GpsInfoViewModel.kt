@@ -27,7 +27,7 @@ constructor(application: Application,
      */
     fun onCopyButtonClicked(data: String){
         Timber.i("Copied to the clipboard: %s", data)
-        clipboardCopyQueue.value = data
+        clipboardCopyQueue.postValue(data)
     }
 
     /**
@@ -35,15 +35,15 @@ constructor(application: Application,
      */
     fun requestUserLocationUpdates(){
         disposable.add(gpsInfoRepository.subscribe(DataObserver()))
-        loadingStatus.value = true
+        loadingStatus.postValue(true)
     }
 
     /**
      * Forward new [UserLocation] object to [MutableLiveData]
      */
     private fun userLocationUpdate(data: UserLocation){
-        location.value = data
-        loadingStatus.value = false
+        location.postValue(data)
+        loadingStatus.postValue(false)
     }
 
     /**

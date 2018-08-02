@@ -83,6 +83,12 @@ class MainActivity : AppCompatActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        if(savedInstanceState != null){
+            presenter = savedPresenter
+            presenter.bindView(this)
+        }
+
         setUp()
     }
 
@@ -101,11 +107,18 @@ class MainActivity : AppCompatActivity(),
     override fun onPause() {
         super.onPause()
         presenter.pause()
+        presenter.unbindView()
     }
 
     override fun onResume() {
         super.onResume()
         presenter.resume()
+        presenter.bindView(this)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        MainActivity.savedPresenter = presenter
     }
 
     /**
@@ -370,6 +383,7 @@ class MainActivity : AppCompatActivity(),
     }
 
     companion object {
+        private lateinit var savedPresenter: MainPresenter
         private const val REQUEST_CHECK_SETTINGS_GPS=0x1
         private const val REQUEST_ID_MULTIPLE_PERMISSIONS=0x2
     }

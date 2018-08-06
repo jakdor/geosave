@@ -1,30 +1,105 @@
 package com.jakdor.geosave.ui.map
 
+import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
 import com.jakdor.geosave.R
+import com.jakdor.geosave.common.model.UserLocation
 import com.jakdor.geosave.di.InjectableFragment
+import com.jakdor.geosave.ui.gpsinfo.GpsInfoViewModel
+import timber.log.Timber
 import javax.inject.Inject
 
-class MapFragment: Fragment(), InjectableFragment {
+class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
     var viewModel: MapViewModel? = null
 
+    private var map: GoogleMap? = null
+
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_map_overlay, container, false)
+        val mapView : FrameLayout =
+                super.onCreateView(inflater, container, savedInstanceState) as FrameLayout
+        val overlay = inflater.inflate(R.layout.fragment_map_overlay, container, false)
+        mapView.addView(overlay)
+        return mapView
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        if(viewModel == null){
+            viewModel = ViewModelProviders.of(this, viewModelFactory)
+                    .get(MapViewModel::class.java)
+        }
+
+        viewModel?.requestUserLocationUpdates()
+        observeUserLocation()
+    }
+
+    /**
+     * Observe [GpsInfoViewModel] for updates on location [MutableLiveData] stream
+     */
+    fun observeUserLocation(){
+        viewModel?.location?.observe(this, Observer {
+            handleUserLocation(it)
+        })
+    }
+
+    /**
+     * Handle new [UserLocation] object
+     */
+    fun handleUserLocation(location: UserLocation?) {
+        if(location != null) { //todo soft camera fallowing
+            map?.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                    LatLng(location.latitude, location.longitude), DEFAULT_ZOOM))
+        }
+    }
+
+    /**
+     * Start loading map
+     */
+    override fun onCreate(p0: Bundle?) {
+        super.onCreate(p0)
+        getMapAsync(this)
+    }
+
+    /**
+     * Map ready callback
+     */
+    override fun onMapReady(p0: GoogleMap?) {
+        map = p0
+        try{
+            map?.isMyLocationEnabled = true
+        } catch (e: SecurityException){
+            Timber.wtf("SecurityException thrown: %s", e.toString())
+        }
+    }
+
+    override fun onDestroyView() {
+        map?.clear()
+        super.onDestroyView()
     }
 
     companion object: InjectableFragment {
         const val CLASS_TAG = "MapFragment"
+
+        private const val DEFAULT_ZOOM = 17.0f
 
         fun newInstance(): MapFragment{
             val args = Bundle()

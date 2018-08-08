@@ -94,6 +94,7 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
      */
     override fun onMapReady(p0: GoogleMap?) {
         map = p0
+        initCamZoom = false
         try{
             map?.isMyLocationEnabled = true
         } catch (e: SecurityException){

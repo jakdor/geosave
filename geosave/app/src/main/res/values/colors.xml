@@ -6,6 +6,8 @@
 
     <color name="materialGrey">#fafafa</color>
     <color name="shadow">#40000000</color>
+    <color name="materialTransparent">#d2ffffff</color>
+    <color name="transparent">#00000000</color>
 
     <color name="textCardTitle">#000000</color>
 </resources>

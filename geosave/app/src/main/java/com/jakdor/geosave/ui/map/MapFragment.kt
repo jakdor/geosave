@@ -18,7 +18,9 @@ import com.jakdor.geosave.R
 import com.jakdor.geosave.common.model.UserLocation
 import com.jakdor.geosave.di.InjectableFragment
 import com.jakdor.geosave.ui.gpsinfo.GpsInfoViewModel
+import kotlinx.android.synthetic.main.fragment_map_overlay.*
 import timber.log.Timber
+import java.util.*
 import javax.inject.Inject
 
 class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment {
@@ -29,6 +31,8 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
     var viewModel: MapViewModel? = null
 
     private var map: GoogleMap? = null
+
+    private var initCamZoom = false
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
@@ -65,9 +69,15 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
      * Handle new [UserLocation] object
      */
     fun handleUserLocation(location: UserLocation?) {
-        if(location != null) { //todo soft camera fallowing
-            map?.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                    LatLng(location.latitude, location.longitude), DEFAULT_ZOOM))
+        if(location != null) {
+            if(!initCamZoom) { //todo soft camera fallowing
+                map?.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                        LatLng(location.latitude, location.longitude), DEFAULT_ZOOM))
+                initCamZoom = true
+            }
+
+            val pos = String.format(Locale.US, "%f, %f", location.latitude, location.longitude)
+            map_location_text_view.text = pos
         }
     }
 
@@ -87,7 +97,7 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
         try{
             map?.isMyLocationEnabled = true
         } catch (e: SecurityException){
-            Timber.wtf("SecurityException thrown: %s", e.toString())
+            Timber.wtf("SecurityException thrown, location permission: %s", e.toString())
         }
     }
 

@@ -1,6 +1,7 @@
 package com.jakdor.geosave.di
 
 import com.jakdor.geosave.ui.gpsinfo.GpsInfoFragment
+import com.jakdor.geosave.ui.map.MapFragment
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
@@ -11,4 +12,7 @@ import dagger.android.ContributesAndroidInjector
 abstract class MainActivityMVVMFragmentBuilderModule {
     @ContributesAndroidInjector
     abstract fun contributeGpsInfoFragment(): GpsInfoFragment
+
+    @ContributesAndroidInjector
+    abstract fun contributeMapFragment(): MapFragment
 }

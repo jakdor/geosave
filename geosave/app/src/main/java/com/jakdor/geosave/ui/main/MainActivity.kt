@@ -35,6 +35,7 @@ import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationCallback
 import com.jakdor.geosave.common.model.UserLocation
+import com.jakdor.geosave.ui.map.MapFragment
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
 
@@ -56,6 +57,8 @@ class MainActivity : AppCompatActivity(),
 
     private lateinit var fallbackLocationManager: LocationManager
     private var fallbackLocationProvider: String? = null
+
+    private val fragmentMap: MutableMap<String, Fragment> = mutableMapOf()
 
     private val mOnNavigationItemSelectedListener
             = BottomNavigationView.OnNavigationItemSelectedListener { item ->
@@ -125,23 +128,36 @@ class MainActivity : AppCompatActivity(),
      * Create or reattach [GpsInfoFragment]
      */
     override fun switchToGpsInfoFragment() {
-        if (supportFragmentManager.findFragmentByTag(GpsInfoFragment.CLASS_TAG) == null) {
-            supportFragmentManager
-                    .beginTransaction()
-                    .add(R.id.main_fragment_layout, //todo check add vs replace
-                            GpsInfoFragment.newInstance(), GpsInfoFragment.CLASS_TAG)
-                    .commit()
+        if (!fragmentMap.containsKey(GpsInfoFragment.CLASS_TAG)) {
+            fragmentMap[GpsInfoFragment.CLASS_TAG] = GpsInfoFragment.newInstance()
             Timber.i("Created %s", GpsInfoFragment.CLASS_TAG)
-        } else {
-            supportFragmentManager
-                    .beginTransaction()
-                    .attach(supportFragmentManager.findFragmentByTag(GpsInfoFragment.CLASS_TAG))
-                    .commit()
-            Timber.i("Reattached %s", GpsInfoFragment.CLASS_TAG)
         }
+       
+        supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.main_fragment_layout,
+                        fragmentMap[GpsInfoFragment.CLASS_TAG], GpsInfoFragment.CLASS_TAG)
+                .commit()
+        
+        Timber.i("Attached %s", GpsInfoFragment.CLASS_TAG)
     }
 
+    /**
+     * Create or reattach [MapFragment]
+     */
     override fun switchToMapFragment() {
+        if (!fragmentMap.containsKey(MapFragment.CLASS_TAG)) {
+            fragmentMap[MapFragment.CLASS_TAG] = MapFragment.newInstance()
+            Timber.i("Created %s", MapFragment.CLASS_TAG)
+        }
+
+        supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.main_fragment_layout,
+                        fragmentMap[MapFragment.CLASS_TAG], MapFragment.CLASS_TAG)
+                .commit()
+
+        Timber.i("Attached %s", MapFragment.CLASS_TAG)
     }
 
     override fun switchToLocationsFragment() {

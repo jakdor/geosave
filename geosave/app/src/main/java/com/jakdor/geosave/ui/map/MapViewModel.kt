@@ -19,6 +19,13 @@ constructor(application: Application,
     val location = MutableLiveData<UserLocation>()
 
     /**
+     * Handle user choose map type
+     */
+    fun onMapTypeClicked(id: Int){
+        Timber.i("Map type changed, %d", id)
+    }
+
+    /**
      * Observe [GpsInfoRepository] stream
      */
     fun requestUserLocationUpdates(){

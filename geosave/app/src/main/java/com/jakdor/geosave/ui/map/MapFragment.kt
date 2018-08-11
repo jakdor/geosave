@@ -17,7 +17,6 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.jakdor.geosave.R
 import com.jakdor.geosave.common.model.UserLocation
-import com.jakdor.geosave.databinding.FragmentGpsInfoBinding
 import com.jakdor.geosave.databinding.FragmentMapOverlayBinding
 import com.jakdor.geosave.di.InjectableFragment
 import com.jakdor.geosave.ui.gpsinfo.GpsInfoViewModel
@@ -47,6 +46,10 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
                 inflater, R.layout.fragment_map_overlay, container, false)
         val overlay = binding.root
         mapView.addView(overlay)
+
+        binding.mapTypeCard?.visibility = View.GONE
+        binding.mapTypeFab?.setOnClickListener { onMapTypeFabClicked() }
+
         return mapView
     }
 
@@ -58,6 +61,7 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
                     .get(MapViewModel::class.java)
         }
 
+        binding.viewModel = viewModel
         viewModel?.requestUserLocationUpdates()
         observeUserLocation()
     }
@@ -101,6 +105,9 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
     override fun onMapReady(p0: GoogleMap?) {
         map = p0
         initCamZoom = false
+        map?.setOnMapClickListener { onMapInteraction() }
+        map?.setOnMapLongClickListener { onMapInteraction() }
+        map?.setOnCameraMoveListener { onMapInteraction() }
         try{
             map?.isMyLocationEnabled = true
         } catch (e: SecurityException){
@@ -111,6 +118,22 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
     override fun onDestroyView() {
         map?.clear()
         super.onDestroyView()
+    }
+
+    /**
+     * Animate showing of MapTypeCard
+     */
+    fun onMapTypeFabClicked(){
+        binding.mapTypeFab?.visibility = View.GONE
+        binding.mapTypeCard?.visibility = View.VISIBLE
+    }
+
+    /**
+     * Hide MapTypeCard when user engages with the map
+     */
+    fun onMapInteraction(){
+        binding.mapTypeFab?.visibility = View.VISIBLE
+        binding.mapTypeCard?.visibility = View.GONE
     }
 
     companion object: InjectableFragment {

@@ -4,6 +4,7 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
+import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +17,8 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.jakdor.geosave.R
 import com.jakdor.geosave.common.model.UserLocation
+import com.jakdor.geosave.databinding.FragmentGpsInfoBinding
+import com.jakdor.geosave.databinding.FragmentMapOverlayBinding
 import com.jakdor.geosave.di.InjectableFragment
 import com.jakdor.geosave.ui.gpsinfo.GpsInfoViewModel
 import kotlinx.android.synthetic.main.fragment_map_overlay.*
@@ -29,6 +32,7 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
     var viewModel: MapViewModel? = null
+    lateinit var binding: FragmentMapOverlayBinding
 
     private var map: GoogleMap? = null
 
@@ -39,7 +43,9 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
                               savedInstanceState: Bundle?): View? {
         val mapView : FrameLayout =
                 super.onCreateView(inflater, container, savedInstanceState) as FrameLayout
-        val overlay = inflater.inflate(R.layout.fragment_map_overlay, container, false)
+        binding = DataBindingUtil.inflate(
+                inflater, R.layout.fragment_map_overlay, container, false)
+        val overlay = binding.root
         mapView.addView(overlay)
         return mapView
     }

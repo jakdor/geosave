@@ -21,7 +21,7 @@ constructor(application: Application,
     /**
      * Handle user choose map type
      */
-    fun onMapTypeClicked(id: Int){
+fun onMapTypeClicked(id: Int){
         Timber.i("Map type changed, %d", id)
     }
 

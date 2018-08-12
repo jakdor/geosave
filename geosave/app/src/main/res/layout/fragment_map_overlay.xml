@@ -83,12 +83,15 @@
             app:layout_constraintStart_toStartOf="@+id/map_text_guideline1"
             app:layout_constraintTop_toTopOf="@+id/map_type_card_guideline">
 
-            <Button
-                android:id="@+id/map_type_test_button"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:text="test"
-                android:onClick="@{() -> viewModel.onMapTypeClicked(1)}"/>
+            <include layout="@layout/map_type_button"
+                android:id="@+id/map_type_default"
+                android:layout_width="75dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                app:buttonId="@{1}"
+                app:viewModel="@{viewModel}"
+                app:desc="@{@string/app_name}"
+                app:selected="@{true}"/>
 
         </android.support.v7.widget.CardView>
 

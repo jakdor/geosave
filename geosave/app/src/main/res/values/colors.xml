@@ -9,5 +9,7 @@
     <color name="materialTransparent">#d2ffffff</color>
     <color name="transparent">#00000000</color>
 
+    <color name="selected_highlight">#304FFE</color>
+
     <color name="textCardTitle">#000000</color>
 </resources>

@@ -75,23 +75,82 @@
             android:layout_height="0dp"
             android:layout_marginBottom="16dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             app:cardCornerRadius="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/map_text_guideline1"
+            app:layout_constraintStart_toStartOf="@+id/map_type_card_guideline2"
             app:layout_constraintTop_toTopOf="@+id/map_type_card_guideline">
 
-            <include layout="@layout/map_type_button"
-                android:id="@+id/map_type_default"
-                android:layout_width="75dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                app:buttonId="@{1}"
-                app:viewModel="@{viewModel}"
-                app:desc="@{@string/app_name}"
-                app:selected="@{true}"/>
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/map_type_card_title"
+                    android:textAllCaps="true"
+                    android:textColor="@color/textCardTitle"
+                    app:autoSizeTextType="uniform"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/map_type_default"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <include
+                    android:id="@+id/map_type_default"
+                    layout="@layout/map_type_button"
+                    android:layout_width="75dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    app:buttonId="@{1}"
+                    app:desc="@{@string/map_type_button_default}"
+                    app:layout_constraintEnd_toStartOf="@+id/map_type_satellite"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView"
+                    app:selected="@{true}"
+                    app:viewModel="@{viewModel}" />
+
+                <include
+                    android:id="@+id/map_type_satellite"
+                    layout="@layout/map_type_button"
+                    android:layout_width="75dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    app:buttonId="@{2}"
+                    app:desc="@{@string/map_type_button_satellite}"
+                    app:layout_constraintEnd_toStartOf="@+id/map_type_terrain"
+                    app:layout_constraintStart_toEndOf="@+id/map_type_default"
+                    app:layout_constraintTop_toBottomOf="@+id/textView"
+                    app:selected="@{false}"
+                    app:viewModel="@{viewModel}" />
+
+                <include
+                    android:id="@+id/map_type_terrain"
+                    layout="@layout/map_type_button"
+                    android:layout_width="75dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    app:buttonId="@{3}"
+                    app:desc="@{@string/map_type_button_terrain}"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/map_type_satellite"
+                    app:layout_constraintTop_toBottomOf="@+id/textView"
+                    app:selected="@{false}"
+                    app:viewModel="@{viewModel}" />
+
+
+            </android.support.constraint.ConstraintLayout>
 
         </android.support.v7.widget.CardView>
 
@@ -101,6 +160,13 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.70" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/map_type_card_guideline2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.25" />
 
     </android.support.constraint.ConstraintLayout>
 </layout>

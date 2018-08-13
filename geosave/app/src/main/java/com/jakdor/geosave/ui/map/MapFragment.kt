@@ -47,8 +47,8 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
         val overlay = binding.root
         mapView.addView(overlay)
 
-        binding.mapTypeCard?.visibility = View.GONE
-        binding.mapTypeFab?.setOnClickListener { onMapTypeFabClicked() }
+        binding.mapTypePopup?.mapTypeCard?.visibility = View.GONE
+        binding.mapTypeFab.setOnClickListener { onMapTypeFabClicked() }
 
         return mapView
     }
@@ -133,6 +133,13 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
         map?.setOnMapClickListener { onMapInteraction() }
         map?.setOnMapLongClickListener { onMapInteraction() }
         map?.setOnCameraMoveListener { onMapInteraction() }
+
+        //load user preferences
+        viewModel?.loadPreferences()
+
+        //restore map type
+        handleMapTypeChange(viewModel?.mapType?.value)
+
         try{
             map?.isMyLocationEnabled = true
         } catch (e: SecurityException){
@@ -149,17 +156,17 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
      * Animate showing of MapTypeCard
      */
     fun onMapTypeFabClicked(){
-        binding.mapTypeFab?.visibility = View.GONE
-        binding.mapTypeCard?.visibility = View.VISIBLE
-        binding.mapTypeLayout?.visibility = View.GONE
+        binding.mapTypeFab.visibility = View.GONE
+        binding.mapTypePopup?.mapTypeCard?.visibility = View.VISIBLE
+        binding.mapTypePopup?.mapTypeLayout?.visibility = View.GONE
 
-        binding.mapTypeCard?.translationY = 50.0f
-        binding.mapTypeCard?.translationX = 50.0f
-        binding.mapTypeCard?.scaleX = 0.75f
-        binding.mapTypeCard?.scaleY = 0.75f
-        binding.mapTypeCard?.alpha = 0.0f
+        binding.mapTypePopup?.mapTypeCard?.translationY = 50.0f
+        binding.mapTypePopup?.mapTypeCard?.translationX = 50.0f
+        binding.mapTypePopup?.mapTypeCard?.scaleX = 0.75f
+        binding.mapTypePopup?.mapTypeCard?.scaleY = 0.75f
+        binding.mapTypePopup?.mapTypeCard?.alpha = 0.0f
 
-        binding.mapTypeCard?.animate()!!
+        binding.mapTypePopup?.mapTypeCard?.animate()!!
                 .scaleX(1.0f)
                 .scaleY(1.0f)
                 .alpha(1.0f)
@@ -167,7 +174,7 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
                 .translationY(0.0f)
                 .setInterpolator(FastOutLinearInInterpolator())
                 .setDuration(120)
-                .withEndAction { binding.mapTypeLayout?.visibility = View.VISIBLE }
+                .withEndAction { binding.mapTypePopup?.mapTypeLayout?.visibility = View.VISIBLE }
                 .start()
     }
 
@@ -175,8 +182,8 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
      * Hide MapTypeCard when user engages with the map
      */
     fun onMapInteraction(){
-        binding.mapTypeFab?.visibility = View.VISIBLE
-        binding.mapTypeCard?.visibility = View.GONE
+        binding.mapTypeFab.visibility = View.VISIBLE
+        binding.mapTypePopup?.mapTypeCard?.visibility = View.GONE
     }
 
     companion object: InjectableFragment {

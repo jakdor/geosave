@@ -57,6 +57,47 @@
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.75" />
 
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/map_type_fab"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="16dp"
+            android:focusable="true"
+            android:clickable="true"
+            app:backgroundTint="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <include
+            android:id="@+id/map_type_popup"
+            layout="@layout/map_type_card"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="8dp"
+            app:cardCornerRadius="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/map_type_card_guideline2"
+            app:layout_constraintTop_toTopOf="@+id/map_type_card_guideline"
+            app:selectedMapType="@{selectedMapType}"
+            app:viewModel="@{viewModel}" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/map_type_card_guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.4" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/map_type_card_guideline2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.50" />
 
     </android.support.constraint.ConstraintLayout>
 </layout>

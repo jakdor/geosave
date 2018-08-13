@@ -5,6 +5,7 @@ import android.arch.lifecycle.MutableLiveData
 import com.jakdor.geosave.arch.BaseViewModel
 import com.jakdor.geosave.common.model.UserLocation
 import com.jakdor.geosave.common.repository.GpsInfoRepository
+import com.jakdor.geosave.common.repository.SharedPreferencesRepository
 import com.jakdor.geosave.common.repository.UserLocationObserver
 import com.jakdor.geosave.utils.RxSchedulersFacade
 import timber.log.Timber
@@ -13,7 +14,8 @@ import javax.inject.Inject
 class MapViewModel @Inject
 constructor(application: Application,
             rxSchedulersFacade: RxSchedulersFacade,
-            private val gpsInfoRepository: GpsInfoRepository):
+            private val gpsInfoRepository: GpsInfoRepository,
+            private val sharedPreferencesRepository: SharedPreferencesRepository):
         BaseViewModel(application, rxSchedulersFacade){
 
     val location = MutableLiveData<UserLocation>()
@@ -25,8 +27,17 @@ constructor(application: Application,
     fun onMapTypeClicked(id: Int){
         if(mapType.value != id) {
             mapType.postValue(id)
+            sharedPreferencesRepository.save(SharedPreferencesRepository.mapTypeKey, id)
             Timber.i("Map type changed, %d", id)
         }
+    }
+
+    /**
+     * Load saved preferences
+     */
+    fun loadPreferences(){
+        val mapTypeVal = sharedPreferencesRepository.getInt(SharedPreferencesRepository.mapTypeKey)
+        mapType.postValue(mapTypeVal)
     }
 
     /**

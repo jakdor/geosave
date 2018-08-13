@@ -6,6 +6,7 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.databinding.DataBindingUtil
 import android.os.Bundle
+import android.support.v4.view.animation.FastOutLinearInInterpolator
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,7 +20,6 @@ import com.jakdor.geosave.R
 import com.jakdor.geosave.common.model.UserLocation
 import com.jakdor.geosave.databinding.FragmentMapOverlayBinding
 import com.jakdor.geosave.di.InjectableFragment
-import com.jakdor.geosave.ui.gpsinfo.GpsInfoViewModel
 import kotlinx.android.synthetic.main.fragment_map_overlay.*
 import timber.log.Timber
 import java.util.*
@@ -64,10 +64,11 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
         binding.viewModel = viewModel
         viewModel?.requestUserLocationUpdates()
         observeUserLocation()
+        observeMapType()
     }
 
     /**
-     * Observe [GpsInfoViewModel] for updates on location [MutableLiveData] stream
+     * Observe [MapViewModel] for updates on location [MutableLiveData] stream
      */
     fun observeUserLocation(){
         viewModel?.location?.observe(this, Observer {
@@ -80,7 +81,7 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
      */
     fun handleUserLocation(location: UserLocation?) {
         if(location != null) {
-            if(!initCamZoom) { //todo soft camera fallowing
+            if(!initCamZoom) {
                 map?.moveCamera(CameraUpdateFactory.newLatLngZoom(
                         LatLng(location.latitude, location.longitude), DEFAULT_ZOOM))
                 initCamZoom = true
@@ -88,6 +89,30 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
 
             val pos = String.format(Locale.US, "%f, %f", location.latitude, location.longitude)
             map_location_text_view.text = pos
+        }
+    }
+
+    /**
+     * Observe [MapViewModel] for updates on map type [MutableLiveData] stream
+     */
+    fun observeMapType(){
+        viewModel?.mapType?.observe(this, Observer {
+            handleMapTypeChange(it)
+        })
+    }
+
+    /**
+     * Handle map type changed
+     */
+    fun handleMapTypeChange(mapId: Int?){
+        if(mapId != null) {
+            binding.selectedMapType = mapId
+            when(mapId){
+                0 -> map?.mapType = GoogleMap.MAP_TYPE_NORMAL
+                1 -> map?.mapType = GoogleMap.MAP_TYPE_SATELLITE
+                2 -> map?.mapType = GoogleMap.MAP_TYPE_HYBRID
+                3 -> map?.mapType = GoogleMap.MAP_TYPE_TERRAIN
+            }
         }
     }
 
@@ -126,6 +151,24 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
     fun onMapTypeFabClicked(){
         binding.mapTypeFab?.visibility = View.GONE
         binding.mapTypeCard?.visibility = View.VISIBLE
+        binding.mapTypeLayout?.visibility = View.GONE
+
+        binding.mapTypeCard?.translationY = 50.0f
+        binding.mapTypeCard?.translationX = 50.0f
+        binding.mapTypeCard?.scaleX = 0.75f
+        binding.mapTypeCard?.scaleY = 0.75f
+        binding.mapTypeCard?.alpha = 0.0f
+
+        binding.mapTypeCard?.animate()!!
+                .scaleX(1.0f)
+                .scaleY(1.0f)
+                .alpha(1.0f)
+                .translationX(0.0f)
+                .translationY(0.0f)
+                .setInterpolator(FastOutLinearInInterpolator())
+                .setDuration(120)
+                .withEndAction { binding.mapTypeLayout?.visibility = View.VISIBLE }
+                .start()
     }
 
     /**

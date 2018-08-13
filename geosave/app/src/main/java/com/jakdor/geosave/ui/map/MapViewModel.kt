@@ -17,12 +17,16 @@ constructor(application: Application,
         BaseViewModel(application, rxSchedulersFacade){
 
     val location = MutableLiveData<UserLocation>()
+    val mapType = MutableLiveData<Int>()
 
     /**
-     * Handle user choose map type
+     * Handle user changed map type
      */
-fun onMapTypeClicked(id: Int){
-        Timber.i("Map type changed, %d", id)
+    fun onMapTypeClicked(id: Int){
+        if(mapType.value != id) {
+            mapType.postValue(id)
+            Timber.i("Map type changed, %d", id)
+        }
     }
 
     /**

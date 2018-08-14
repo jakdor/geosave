@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -20,6 +21,7 @@ import com.jakdor.geosave.R
 import com.jakdor.geosave.common.model.UserLocation
 import com.jakdor.geosave.databinding.FragmentMapOverlayBinding
 import com.jakdor.geosave.di.InjectableFragment
+import com.jakdor.geosave.utils.GlideApp
 import kotlinx.android.synthetic.main.fragment_map_overlay.*
 import timber.log.Timber
 import java.util.*
@@ -49,6 +51,31 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
 
         binding.mapTypePopup?.mapTypeCard?.visibility = View.GONE
         binding.mapTypeFab.setOnClickListener { onMapTypeFabClicked() }
+
+        //resize map type icons to specific device dynamically
+        GlideApp.with(this)
+                .load(R.drawable.map_default)
+                .fitCenter()
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .into(binding.mapTypePopup?.mapTypeDefault?.mapTypeButtonIcon)
+
+        GlideApp.with(this)
+                .load(R.drawable.map_satellite)
+                .fitCenter()
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .into(binding.mapTypePopup?.mapTypeSatellite?.mapTypeButtonIcon)
+
+        GlideApp.with(this)
+                .load(R.drawable.map_hybrid)
+                .fitCenter()
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .into(binding.mapTypePopup?.mapTypeHybrid?.mapTypeButtonIcon)
+
+        GlideApp.with(this)
+                .load(R.drawable.map_terrain)
+                .fitCenter()
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .into(binding.mapTypePopup?.mapTypeTerrain?.mapTypeButtonIcon)
 
         return mapView
     }
@@ -161,7 +188,7 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
         binding.mapTypePopup?.mapTypeLayout?.visibility = View.GONE
 
         binding.mapTypePopup?.mapTypeCard?.translationY = 50.0f
-        binding.mapTypePopup?.mapTypeCard?.translationX = 50.0f
+        binding.mapTypePopup?.mapTypeCard?.translationX = 100.0f
         binding.mapTypePopup?.mapTypeCard?.scaleX = 0.75f
         binding.mapTypePopup?.mapTypeCard?.scaleY = 0.75f
         binding.mapTypePopup?.mapTypeCard?.alpha = 0.0f

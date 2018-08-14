@@ -26,4 +26,11 @@
     <string name="provider_gsm">GSM</string>
     <string name="clipboard_label">location</string>
     <string name="clipboard_toast">Copied to the clipboard</string>
+
+    <string name="map_type_card_title">Map type</string>
+    <string name="map_type_button_default">default</string>
+    <string name="map_type_button_satellite">satellite</string>
+    <string name="map_type_button_hybrid">hybrid</string>
+    <string name="map_type_button_terrain">terrain</string>
+    <string name="map_type_icon_desc">Map type icon</string>
 </resources>

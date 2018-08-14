@@ -16,6 +16,7 @@ project.ext {
     rxAndroidVersion = "2.0.1"
     timberVersion = "4.7.0"
     gmsVersion = "15.0.1"
+    glideVersion = "4.4.0"
 
     junitVersion = "4.12"
     mockitoVersion = "2.13.0"
@@ -96,6 +97,10 @@ dependencies {
     //Google Play Services
     implementation "com.google.android.gms:play-services-location:$project.gmsVersion"
     implementation "com.google.android.gms:play-services-maps:$project.gmsVersion"
+
+    //Glide
+    kapt "com.github.bumptech.glide:compiler:$project.glideVersion"
+    implementation "com.github.bumptech.glide:glide:$project.glideVersion"
 
     //TESTS LOCAL
 

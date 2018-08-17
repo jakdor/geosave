@@ -212,9 +212,11 @@ class MainActivity : AppCompatActivity(),
                 Manifest.permission.ACCESS_FINE_LOCATION)
         if (permissionLocation == PackageManager.PERMISSION_GRANTED) {
             Timber.i("Permissions granted by user")
+            presenter.bindView(this) //fix for onRequestPermissionsResult called before onResume
             presenter.permissionsGranted(true)
         } else {
             Timber.e("Permissions declined by user")
+            presenter.bindView(this) //fix for onRequestPermissionsResult called before onResume
             presenter.permissionsGranted(false)
         }
     }

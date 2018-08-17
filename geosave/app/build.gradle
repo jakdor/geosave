@@ -42,6 +42,17 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    flavorDimensions "version"
+    productFlavors {
+        dev {
+            dimension "version"
+            versionNameSuffix "-dev"
+        }
+        production {
+            dimension "version"
+            versionNameSuffix "-production"
+        }
+    }
     dataBinding {
         enabled = true
     }

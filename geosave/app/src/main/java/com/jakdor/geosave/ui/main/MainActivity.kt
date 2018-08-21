@@ -29,11 +29,16 @@ import android.location.LocationManager
 import android.provider.Settings
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
+import android.view.Menu
+import android.view.MenuItem
+import com.firebase.ui.auth.AuthUI
+import com.firebase.ui.auth.IdpResponse
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.location.*
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationCallback
+import com.google.firebase.auth.FirebaseAuth
 import com.jakdor.geosave.common.model.UserLocation
 import com.jakdor.geosave.ui.map.MapFragment
 import dagger.android.DispatchingAndroidInjector
@@ -54,6 +59,8 @@ class MainActivity : AppCompatActivity(),
 
     @Inject
     lateinit var googleApiClient: GoogleApiClient
+
+    private lateinit var mAuth: FirebaseAuth
 
     private lateinit var fallbackLocationManager: LocationManager
     private var fallbackLocationProvider: String? = null
@@ -107,6 +114,17 @@ class MainActivity : AppCompatActivity(),
         googleApiClient.connect()
     }
 
+    override fun onStart() {
+        super.onStart()
+        mAuth = FirebaseAuth.getInstance()
+        val currentUser = mAuth.currentUser
+        if(currentUser != null){
+            Timber.i("User logged in")
+        } else { //todo anonymous user
+            Timber.i("User not logged in")
+        }
+    }
+
     override fun onPause() {
         super.onPause()
         presenter.pause()
@@ -122,6 +140,27 @@ class MainActivity : AppCompatActivity(),
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
         MainActivity.savedPresenter = presenter
+    }
+
+    /**
+     * Inflate options menu
+     */
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_options, menu)
+        return true
+    }
+
+    /**
+     * Handle click on option menu item
+     */
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        return when(item?.itemId){
+            R.id.menu_options_add ->{
+                presenter.onAddOptionClicked()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     /**
@@ -303,10 +342,20 @@ class MainActivity : AppCompatActivity(),
      */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when(requestCode){
-            REQUEST_CHECK_SETTINGS_GPS -> {
+            REQUEST_CHECK_SETTINGS_GPS -> { //GPS auto enable
                 when(resultCode){
                     Activity.RESULT_OK -> presenter.gmsGpsEnableDialog(true)
                     Activity.RESULT_CANCELED -> presenter.gmsGpsEnableDialog(false)
+                }
+            }
+            RC_SIGN_IN -> { //Firebase sign-in
+                val response = IdpResponse.fromResultIntent(data)
+                if (resultCode == RESULT_OK) { // Successfully signed in
+                    val user = FirebaseAuth.getInstance().currentUser
+                    Timber.i("Firebase sign-in success: %s", user?.displayName)
+                } else {
+                    Timber.e("Firebase sign-in intent filed with %s code",
+                            response?.error?.errorCode)
                 }
             }
         }
@@ -400,9 +449,29 @@ class MainActivity : AppCompatActivity(),
         fallbackLocationManager.removeUpdates(this)
     }
 
+    /**
+     * Lunch firebase sign-in activity
+     */
+    override fun signInIntent() {
+        val providers = listOf(
+                AuthUI.IdpConfig.EmailBuilder().build(),
+                AuthUI.IdpConfig.GoogleBuilder().build()
+        )
+
+        startActivityForResult(AuthUI.getInstance()
+                .createSignInIntentBuilder()
+                .setAvailableProviders(providers)
+                .setLogo(R.mipmap.ic_launcher_round)
+                .build(),
+                RC_SIGN_IN)
+
+        AuthUI.getInstance()
+    }
+
     companion object {
         private lateinit var savedPresenter: MainPresenter
         private const val REQUEST_CHECK_SETTINGS_GPS=0x1
         private const val REQUEST_ID_MULTIPLE_PERMISSIONS=0x2
+        private const val RC_SIGN_IN = 123
     }
 }

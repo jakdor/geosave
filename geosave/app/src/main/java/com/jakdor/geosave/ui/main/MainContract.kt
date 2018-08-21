@@ -24,12 +24,16 @@ interface MainContract {
         fun fallbackLocationManagerSetup()
         fun fallbackStartLocationUpdates()
         fun fallbackStopLocationUpdates()
+
+        fun signInIntent()
     }
 
     interface MainPresenter {
         fun onGpsInfoTabClicked()
         fun onMapTabClicked()
         fun onLocationsTabClicked()
+
+        fun onAddOptionClicked()
 
         fun onLocationChanged(userLocation: UserLocation)
         fun gmsConnected()

@@ -78,6 +78,13 @@ class MainPresenter(view: MainContract.MainView, private val gpsInfoRepository: 
     }
 
     /**
+     * Add location menu option clicked
+     */
+    override fun onAddOptionClicked() {
+        view?.signInIntent() //todo just for test
+    }
+
+    /**
      * Called on GMS connection established
      */
     override fun gmsConnected() {

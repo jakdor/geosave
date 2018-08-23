@@ -114,13 +114,18 @@ class MainActivity : AppCompatActivity(),
         googleApiClient.connect()
     }
 
+    /**
+     * Check firebase login
+     */
     override fun onStart() {
         super.onStart()
         mAuth = FirebaseAuth.getInstance()
         val currentUser = mAuth.currentUser
         if(currentUser != null){
+            presenter.firebaseLogin(true)
             Timber.i("User logged in")
         } else { //todo anonymous user
+            presenter.firebaseLogin(false)
             Timber.i("User not logged in")
         }
     }
@@ -338,7 +343,8 @@ class MainActivity : AppCompatActivity(),
     }
 
     /**
-     * Handle GPS auto enable result
+     * - Handle GPS auto enable result
+     * - Handle Firebase sign-in result
      */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when(requestCode){
@@ -349,13 +355,17 @@ class MainActivity : AppCompatActivity(),
                 }
             }
             RC_SIGN_IN -> { //Firebase sign-in
+                presenter.bindView(this) //workaround for onActivityResult called before resume
                 val response = IdpResponse.fromResultIntent(data)
                 if (resultCode == RESULT_OK) { // Successfully signed in
                     val user = FirebaseAuth.getInstance().currentUser
-                    Timber.i("Firebase sign-in success: %s", user?.displayName)
+                    Timber.i("Firebase sign-in success: %s\n providerId: %s",
+                            user?.displayName, user?.providerId)
+                    presenter.firebaseSignIn(true)
                 } else {
                     Timber.e("Firebase sign-in intent filed with %s code",
                             response?.error?.errorCode)
+                    presenter.firebaseSignIn(false)
                 }
             }
         }
@@ -452,7 +462,7 @@ class MainActivity : AppCompatActivity(),
     /**
      * Lunch firebase sign-in activity
      */
-    override fun signInIntent() {
+    override fun firebaseSignInIntent() {
         val providers = listOf(
                 AuthUI.IdpConfig.EmailBuilder().build(),
                 AuthUI.IdpConfig.GoogleBuilder().build()
@@ -466,6 +476,17 @@ class MainActivity : AppCompatActivity(),
                 RC_SIGN_IN)
 
         AuthUI.getInstance()
+    }
+
+    /**
+     * Send verification email after sign-in
+     */
+    override fun firebaseSendEmailVerification() {
+        val user = FirebaseAuth.getInstance().currentUser
+        if(user != null && !user.isEmailVerified){
+            user.sendEmailVerification()
+            Timber.i("User not verified, sending email")
+        }
     }
 
     companion object {

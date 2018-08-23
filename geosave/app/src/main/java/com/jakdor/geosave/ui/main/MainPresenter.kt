@@ -81,7 +81,7 @@ class MainPresenter(view: MainContract.MainView, private val gpsInfoRepository: 
      * Add location menu option clicked
      */
     override fun onAddOptionClicked() {
-        view?.signInIntent() //todo just for test
+        view?.firebaseSignInIntent() //todo just for test
     }
 
     /**
@@ -178,5 +178,21 @@ class MainPresenter(view: MainContract.MainView, private val gpsInfoRepository: 
      */
     override fun fallbackLocationUpdatesActive() {
         fallbackLocationUpdates = true
+    }
+
+    /**
+     * Firebase handle result of sign-in
+     */
+    override fun firebaseSignIn(status: Boolean) {
+        if(status) {
+            view?.firebaseSendEmailVerification()
+        }
+    }
+
+    /**
+     * Firebase login status changed
+     */
+    override fun firebaseLogin(status: Boolean) {
+
     }
 }

@@ -25,7 +25,8 @@ interface MainContract {
         fun fallbackStartLocationUpdates()
         fun fallbackStopLocationUpdates()
 
-        fun signInIntent()
+        fun firebaseSignInIntent()
+        fun firebaseSendEmailVerification()
     }
 
     interface MainPresenter {
@@ -48,5 +49,8 @@ interface MainContract {
         fun fallbackGpsAutoEnableFailed()
         fun fallbackGpsDialogUserResponse(response: Boolean)
         fun fallbackLocationUpdatesActive()
+
+        fun firebaseSignIn(status: Boolean)
+        fun firebaseLogin(status: Boolean)
     }
 }

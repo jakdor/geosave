@@ -56,19 +56,16 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
         GlideApp.with(this)
                 .load(R.drawable.map_default)
                 .fitCenter()
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into(binding.mapTypePopup?.mapTypeDefault?.mapTypeButtonIcon)
 
         GlideApp.with(this)
                 .load(R.drawable.map_satellite)
                 .fitCenter()
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into(binding.mapTypePopup?.mapTypeSatellite?.mapTypeButtonIcon)
 
         GlideApp.with(this)
                 .load(R.drawable.map_hybrid)
                 .fitCenter()
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into(binding.mapTypePopup?.mapTypeHybrid?.mapTypeButtonIcon)
 
         GlideApp.with(this)

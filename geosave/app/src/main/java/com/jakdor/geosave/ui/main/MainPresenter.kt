@@ -15,6 +15,8 @@ class MainPresenter(view: MainContract.MainView, private val gpsInfoRepository: 
     private var fallBackMode = false
     private var fallbackLocationUpdates = false
 
+    private var logged = false
+
     override fun start() {
         super.start()
         if(currentTab == -1) { //first load
@@ -185,7 +187,12 @@ class MainPresenter(view: MainContract.MainView, private val gpsInfoRepository: 
      */
     override fun firebaseSignIn(status: Boolean) {
         if(status) {
+            logged = true
             view?.firebaseSendEmailVerification()
+        } else {
+            if(!logged) {
+                view?.firebaseLoginAnonymous()
+            }
         }
     }
 
@@ -194,7 +201,10 @@ class MainPresenter(view: MainContract.MainView, private val gpsInfoRepository: 
      */
     override fun firebaseLogin(loggedIn: Boolean) {
         if(!loggedIn){
+            logged = false
             view?.displayFirstStartupDialog()
+        } else {
+            logged = true
         }
     }
 

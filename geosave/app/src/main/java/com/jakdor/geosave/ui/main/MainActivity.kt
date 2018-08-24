@@ -40,6 +40,7 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationCallback
 import com.google.firebase.auth.FirebaseAuth
 import com.jakdor.geosave.common.model.UserLocation
+import com.jakdor.geosave.ui.elements.StartupDialog
 import com.jakdor.geosave.ui.map.MapFragment
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
@@ -124,7 +125,7 @@ class MainActivity : AppCompatActivity(),
         if(currentUser != null){
             presenter.firebaseLogin(true)
             Timber.i("User logged in")
-        } else { //todo anonymous user
+        } else {
             presenter.firebaseLogin(false)
             Timber.i("User not logged in")
         }
@@ -212,6 +213,14 @@ class MainActivity : AppCompatActivity(),
      */
     override fun displayToast(strId: Int) {
         Toast.makeText(this, strId, Toast.LENGTH_LONG).show()
+    }
+
+    /**
+     * Display [StartupDialog]
+     */
+    override fun displayFirstStartupDialog() {
+        val dialog = StartupDialog(this)
+        dialog.show()
     }
 
     override fun onConnected(p0: Bundle?) {
@@ -363,7 +372,7 @@ class MainActivity : AppCompatActivity(),
                             user?.displayName, user?.providerId)
                     presenter.firebaseSignIn(true)
                 } else {
-                    Timber.e("Firebase sign-in intent filed with %s code",
+                    Timber.e("Firebase sign-in intent failed with %s code",
                             response?.error?.errorCode)
                     presenter.firebaseSignIn(false)
                 }

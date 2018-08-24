@@ -190,9 +190,11 @@ class MainPresenter(view: MainContract.MainView, private val gpsInfoRepository: 
     }
 
     /**
-     * Firebase login status changed
+     * Firebase login loggedIn changed
      */
-    override fun firebaseLogin(status: Boolean) {
-
+    override fun firebaseLogin(loggedIn: Boolean) {
+        if(!loggedIn){
+            view?.displayFirstStartupDialog()
+        }
     }
 }

@@ -14,6 +14,8 @@ interface MainContract {
 
         fun displayToast(strId: Int)
 
+        fun displayFirstStartupDialog()
+
         fun checkPermissions()
 
         fun gmsSetupLocationUpdates()
@@ -51,6 +53,6 @@ interface MainContract {
         fun fallbackLocationUpdatesActive()
 
         fun firebaseSignIn(status: Boolean)
-        fun firebaseLogin(status: Boolean)
+        fun firebaseLogin(loggedIn: Boolean)
     }
 }

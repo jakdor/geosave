@@ -33,4 +33,9 @@
     <string name="map_type_button_hybrid">hybrid</string>
     <string name="map_type_button_terrain">terrain</string>
     <string name="map_type_icon_desc">Map type icon</string>
+    <string name="dialog_startup_title_text">Sign in for full experience</string>
+    <string name="dialog_startup_message_text">With Geosave account you will be able to collaborate on location data with your coworkers and friends. Your data will be backed-up and accessible from multiple devices at once.\n\nBut no worries, you can also use Geosave without signing in if you don\'t need extra features now. :)</string>
+    <string name="dialog_startup_yes_button_text">Sign-in/Login</string>
+    <string name="dialog_startup_no_button_text">Not now</string>
+    <string name="dialog_startup_image_desc">dialog_startup_image_desc</string>
 </resources>

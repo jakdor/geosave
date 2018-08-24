@@ -81,7 +81,7 @@ class MainPresenter(view: MainContract.MainView, private val gpsInfoRepository: 
      * Add location menu option clicked
      */
     override fun onAddOptionClicked() {
-        view?.firebaseSignInIntent() //todo just for test
+
     }
 
     /**
@@ -195,6 +195,14 @@ class MainPresenter(view: MainContract.MainView, private val gpsInfoRepository: 
     override fun firebaseLogin(loggedIn: Boolean) {
         if(!loggedIn){
             view?.displayFirstStartupDialog()
+        }
+    }
+
+    override fun onFirstStartupDialogResult(response: Boolean) {
+        if(response){
+            view?.firebaseSignInIntent()
+        } else {
+            view?.firebaseLoginAnonymous()
         }
     }
 }

@@ -44,6 +44,7 @@ import com.jakdor.geosave.ui.elements.StartupDialog
 import com.jakdor.geosave.ui.map.MapFragment
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
+import kotlinx.android.synthetic.main.dialog_first_startup.*
 
 class MainActivity : AppCompatActivity(),
         HasSupportFragmentInjector,
@@ -221,6 +222,16 @@ class MainActivity : AppCompatActivity(),
     override fun displayFirstStartupDialog() {
         val dialog = StartupDialog(this)
         dialog.show()
+
+        dialog.dialog_startup_yes_button.setOnClickListener {
+            presenter.onFirstStartupDialogResult(true)
+            dialog.dismiss()
+        }
+
+        dialog.dialog_startup_no_button.setOnClickListener {
+            presenter.onFirstStartupDialogResult(false)
+            dialog.dismiss()
+        }
     }
 
     override fun onConnected(p0: Bundle?) {
@@ -228,7 +239,7 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onConnectionSuspended(p0: Int) {
-       presenter.gmsSuspended()
+        presenter.gmsSuspended()
     }
 
     override fun onConnectionFailed(p0: ConnectionResult) {
@@ -491,10 +502,24 @@ class MainActivity : AppCompatActivity(),
      * Send verification email after sign-in
      */
     override fun firebaseSendEmailVerification() {
-        val user = FirebaseAuth.getInstance().currentUser
+        val user = mAuth.currentUser
         if(user != null && !user.isEmailVerified){
             user.sendEmailVerification()
             Timber.i("User not verified, sending email")
+        }
+    }
+
+    /**
+     * Login as anonymous
+     */
+    override fun firebaseLoginAnonymous() {
+        mAuth.signInAnonymously().addOnCompleteListener {
+            if(it.isSuccessful){
+                presenter.firebaseLogin(true)
+                Timber.i("Firebase anonymous login success")
+            } else {
+                Timber.wtf("Unable to login as anonymous")
+            }
         }
     }
 

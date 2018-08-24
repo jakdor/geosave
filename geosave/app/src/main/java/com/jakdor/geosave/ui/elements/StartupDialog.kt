@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.ViewGroup
 import android.view.Window
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.jakdor.geosave.R
 import com.jakdor.geosave.utils.GlideApp
 import kotlinx.android.synthetic.main.dialog_first_startup.*
@@ -23,6 +24,8 @@ class StartupDialog(context: Context?) : Dialog(context, R.style.FullscreenDialo
 
         GlideApp.with(context)
                 .load(R.drawable.placeholder)
+                .fitCenter()
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into(dialog_startup_image)
     }
 }

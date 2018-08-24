@@ -29,6 +29,7 @@ interface MainContract {
 
         fun firebaseSignInIntent()
         fun firebaseSendEmailVerification()
+        fun firebaseLoginAnonymous()
     }
 
     interface MainPresenter {
@@ -54,5 +55,7 @@ interface MainContract {
 
         fun firebaseSignIn(status: Boolean)
         fun firebaseLogin(loggedIn: Boolean)
+
+        fun onFirstStartupDialogResult(response: Boolean)
     }
 }

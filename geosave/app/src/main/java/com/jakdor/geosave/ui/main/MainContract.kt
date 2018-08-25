@@ -28,8 +28,6 @@ interface MainContract {
         fun fallbackStopLocationUpdates()
 
         fun firebaseSignInIntent()
-        fun firebaseSendEmailVerification()
-        fun firebaseLoginAnonymous()
     }
 
     interface MainPresenter {

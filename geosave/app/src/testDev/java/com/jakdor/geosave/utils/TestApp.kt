@@ -1,4 +1,4 @@
-package com.jakdor.geosave
+package com.jakdor.geosave.utils
 
 import android.app.Application
 

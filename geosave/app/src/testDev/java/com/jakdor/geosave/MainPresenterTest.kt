@@ -1,6 +1,7 @@
 package com.jakdor.geosave
 
 import com.jakdor.geosave.common.repository.GpsInfoRepository
+import com.jakdor.geosave.common.wrapper.FirebaseAuthWrapper
 import com.jakdor.geosave.ui.main.MainActivity
 import com.jakdor.geosave.ui.main.MainPresenter
 import com.nhaarman.mockito_kotlin.*
@@ -18,20 +19,19 @@ class MainPresenterTest {
     @get:Rule
     var mockitoRule = MockitoJUnit.rule()
 
-    private val view: MainActivity = mock {
+    private val view: MainActivity = mock()
+    private val gpsInfoRepository: GpsInfoRepository = mock()
+    private val firebaseAuthWrapper: FirebaseAuthWrapper = mock()
 
-    }
-
-    private val gpsInfoRepository: GpsInfoRepository = mock {  }
-
-    private val mainPresenter: MainPresenter = MainPresenter(view, gpsInfoRepository)
+    private val mainPresenter: MainPresenter =
+            MainPresenter(view, gpsInfoRepository, firebaseAuthWrapper)
 
     /**
-     * Test start() - lunching correct fragment
+     * Test create() - lunching correct fragment
      */
     @Test
     fun startTest(){
-        mainPresenter.start()
+        mainPresenter.create()
 
         verify(view).switchToGpsInfoFragment()
     }
@@ -89,7 +89,7 @@ class MainPresenterTest {
     }
 
     /**
-     * Test resume() - start location updates (Google api location provider)
+     * Test resume() - create location updates (Google api location provider)
      */
     @Test
     fun resumeGMSActiveTest(){
@@ -113,7 +113,7 @@ class MainPresenterTest {
     }
 
     /**
-     * Test resume() - start location updates (Native location provider)
+     * Test resume() - create location updates (Native location provider)
      */
     @Test
     fun resumeNativeActiveTest(){

@@ -3,10 +3,12 @@ package com.jakdor.geosave.di
 import android.app.Application
 import android.arch.lifecycle.ViewModelProvider
 import android.content.Context
+import com.google.firebase.auth.FirebaseAuth
 import com.jakdor.geosave.App
 import com.jakdor.geosave.arch.ViewModelFactory
 import com.jakdor.geosave.common.repository.GpsInfoRepository
 import com.jakdor.geosave.common.repository.SharedPreferencesRepository
+import com.jakdor.geosave.common.wrapper.FirebaseAuthWrapper
 import com.jakdor.geosave.utils.RxSchedulersFacade
 import dagger.Module
 import dagger.Provides
@@ -46,5 +48,10 @@ class AppModule {
     @Provides
     fun provideSharedPreferencesRepository(app: Application): SharedPreferencesRepository {
         return SharedPreferencesRepository(app.applicationContext)
+    }
+
+    @Provides
+    fun provideFirebaseAuthWrapper(): FirebaseAuthWrapper{
+        return FirebaseAuthWrapper(FirebaseAuth.getInstance())
     }
 }

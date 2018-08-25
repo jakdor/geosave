@@ -62,8 +62,6 @@ class MainActivity : AppCompatActivity(),
     @Inject
     lateinit var googleApiClient: GoogleApiClient
 
-    private lateinit var mAuth: FirebaseAuth
-
     private lateinit var fallbackLocationManager: LocationManager
     private var fallbackLocationProvider: String? = null
 
@@ -112,24 +110,13 @@ class MainActivity : AppCompatActivity(),
 
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
-        presenter.start()
+        presenter.create()
         googleApiClient.connect()
     }
 
-    /**
-     * Check firebase login
-     */
     override fun onStart() {
         super.onStart()
-        mAuth = FirebaseAuth.getInstance()
-        val currentUser = mAuth.currentUser
-        if(currentUser != null){
-            presenter.firebaseLogin(true)
-            Timber.i("User logged in")
-        } else {
-            presenter.firebaseLogin(false)
-            Timber.i("User not logged in")
-        }
+        presenter.start()
     }
 
     override fun onPause() {
@@ -459,7 +446,7 @@ class MainActivity : AppCompatActivity(),
     }
 
     /**
-     * Fallback GMS connection fail - start native location updates
+     * Fallback GMS connection fail - create native location updates
      */
     override fun fallbackStartLocationUpdates() {
         try {
@@ -496,31 +483,6 @@ class MainActivity : AppCompatActivity(),
                 RC_SIGN_IN)
 
         AuthUI.getInstance()
-    }
-
-    /**
-     * Send verification email after sign-in
-     */
-    override fun firebaseSendEmailVerification() {
-        val user = mAuth.currentUser
-        if(user != null && !user.isEmailVerified){
-            user.sendEmailVerification()
-            Timber.i("User not verified, sending email")
-        }
-    }
-
-    /**
-     * Login as anonymous
-     */
-    override fun firebaseLoginAnonymous() {
-        mAuth.signInAnonymously().addOnCompleteListener {
-            if(it.isSuccessful){
-                presenter.firebaseLogin(true)
-                Timber.i("Firebase anonymous login success")
-            } else {
-                Timber.wtf("Unable to login as anonymous")
-            }
-        }
     }
 
     companion object {

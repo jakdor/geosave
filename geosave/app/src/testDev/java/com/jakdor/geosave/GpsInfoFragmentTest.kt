@@ -21,6 +21,8 @@ import org.robolectric.annotation.Config
 import org.robolectric.shadows.support.v4.SupportFragmentTestUtil.startFragment
 import java.util.*
 import android.widget.Toast
+import com.jakdor.geosave.utils.TestApp
+import com.jakdor.geosave.utils.TestUtils
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.shadows.ShadowToast
 

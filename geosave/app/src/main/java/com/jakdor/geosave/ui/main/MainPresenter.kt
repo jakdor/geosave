@@ -4,8 +4,11 @@ import com.jakdor.geosave.R
 import com.jakdor.geosave.common.model.UserLocation
 import com.jakdor.geosave.common.repository.GpsInfoRepository
 import com.jakdor.geosave.arch.BasePresenter
+import com.jakdor.geosave.common.wrapper.FirebaseAuthWrapper
 
-class MainPresenter(view: MainContract.MainView, private val gpsInfoRepository: GpsInfoRepository):
+class MainPresenter(view: MainContract.MainView,
+                    private val gpsInfoRepository: GpsInfoRepository,
+                    private val firebaseAuthWrapper: FirebaseAuthWrapper):
         BasePresenter<MainContract.MainView>(view),
         MainContract.MainPresenter{
 
@@ -15,9 +18,18 @@ class MainPresenter(view: MainContract.MainView, private val gpsInfoRepository: 
     private var fallBackMode = false
     private var fallbackLocationUpdates = false
 
-    private var logged = false
-
+    /**
+     * Check firebase login
+     */
     override fun start() {
+        super.start()
+        firebaseLogin(firebaseAuthWrapper.isLoggedIn())
+    }
+
+    /**
+     * Load fragment on create view state
+     */
+    override fun create() {
         super.start()
         if(currentTab == -1) { //first load
             view?.switchToGpsInfoFragment()
@@ -31,6 +43,9 @@ class MainPresenter(view: MainContract.MainView, private val gpsInfoRepository: 
         }
     }
 
+    /**
+     * Remove location updates on pause view state
+     */
     override fun pause() {
         super.pause()
         if(locationUpdates){
@@ -40,6 +55,9 @@ class MainPresenter(view: MainContract.MainView, private val gpsInfoRepository: 
         }
     }
 
+    /**
+     * Resume location updates on resume view state
+     */
     override fun resume() {
         super.resume()
         if(locationUpdates){
@@ -187,24 +205,20 @@ class MainPresenter(view: MainContract.MainView, private val gpsInfoRepository: 
      */
     override fun firebaseSignIn(status: Boolean) {
         if(status) {
-            logged = true
-            view?.firebaseSendEmailVerification()
+            firebaseAuthWrapper.firebaseSendEmailVerification()
         } else {
-            if(!logged) {
-                view?.firebaseLoginAnonymous()
+            if(!firebaseAuthWrapper.isLoggedIn()) {
+                firebaseAuthWrapper.firebaseLoginAnonymous()
             }
         }
     }
 
     /**
-     * Firebase login loggedIn changed
+     * Firebase user login status changed
      */
     override fun firebaseLogin(loggedIn: Boolean) {
         if(!loggedIn){
-            logged = false
             view?.displayFirstStartupDialog()
-        } else {
-            logged = true
         }
     }
 
@@ -212,7 +226,7 @@ class MainPresenter(view: MainContract.MainView, private val gpsInfoRepository: 
         if(response){
             view?.firebaseSignInIntent()
         } else {
-            view?.firebaseLoginAnonymous()
+            firebaseAuthWrapper.firebaseLoginAnonymous()
         }
     }
 }

@@ -4,14 +4,13 @@ import android.content.Intent
 import android.location.Location
 import android.os.Bundle
 import android.provider.Settings
-import android.support.v4.app.Fragment
 import android.view.View
 import android.widget.Toast
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
-import com.jakdor.geosave.ui.gpsinfo.GpsInfoFragment
 import com.jakdor.geosave.ui.main.MainActivity
 import com.jakdor.geosave.ui.main.MainPresenter
+import com.jakdor.geosave.utils.TestApp
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
@@ -32,7 +31,7 @@ import org.robolectric.shadows.ShadowToast
 import java.util.*
 
 @RunWith(RobolectricTestRunner::class)
-@Config(application = App::class)
+@Config(application = TestApp::class)
 class MainActivityTest {
 
     @get:Rule
@@ -45,10 +44,11 @@ class MainActivityTest {
 
     @Before
     fun setUp(){
-        activityController = Robolectric.buildActivity(MainActivity::class.java).create()
+        activityController = Robolectric.buildActivity(MainActivity::class.java)
         mainActivity = activityController.get()
         mainActivity.presenter = presenter
         mainActivity.googleApiClient = googleApiClient
+        activityController.setup()
     }
 
     @Test
@@ -78,8 +78,7 @@ class MainActivityTest {
      */
     @Test
     fun onCreateTest(){
-        mainActivity.setUp()
-        verify(presenter).start()
+        verify(presenter).create()
         verify(googleApiClient).connect()
     }
 
@@ -97,49 +96,7 @@ class MainActivityTest {
      */
     @Test
     fun onResumeTest(){
-        activityController.resume()
         verify(presenter).resume()
-    }
-
-    /**
-     * Test fragment switching to [GpsInfoFragment]
-     */
-    @Test
-    fun switchToGpsInfoFragmentTest(){
-        val fragment: Fragment
-                = mainActivity.supportFragmentManager.findFragmentByTag(GpsInfoFragment.CLASS_TAG)
-        mainActivity.supportFragmentManager.beginTransaction().remove(fragment).commit()
-
-        mainActivity.switchToGpsInfoFragment()
-
-        Assert.assertEquals(GpsInfoFragment::class.java.canonicalName,
-                mainActivity.supportFragmentManager.findFragmentById(
-                        R.id.main_fragment_layout)::class.java.canonicalName)
-    }
-
-    /**
-     * Check if [GpsInfoFragment] is not recreated if present in back stack
-     */
-    @Test
-    fun reAttacheGpsInfoFragmentTest(){
-        //first in fragments list is SupportLifecycleFragmentImpl
-        Assert.assertEquals(2, mainActivity.supportFragmentManager.fragments.size)
-
-        mainActivity.switchToGpsInfoFragment()
-
-        Assert.assertEquals(2, mainActivity.supportFragmentManager.fragments.size)
-    }
-
-    /**
-     * Check if [GpsInfoFragment] loaded initially in [MainActivity.main_fragment_layout]
-     */
-    @Test
-    fun defaultFragmentLoadedTest(){
-        activityController.visible()
-
-        Assert.assertEquals(GpsInfoFragment::class.java.canonicalName,
-                mainActivity.supportFragmentManager.findFragmentById(
-                        R.id.main_fragment_layout)::class.java.canonicalName)
     }
 
     /**

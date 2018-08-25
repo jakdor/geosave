@@ -6,6 +6,7 @@ import com.jakdor.geosave.common.model.UserLocation
 import com.jakdor.geosave.common.repository.GpsInfoRepository
 import com.jakdor.geosave.ui.gpsinfo.GpsInfoViewModel
 import com.jakdor.geosave.utils.RxSchedulersFacade
+import com.jakdor.geosave.utils.TestUtils
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify

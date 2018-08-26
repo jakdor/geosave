@@ -2,7 +2,9 @@ package com.jakdor.geosave.ui.elements
 
 import android.app.Dialog
 import android.content.Context
+import android.content.res.Configuration
 import android.os.Bundle
+import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -22,10 +24,15 @@ class StartupDialog(context: Context?) : Dialog(context, R.style.FullscreenDialo
         setCancelable(false)
         setCanceledOnTouchOutside(false)
 
-        GlideApp.with(context)
-                .load(R.drawable.placeholder)
-                .fitCenter()
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .into(dialog_startup_image)
+        //don't load dialog_startup_image in landscape screen orientation
+        if(context.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            GlideApp.with(context)
+                    .load(R.drawable.placeholder)
+                    .fitCenter()
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .into(dialog_startup_image)
+        } else {
+            dialog_startup_image.visibility = View.GONE
+        }
     }
 }

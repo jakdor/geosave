@@ -12,10 +12,8 @@ import com.jakdor.geosave.R
 import com.jakdor.geosave.ui.gpsinfo.GpsInfoFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
-import com.crashlytics.android.Crashlytics
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
-import io.fabric.sdk.android.Fabric
 import timber.log.Timber
 import android.support.v4.app.ActivityCompat
 import android.content.pm.PackageManager

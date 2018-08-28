@@ -9,8 +9,8 @@ project.ext {
     archVersion = "1.1.1"
     databindingCompilerVersion = "3.1.4"
     constraintLayoutVersion = "1.1.2"
-    firebaseCoreVersion = "16.0.1"
-    crashlyticsVersion = "2.9.4"
+    firebaseCoreVersion = "16.0.3"
+    crashlyticsVersion = "2.9.5"
     firebaseUIVersion = "4.1.0"
     daggerVersion = "2.13"
     rxKotlinVersion = "2.2.0"
@@ -59,7 +59,7 @@ android {
         debug {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
-            storeFile file('/home/jakdor/.android/debug.keystore')
+            storeFile file('debug.keystore')
             storePassword 'android'
         }
     }

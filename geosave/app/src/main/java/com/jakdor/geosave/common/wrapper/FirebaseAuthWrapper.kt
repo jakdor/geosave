@@ -41,4 +41,12 @@ class FirebaseAuthWrapper constructor(private var mAuth: FirebaseAuth) {
             }
         }
     }
+
+    /**
+     * Check if user is logged anonymously
+     */
+    fun isAnonymous(): Boolean{
+        val user = mAuth.currentUser
+        return user?.isAnonymous ?: false
+    }
 }

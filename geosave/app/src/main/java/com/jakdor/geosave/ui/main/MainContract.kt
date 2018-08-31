@@ -11,6 +11,7 @@ interface MainContract {
         fun switchToGpsInfoFragment()
         fun switchToMapFragment()
         fun switchToLocationsFragment()
+        fun switchToPreferencesFragment()
 
         fun displayToast(strId: Int)
 
@@ -36,6 +37,8 @@ interface MainContract {
         fun onLocationsTabClicked()
 
         fun onAddOptionClicked()
+        fun onPreferencesOptionClicked()
+        fun switchBackFromPreferenceFragment(): Boolean
 
         fun onLocationChanged(userLocation: UserLocation)
         fun gmsConnected()

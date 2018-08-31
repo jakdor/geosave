@@ -13,6 +13,7 @@ class MainPresenter(view: MainContract.MainView,
         MainContract.MainPresenter{
 
     private var currentTab = -1
+    private var backTab = -1
 
     private var locationUpdates = false
     private var fallBackMode = false
@@ -39,6 +40,7 @@ class MainPresenter(view: MainContract.MainView,
                 0 -> view?.switchToGpsInfoFragment()
                 1 -> view?.switchToMapFragment()
                 2 -> view?.switchToLocationsFragment()
+                3 -> view?.switchToPreferencesFragment()
             }
         }
     }
@@ -75,6 +77,7 @@ class MainPresenter(view: MainContract.MainView,
             view?.switchToGpsInfoFragment()
             currentTab = 0
         }
+        backTab = -1
     }
 
     /**
@@ -85,6 +88,7 @@ class MainPresenter(view: MainContract.MainView,
             view?.switchToMapFragment()
             currentTab = 1
         }
+        backTab = -1
     }
 
     /**
@@ -95,6 +99,7 @@ class MainPresenter(view: MainContract.MainView,
             view?.switchToLocationsFragment()
             currentTab = 2
         }
+        backTab = -1
     }
 
     /**
@@ -102,6 +107,32 @@ class MainPresenter(view: MainContract.MainView,
      */
     override fun onAddOptionClicked() {
 
+    }
+
+    /**
+     * Preferences menu option clicked
+     */
+    override fun onPreferencesOptionClicked() {
+        if(currentTab != 3) {
+            backTab = currentTab
+            currentTab = 3
+            view?.switchToPreferencesFragment()
+        }
+    }
+
+    /**
+     * Get back to fragment id in backTab variable
+     */
+    override fun switchBackFromPreferenceFragment(): Boolean {
+        return if(backTab != -1) {
+            when (backTab) {
+                0 -> view?.switchToGpsInfoFragment()
+                1 -> view?.switchToMapFragment()
+                2 -> view?.switchToLocationsFragment()
+            }
+            backTab = -1
+            true
+        } else false
     }
 
     /**

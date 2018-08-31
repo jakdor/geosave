@@ -126,11 +126,10 @@ class MainPresenter(view: MainContract.MainView,
     override fun switchBackFromPreferenceFragment(): Boolean {
         return if(backTab != -1) {
             when (backTab) {
-                0 -> view?.switchToGpsInfoFragment()
-                1 -> view?.switchToMapFragment()
-                2 -> view?.switchToLocationsFragment()
+                0 -> onGpsInfoTabClicked()
+                1 -> onMapTabClicked()
+                2 -> onLocationsTabClicked()
             }
-            backTab = -1
             true
         } else false
     }

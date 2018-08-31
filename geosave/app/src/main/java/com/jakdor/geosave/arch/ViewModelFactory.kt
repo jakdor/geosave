@@ -6,6 +6,7 @@ import android.util.ArrayMap
 import com.jakdor.geosave.di.ViewModelSubComponent
 import com.jakdor.geosave.ui.gpsinfo.GpsInfoViewModel
 import com.jakdor.geosave.ui.map.MapViewModel
+import com.jakdor.geosave.ui.preferences.PreferencesViewModel
 
 import java.util.concurrent.Callable
 
@@ -30,6 +31,7 @@ constructor(viewModelSubComponent: ViewModelSubComponent) : ViewModelProvider.Fa
     init {
         creators[GpsInfoViewModel::class.java] = Callable { viewModelSubComponent.gpsInfoViewModel() }
         creators[MapViewModel::class.java] = Callable { viewModelSubComponent.mapViewModel() }
+        creators[PreferencesViewModel::class.java] = Callable { viewModelSubComponent.preferencesViewModel() }
     }
 
     /**

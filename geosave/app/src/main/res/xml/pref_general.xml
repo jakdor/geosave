@@ -1,7 +1,17 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="Geosave account">
+    <PreferenceCategory android:title="@string/pref_account_title">
 
+        <Preference android:title="Sign-in/Login"
+            android:key="@string/pref_sign_in_login_key"
+            android:summary="@string/pref_sign_in_login_desc"/>
+
+        <Preference android:title="Logout"
+            android:key="@string/pref_logout_key" />
+
+        <Preference android:title="Delete account"
+            android:key="@string/pref_delete_account_key"
+            android:summary="@string/pref_delete_account_desc"/>
 
     </PreferenceCategory>
 

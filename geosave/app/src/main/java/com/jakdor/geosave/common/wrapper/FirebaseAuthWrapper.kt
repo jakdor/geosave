@@ -49,4 +49,12 @@ class FirebaseAuthWrapper constructor(private var mAuth: FirebaseAuth) {
         val user = mAuth.currentUser
         return user?.isAnonymous ?: false
     }
+
+    /**
+     * Logout current user
+     */
+    fun logout(){
+        mAuth.signOut()
+        Timber.i("Firebase user logged out")
+    }
 }

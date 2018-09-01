@@ -4,7 +4,7 @@
 
         <Preference android:title="Sign-in/Login"
             android:key="@string/pref_sign_in_login_key"
-            android:summary="@string/pref_sign_in_login_desc"/>
+            android:summary="@string/pref_sign_in_login_desc" />
 
         <Preference android:title="Logout"
             android:key="@string/pref_logout_key" />

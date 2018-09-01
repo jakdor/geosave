@@ -63,4 +63,14 @@ class FirebaseAuthWrapperTest{
 
         Assert.assertFalse(firebaseAuthWrapper.isAnonymous())
     }
+
+    /**
+     * Test correct method invoked on FirebaseAuth object
+     */
+    @Test
+    fun logoutTest(){
+        firebaseAuthWrapper.logout()
+
+        verify(firebaseAuth).signOut()
+    }
 }

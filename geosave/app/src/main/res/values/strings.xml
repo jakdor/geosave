@@ -40,7 +40,8 @@
     <string name="dialog_startup_no_button_text">Not now</string>
     <string name="dialog_startup_image_desc">dialog_startup_image_desc</string>
 
-    <string name="menu_option_add_title">add new</string>
+    <string name="menu_option_add_title">Add new</string>
+    <string name="menu_option_preferences_title">Preferences</string>
 
     <string name="pref_account_title">Geosave account</string>
     <string name="pref_delete_account_desc">Permanently delete local data and Geosave account</string>
@@ -49,6 +50,11 @@
     <string name="pref_logout_key">pref_logout</string>
     <string name="pref_delete_account_key">pref_delete_account</string>
     <string name="pref_sign_in_login_desc">Register or login to Geosave account</string>
-    <string name="menu_option_preferences_title">Preferences</string>
+
+    <string name="preferences_logged_out_toast">You have logged out from Geosave</string>
+    <string name="preferences_delete_account_dialog_message">Deleting account will result in permanent removal of all your data!\n\nThis action is not reversible, are you sure?</string>
+    <string name="preferences_delete_account_dialog_yes">Yes</string>
+    <string name="preferences_delete_account_dialog_no">No</string>
+    <string name="preferences_delete_account_toast">You have deleted Geosave account, all data removed. You can continue to use Geosave locally</string>
 
 </resources>

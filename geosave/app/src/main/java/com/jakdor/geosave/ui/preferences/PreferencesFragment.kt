@@ -1,14 +1,18 @@
 package com.jakdor.geosave.ui.preferences
 
+import android.app.AlertDialog
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
+import android.content.DialogInterface
 import android.os.Bundle
 import android.support.v7.preference.Preference
 import android.support.v7.preference.PreferenceFragmentCompat
+import android.widget.Toast
 import com.jakdor.geosave.R
 import com.jakdor.geosave.di.InjectableFragment
+import com.jakdor.geosave.ui.main.MainActivity
 import javax.inject.Inject
 
 class PreferencesFragment: PreferenceFragmentCompat(), InjectableFragment {
@@ -18,9 +22,9 @@ class PreferencesFragment: PreferenceFragmentCompat(), InjectableFragment {
 
     var viewModel: PreferencesViewModel? = null
 
-    lateinit var signInLogin: Preference
-    lateinit var logout: Preference
-    lateinit var deleteAccount: Preference
+    private lateinit var signInLogin: Preference
+    private lateinit var logout: Preference
+    private lateinit var deleteAccount: Preference
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.pref_general, rootKey)
@@ -43,6 +47,7 @@ class PreferencesFragment: PreferenceFragmentCompat(), InjectableFragment {
 
         viewModel?.updateAvailableOptions()
         observeHidePreferences()
+        observeAccountOption()
     }
 
     /**
@@ -51,6 +56,15 @@ class PreferencesFragment: PreferenceFragmentCompat(), InjectableFragment {
     fun observeHidePreferences(){
         viewModel?.hidePreferences?.observe(this, Observer {
             handleHidePreferences(it)
+        })
+    }
+
+    /**
+     * Observe [PreferencesViewModel] account option [MutableLiveData]
+     */
+    fun observeAccountOption(){
+        viewModel?.accountOption?.observe(this, Observer {
+            handleAccountOption(it)
         })
     }
 
@@ -66,6 +80,51 @@ class PreferencesFragment: PreferenceFragmentCompat(), InjectableFragment {
             hideList.forEach {
                 s: String -> findPreference(s).isVisible = false
             }
+        }
+    }
+
+    /**
+     * Handle user picked account option preference
+     */
+    fun handleAccountOption(option: Int?){
+        if(option != null){
+            when(option){
+                0 -> { //discard preferences fragment and lunch sign-in/login intent
+                    (activity as MainActivity).presenter.onGpsInfoTabClicked()
+                    (activity as MainActivity).firebaseSignInIntent()
+                }
+                1 -> { //display logout toast
+                    Toast.makeText(activity,
+                            R.string.preferences_logged_out_toast,
+                            Toast.LENGTH_SHORT).show()
+                }
+                2 -> { //show account delete confirmation dialog
+                    AlertDialog.Builder(context)
+                            .setMessage(R.string.preferences_delete_account_dialog_message)
+                            .setPositiveButton(R.string.preferences_delete_account_dialog_yes,
+                                    deleteAccountDialogListener)
+                            .setNegativeButton(R.string.preferences_delete_account_dialog_no,
+                                    deleteAccountDialogListener)
+                            .show()
+                }
+            }
+            viewModel?.accountOption?.value = null
+        }
+    }
+
+    /**
+     * Listener for account deletion confirmation dialog
+     */
+    private val deleteAccountDialogListener = DialogInterface.OnClickListener { dialogInterface, i ->
+        when(i){
+            DialogInterface.BUTTON_POSITIVE -> {
+                (activity as MainActivity).presenter.onGpsInfoTabClicked()
+                viewModel?.deleteAccount()
+                Toast.makeText(activity,
+                        R.string.preferences_delete_account_toast,
+                        Toast.LENGTH_LONG).show()
+            }
+            DialogInterface.BUTTON_NEGATIVE -> dialogInterface.dismiss()
         }
     }
 

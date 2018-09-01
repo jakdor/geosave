@@ -73,4 +73,14 @@ class FirebaseAuthWrapperTest{
 
         verify(firebaseAuth).signOut()
     }
+
+    /**
+     * Test correct method invoked on FirebaseAuth object
+     */
+    @Test
+    fun deleteAccountTest(){
+        firebaseAuthWrapper.deleteAccount(true)
+
+        verify(user).delete()
+    }
 }

@@ -16,6 +16,7 @@ constructor(application: Application,
 
     private val app = application
     val hidePreferences = MutableLiveData<ArrayList<String>>()
+    val accountOption = MutableLiveData<Int>()
 
     /**
      * Hide unnecessary options based on current app state/configuration
@@ -41,6 +42,7 @@ constructor(application: Application,
      * Handle click on Sign-in/Login option
      */
     fun onSignInLoginClicked(): Boolean{
+        accountOption.postValue(0) //lunch sign-in/login intent
         return true
     }
 
@@ -48,6 +50,9 @@ constructor(application: Application,
      * Handle click on logout option
      */
     fun onLogoutClicked(): Boolean{
+        firebaseAuthWrapper.logout()
+        updateAvailableOptions()
+        accountOption.postValue(1) //display logout toast
         return true
     }
 
@@ -55,7 +60,14 @@ constructor(application: Application,
      * Handle click on delete account option
      */
     fun onDeleteAccountClicked(): Boolean{
+        accountOption.postValue(2) //display confirmation dialog
         return true
     }
 
+    /**
+     * Delete account and login as anonymous
+     */
+    fun deleteAccount(){
+        firebaseAuthWrapper.deleteAccount(recreate = true)
+    }
 }

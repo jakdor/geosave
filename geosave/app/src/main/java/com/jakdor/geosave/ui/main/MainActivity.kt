@@ -40,6 +40,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.jakdor.geosave.common.model.UserLocation
 import com.jakdor.geosave.ui.elements.StartupDialog
 import com.jakdor.geosave.ui.map.MapFragment
+import com.jakdor.geosave.ui.preferences.PreferencesFragment
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.dialog_first_startup.*
@@ -127,9 +128,17 @@ class MainActivity : AppCompatActivity(),
         presenter.bindView(this)
     }
 
+    /**
+     * Overrider back behaviour when returning from [PreferencesFragment]
+     */
+    override fun onBackPressed() {
+        if(!presenter.switchBackFromPreferenceFragment())
+            super.onBackPressed()
+    }
+
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
-        MainActivity.savedPresenter = presenter
+        savedPresenter = presenter
     }
 
     /**
@@ -145,8 +154,12 @@ class MainActivity : AppCompatActivity(),
      */
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         return when(item?.itemId){
-            R.id.menu_options_add ->{
+            R.id.menu_options_add -> {
                 presenter.onAddOptionClicked()
+                true
+            }
+            R.id.menu_option_preferences -> {
+                presenter.onPreferencesOptionClicked()
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -190,6 +203,24 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun switchToLocationsFragment() {
+    }
+
+    /**
+     * Create or reattach [PreferencesFragment]
+     */
+    override fun switchToPreferencesFragment() {
+        if (!fragmentMap.containsKey(PreferencesFragment.CLASS_TAG)) {
+            fragmentMap[PreferencesFragment.CLASS_TAG] = PreferencesFragment.newInstance()
+            Timber.i("Created %s", PreferencesFragment.CLASS_TAG)
+        }
+
+        supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.main_fragment_layout,
+                        fragmentMap[PreferencesFragment.CLASS_TAG], PreferencesFragment.CLASS_TAG)
+                .commit()
+
+        Timber.i("Attached %s", PreferencesFragment.CLASS_TAG)
     }
 
     /**

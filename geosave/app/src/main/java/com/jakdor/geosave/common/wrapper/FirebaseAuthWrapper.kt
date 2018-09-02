@@ -34,11 +34,37 @@ class FirebaseAuthWrapper constructor(private var mAuth: FirebaseAuth) {
      */
     fun firebaseLoginAnonymous() {
         mAuth.signInAnonymously().addOnCompleteListener {
+            if(it.isSuccessful) Timber.i("Firebase anonymous login success")
+            else Timber.wtf("Unable to login as anonymous")
+        }
+    }
+
+    /**
+     * Check if user is logged anonymously
+     */
+    fun isAnonymous(): Boolean{
+        val user = mAuth.currentUser
+        return user?.isAnonymous ?: false
+    }
+
+    /**
+     * Logout current user
+     */
+    fun logout(){
+        mAuth.signOut()
+        Timber.i("Firebase user logged out")
+    }
+
+    /**
+     * Delete current user account
+     */
+    fun deleteAccount(recreate: Boolean){
+        mAuth.currentUser?.delete()?.addOnCompleteListener {
             if(it.isSuccessful){
-                Timber.i("Firebase anonymous login success")
-            } else {
-                Timber.wtf("Unable to login as anonymous")
+                Timber.i("Firebase user account deleted")
+                if(recreate) firebaseLoginAnonymous()
             }
+            else Timber.wtf("Unable to delete user account")
         }
     }
 }

@@ -5,6 +5,7 @@ import android.arch.lifecycle.MutableLiveData
 import com.jakdor.geosave.arch.BaseViewModel
 import com.jakdor.geosave.common.model.UserLocation
 import com.jakdor.geosave.common.repository.GpsInfoRepository
+import com.jakdor.geosave.common.repository.SharedPreferencesRepository
 import com.jakdor.geosave.common.repository.UserLocationObserver
 import com.jakdor.geosave.utils.RxSchedulersFacade
 import timber.log.Timber
@@ -16,11 +17,28 @@ import javax.inject.Inject
 class GpsInfoViewModel @Inject
 constructor(application: Application,
             rxSchedulersFacade: RxSchedulersFacade,
-            private val gpsInfoRepository: GpsInfoRepository):
+            private val gpsInfoRepository: GpsInfoRepository,
+            private val sharedPreferencesRepository: SharedPreferencesRepository):
         BaseViewModel(application, rxSchedulersFacade){
 
     val location = MutableLiveData<UserLocation>()
     val clipboardCopyQueue = MutableLiveData<String>()
+    val preferences = MutableLiveData<MutableMap<String, Int>>()
+
+    /**
+     * Get update on saved preferences from [SharedPreferencesRepository]
+     */
+    fun requestPreferencesUpdate(){
+        val preferencesMap: MutableMap<String, Int> = mutableMapOf(
+                Pair(SharedPreferencesRepository.locationUnits, sharedPreferencesRepository
+                        .getString(SharedPreferencesRepository.locationUnits, "0").toInt()),
+                Pair(SharedPreferencesRepository.altAccUnits, sharedPreferencesRepository
+                        .getString(SharedPreferencesRepository.altAccUnits, "0").toInt()),
+                Pair(SharedPreferencesRepository.speedUnits, sharedPreferencesRepository
+                        .getString(SharedPreferencesRepository.speedUnits, "0").toInt()))
+
+        preferences.postValue(preferencesMap)
+    }
 
     /**
      * Handle copy button click

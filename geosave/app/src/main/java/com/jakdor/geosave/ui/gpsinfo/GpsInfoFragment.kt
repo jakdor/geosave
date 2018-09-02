@@ -14,12 +14,13 @@ import com.jakdor.geosave.R
 import com.jakdor.geosave.di.InjectableFragment
 import com.jakdor.geosave.common.model.UserLocation
 import com.jakdor.geosave.databinding.FragmentGpsInfoBinding
-import java.util.*
 import javax.inject.Inject
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.widget.Toast
+import com.jakdor.geosave.common.repository.LocationConverter
+import com.jakdor.geosave.common.repository.SharedPreferencesRepository
 
 /**
  * Fragment displaying GPS info
@@ -31,6 +32,8 @@ class GpsInfoFragment: Fragment(), InjectableFragment {
 
     var viewModel: GpsInfoViewModel? = null
     lateinit var binding: FragmentGpsInfoBinding
+
+    private lateinit var preferencesMap: Map<String, Int>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -52,6 +55,12 @@ class GpsInfoFragment: Fragment(), InjectableFragment {
         viewModel?.requestUserLocationUpdates()
         observeUserLocation()
         observeClipboardCopyQueue()
+        observePreferencesMap()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel?.requestPreferencesUpdate()
     }
 
     /**
@@ -71,7 +80,7 @@ class GpsInfoFragment: Fragment(), InjectableFragment {
      */
     fun observeUserLocation(){
         viewModel?.location?.observe(this, Observer {
-            handleUserLocation(it)
+            if(it != null) handleUserLocation(it)
         })
     }
 
@@ -79,25 +88,42 @@ class GpsInfoFragment: Fragment(), InjectableFragment {
      * Handle new [UserLocation] object
      * Pass formatted String variables instead of model to layout for better testability
      */
-    fun handleUserLocation(location: UserLocation?){
-        val pos = String.format(Locale.US, "%f, %f", location?.latitude, location?.longitude)
-        binding.position = pos
+    fun handleUserLocation(location: UserLocation){
 
-        if(location?.altitude != 0.0){
-            val alt = String.format("%.2f m", location?.altitude)
+        //location
+        when(preferencesMap[SharedPreferencesRepository.locationUnits]){
+            0 -> { //decimal
+                binding.position =
+                        LocationConverter.decimalFormat(location.latitude, location.longitude)
+            }
+            1 -> { //sexigesimal
+                binding.position = LocationConverter.dmsFormat(location.latitude, location.longitude)
+            }
+            2 -> { //decimal degrees
+                binding.position =
+                        LocationConverter.decimalDegreesFormat(location.latitude, location.longitude)
+            }
+            3 -> { //degrees decimal minutes
+                binding.position =
+                        LocationConverter.dmFormat(location.latitude, location.longitude)
+            }
+        }
+
+        if(location.altitude != -999.0){
+            val alt = String.format("%.2f m", location.altitude)
             binding.altitude = alt
             binding.provider = getString(R.string.provider_gps)
         } else {
             binding.provider = getString(R.string.provider_gsm)
         }
 
-        val acc = String.format("%.2f m", location?.accuracy)
+        val acc = String.format("%.2f m", location.accuracy)
         binding.accuracy = acc
 
-        val speed = String.format("%.2f m/s", location?.speed)
+        val speed = String.format("%.2f m/s", location.speed)
         binding.speed = speed
 
-        val bearing = String.format("%.2f\u00b0", location?.bearing)
+        val bearing = String.format("%.2f\u00b0", location.bearing)
         binding.bearing = bearing
     }
 
@@ -124,6 +150,24 @@ class GpsInfoFragment: Fragment(), InjectableFragment {
             Toast.makeText(activity, getString(R.string.clipboard_toast), Toast.LENGTH_SHORT).show()
 
             viewModel?.clipboardCopyQueue?.value = null
+        }
+    }
+
+    /**
+     * Observe [GpsInfoViewModel] preferences [MutableLiveData] stream for updates on user preferences
+     */
+    fun observePreferencesMap(){
+        viewModel?.preferences?.observe(this, Observer {
+            handlePreferencesMap(it)
+        })
+    }
+
+    /**
+     * Store preferences update values locally
+     */
+    fun handlePreferencesMap(map: MutableMap<String, Int>?){
+        if(map != null){
+            this.preferencesMap = map
         }
     }
 

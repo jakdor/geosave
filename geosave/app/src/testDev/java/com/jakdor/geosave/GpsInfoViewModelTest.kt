@@ -70,6 +70,10 @@ class GpsInfoViewModelTest{
         val testLocation = mock<UserLocation>()
         gpsInfoRepository.next(testLocation)
 
+        try{ //"Temporary" fix for parallel execution due to MutableLiveData
+            Thread.sleep(1)
+        } catch (e: Exception){}
+
         Assert.assertEquals(testLocation, gpsInfoViewModel.location.value)
         Assert.assertNotNull(gpsInfoViewModel.loadingStatus.value)
         Assert.assertFalse(gpsInfoViewModel.loadingStatus.value!!)

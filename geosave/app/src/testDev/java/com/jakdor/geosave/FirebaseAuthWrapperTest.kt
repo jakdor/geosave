@@ -16,12 +16,12 @@ class FirebaseAuthWrapperTest{
     @get:Rule
     var thrown = ExpectedException.none()
 
-    private val user = mock<FirebaseUser>()
+    private var user = mock<FirebaseUser>()
 
-    private val firebaseAuth = mock<FirebaseAuth>{
+    private var firebaseAuth = mock<FirebaseAuth>{
         on{ currentUser }.thenReturn(user)
     }
-    private val firebaseAuthWrapper = FirebaseAuthWrapper(firebaseAuth)
+    private var firebaseAuthWrapper = FirebaseAuthWrapper(firebaseAuth)
 
     /**
      * Test login check
@@ -42,13 +42,45 @@ class FirebaseAuthWrapperTest{
     }
 
     /**
-     * Test correct method invocation
+     * Test correct status returned
      */
     @Test
+    fun isAnonymousTest(){
+        //null, user not initialized - false
+        Assert.assertFalse(firebaseAuthWrapper.isAnonymous())
 
-    fun firebaseLoginAnonymousTest(){
-        firebaseAuthWrapper.firebaseLoginAnonymous()
+        //true returned by FirebaseUser - true
+        user = mock { on{ isAnonymous }.thenReturn(true) }
+        firebaseAuth = mock { on{ currentUser }.thenReturn(user) }
+        firebaseAuthWrapper = FirebaseAuthWrapper(firebaseAuth)
 
-        verify(firebaseAuth.signInAnonymously(), times(1))
+        Assert.assertTrue(firebaseAuthWrapper.isAnonymous())
+
+        //false returned by FirebaseUser - false
+        user = mock { on{ isAnonymous }.thenReturn(false) }
+        firebaseAuth = mock { on{ currentUser }.thenReturn(user) }
+        firebaseAuthWrapper = FirebaseAuthWrapper(firebaseAuth)
+
+        Assert.assertFalse(firebaseAuthWrapper.isAnonymous())
+    }
+
+    /**
+     * Test correct method invoked on FirebaseAuth object
+     */
+    @Test
+    fun logoutTest(){
+        firebaseAuthWrapper.logout()
+
+        verify(firebaseAuth).signOut()
+    }
+
+    /**
+     * Test correct method invoked on FirebaseAuth object
+     */
+    @Test
+    fun deleteAccountTest(){
+        firebaseAuthWrapper.deleteAccount(true)
+
+        verify(user).delete()
     }
 }

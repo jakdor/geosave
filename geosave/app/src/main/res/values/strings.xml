@@ -44,17 +44,66 @@
     <string name="menu_option_preferences_title">Preferences</string>
 
     <string name="pref_account_title">Geosave account</string>
-    <string name="pref_delete_account_desc">Permanently delete local data and Geosave account</string>
-
+    <string name="pref_sign_in_login_title">Sign-in/Login</string>
     <string name="pref_sign_in_login_key">pref_sign_in_login</string>
-    <string name="pref_logout_key">pref_logout</string>
-    <string name="pref_delete_account_key">pref_delete_account</string>
     <string name="pref_sign_in_login_desc">Register or login to Geosave account</string>
+    <string name="pref_logout_title">Logout</string>
+    <string name="pref_logout_key">pref_logout</string>
+    <string name="pref_delete_account_title">Delete account</string>
+    <string name="pref_delete_account_key">pref_delete_account</string>
+    <string name="pref_delete_account_desc">Permanently delete local data and Geosave account</string>
+    <string name="pref_units_title">Units</string>
+    <string name="pref_location_units_title">Location</string>
+    <string name="pref_location_units_key">pref_location_units</string>
+    <string name="pref_alt_acc_units_title">Altitude / Accuracy</string>
+    <string name="pref_alt_acc_units_key">pref_alt_acc_units</string>
+
+    <string-array name="pref_location_units_entries">
+        <item>Decimal</item>
+        <item>Sexigesimal</item>
+    </string-array>
+
+    <string-array name="pref_location_units_values">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+    <string-array name="pref_alt_acc_units_entries">
+        <item>meters (m)</item>
+        <item>kilometers (km)</item>
+        <item>feats (ft)</item>
+        <item>land miles (mi)</item>
+        <item>nautical miles (nmi)</item>
+    </string-array>
+
+    <string-array name="pref_alt_acc_units_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+
+    <string-array name="pref_speed_units_entries">
+        <item>m/s</item>
+        <item>km/h</item>
+        <item>ft/s</item>
+        <item>mph</item>
+    </string-array>
+
+    <string-array name="pref_speed_units_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
 
     <string name="preferences_logged_out_toast">You have logged out from Geosave</string>
     <string name="preferences_delete_account_dialog_message">Deleting account will result in permanent removal of all your data!\n\nThis action is not reversible, are you sure?</string>
     <string name="preferences_delete_account_dialog_yes">Yes</string>
     <string name="preferences_delete_account_dialog_no">No</string>
     <string name="preferences_delete_account_toast">You have deleted Geosave account, all data removed. You can continue to use Geosave locally</string>
+    <string name="pref_speed_units_title">Speed</string>
+    <string name="pref_speed_units_key">pref_speed_units</string>
 
 </resources>

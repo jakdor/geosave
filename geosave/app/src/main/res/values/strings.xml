@@ -60,12 +60,16 @@
 
     <string-array name="pref_location_units_entries">
         <item>Decimal</item>
-        <item>Sexigesimal</item>
+        <item>Sexigesimal (DMS)</item>
+        <item>Decimal degrees (DD)</item>
+        <item>degrees decimal minutes (DM)</item>
     </string-array>
 
     <string-array name="pref_location_units_values">
         <item>0</item>
         <item>1</item>
+        <item>2</item>
+        <item>3</item>
     </string-array>
 
     <string-array name="pref_alt_acc_units_entries">

@@ -158,13 +158,13 @@ class GpsInfoFragment: Fragment(), InjectableFragment {
                 binding.speed = String.format("%.2f m/s", location.speed)
             }
             1 -> { //km/h
-                binding.speed = String.format("%.2f m/s", location.speed * 3.6)
+                binding.speed = String.format("%.2f km/h", location.speed * 3.6)
             }
             2 -> { //ft/s
-                binding.speed = String.format("%.2f m/s", location.speed * 3.2808399)
+                binding.speed = String.format("%.2f ft/s", location.speed * 3.2808399)
             }
             3 -> { //mph
-                binding.speed = String.format("%.2f m/s", location.speed * 2.23693629)
+                binding.speed = String.format("%.2f mph", location.speed * 2.23693629)
             }
         }
 

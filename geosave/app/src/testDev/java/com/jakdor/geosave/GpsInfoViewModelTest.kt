@@ -4,6 +4,7 @@ import android.app.Application
 import android.arch.core.executor.testing.InstantTaskExecutorRule
 import com.jakdor.geosave.common.model.UserLocation
 import com.jakdor.geosave.common.repository.GpsInfoRepository
+import com.jakdor.geosave.common.repository.SharedPreferencesRepository
 import com.jakdor.geosave.ui.gpsinfo.GpsInfoViewModel
 import com.jakdor.geosave.utils.RxSchedulersFacade
 import com.jakdor.geosave.utils.TestUtils
@@ -31,8 +32,10 @@ class GpsInfoViewModelTest{
     private val gpsInfoRepository = mock<GpsInfoRepository>{
         on { subscribe(any()) }.thenReturn(com.nhaarman.mockito_kotlin.mock())
     }
+    private val sharedPreferencesRepository = mock<SharedPreferencesRepository>()
 
-    private var gpsInfoViewModel = GpsInfoViewModel(app, rxSchedulersFacade, gpsInfoRepository)
+    private var gpsInfoViewModel = GpsInfoViewModel(
+            app, rxSchedulersFacade, gpsInfoRepository, sharedPreferencesRepository)
 
     /**
      * Test if copy event String forwarded to clipboardCopyQueue stream
@@ -64,7 +67,8 @@ class GpsInfoViewModelTest{
     @Test
     fun passDataFromRepositoryIntegrationTest(){
         val gpsInfoRepository = GpsInfoRepository(rxSchedulersFacade)
-        gpsInfoViewModel = GpsInfoViewModel(app, rxSchedulersFacade, gpsInfoRepository)
+        gpsInfoViewModel = GpsInfoViewModel(
+                app, rxSchedulersFacade, gpsInfoRepository, sharedPreferencesRepository)
 
         gpsInfoViewModel.requestUserLocationUpdates()
         val testLocation = mock<UserLocation>()

@@ -19,12 +19,12 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.jakdor.geosave.R
 import com.jakdor.geosave.common.model.UserLocation
+import com.jakdor.geosave.common.repository.LocationConverter
 import com.jakdor.geosave.databinding.FragmentMapOverlayBinding
 import com.jakdor.geosave.di.InjectableFragment
 import com.jakdor.geosave.utils.GlideApp
 import kotlinx.android.synthetic.main.fragment_map_overlay.*
 import timber.log.Timber
-import java.util.*
 import javax.inject.Inject
 
 class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment {
@@ -38,6 +38,7 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
     private var map: GoogleMap? = null
 
     private var initCamZoom = false
+    private var locationFormat = 0
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
@@ -87,8 +88,18 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
 
         binding.viewModel = viewModel
         viewModel?.requestUserLocationUpdates()
+        viewModel?.loadPreferences()
         observeUserLocation()
         observeMapType()
+        observeLocationType()
+    }
+
+    /**
+     * load user preferences
+     */
+    override fun onResume() {
+        super.onResume()
+        viewModel?.loadPreferences()
     }
 
     /**
@@ -111,8 +122,24 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
                 initCamZoom = true
             }
 
-            val pos = String.format(Locale.US, "%f, %f", location.latitude, location.longitude)
-            map_location_text_view.text = pos
+            when(locationFormat){
+                0 -> { //decimal
+                    map_location_text_view.text =
+                            LocationConverter.decimalFormat(location.latitude, location.longitude)
+                }
+                1 -> { //sexigesimal
+                    map_location_text_view.text =
+                            LocationConverter.dmsFormat(location.latitude, location.longitude)
+                }
+                2 -> { //decimal degrees
+                    map_location_text_view.text =
+                            LocationConverter.decimalDegreesFormat(location.latitude, location.longitude)
+                }
+                3 -> { //degrees decimal minutes
+                    map_location_text_view.text =
+                            LocationConverter.dmFormat(location.latitude, location.longitude)
+                }
+            }
         }
     }
 
@@ -141,6 +168,22 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
     }
 
     /**
+     * Observe [MapViewModel] for updates on location type/format [MutableLiveData] stream
+     */
+    fun observeLocationType(){
+        viewModel?.locationType?.observe(this, Observer {
+            handleLocationTypeChange(it)
+        })
+    }
+
+    /**
+     * Save location format in local variable
+     */
+    fun handleLocationTypeChange(format: Int?){
+        if(format != null) this.locationFormat = format
+    }
+
+    /**
      * Start loading map
      */
     override fun onCreate(p0: Bundle?) {
@@ -157,9 +200,6 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
         map?.setOnMapClickListener { onMapInteraction() }
         map?.setOnMapLongClickListener { onMapInteraction() }
         map?.setOnCameraMoveListener { onMapInteraction() }
-
-        //load user preferences
-        viewModel?.loadPreferences()
 
         //restore map type
         handleMapTypeChange(viewModel?.mapType?.value)

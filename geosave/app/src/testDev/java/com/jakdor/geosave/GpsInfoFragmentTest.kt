@@ -21,6 +21,7 @@ import org.robolectric.annotation.Config
 import org.robolectric.shadows.support.v4.SupportFragmentTestUtil.startFragment
 import java.util.*
 import android.widget.Toast
+import com.jakdor.geosave.common.repository.SharedPreferencesRepository
 import com.jakdor.geosave.utils.TestApp
 import com.jakdor.geosave.utils.TestUtils
 import org.robolectric.RuntimeEnvironment
@@ -114,7 +115,7 @@ class GpsInfoFragmentTest {
     }
 
     /**
-     * Check correct view formatting for provided [UserLocation] object
+     * Check correct view formatting for provided [UserLocation] object, default formatting prefs
      */
     @Test
     fun handleUserLocationTest() {
@@ -123,7 +124,22 @@ class GpsInfoFragmentTest {
                 random.nextDouble(), random.nextFloat(), "Fused",
                 random.nextFloat(), random.nextFloat())
 
-        gpsInfoFragment.handleUserLocation(testUserLocation)
+        SharedPreferencesRepository.locationUnits =
+                gpsInfoFragment.getString(R.string.pref_location_units_key)
+        SharedPreferencesRepository.altUnits =
+                gpsInfoFragment.getString(R.string.pref_alt_units_key)
+        SharedPreferencesRepository.accUnits =
+                gpsInfoFragment.getString(R.string.pref_acc_units_key)
+        SharedPreferencesRepository.speedUnits =
+                gpsInfoFragment.getString(R.string.pref_speed_units_key)
+
+        val prefsMap: MutableMap<String, Int> = mutableMapOf()
+        prefsMap[SharedPreferencesRepository.locationUnits] = 0
+        prefsMap[SharedPreferencesRepository.altUnits] = 0
+        prefsMap[SharedPreferencesRepository.accUnits] = 0
+        prefsMap[SharedPreferencesRepository.speedUnits] = 0
+
+        gpsInfoFragment.handleUserLocation(testUserLocation, prefsMap)
         gpsInfoFragment.binding.executePendingBindings()
 
         val pos = String.format(

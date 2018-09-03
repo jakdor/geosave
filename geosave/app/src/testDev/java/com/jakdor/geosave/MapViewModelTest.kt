@@ -7,12 +7,14 @@ import com.jakdor.geosave.common.repository.GpsInfoRepository
 import com.jakdor.geosave.common.repository.SharedPreferencesRepository
 import com.jakdor.geosave.ui.map.MapViewModel
 import com.jakdor.geosave.utils.RxSchedulersFacade
+import com.jakdor.geosave.utils.TestUtils
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
 import io.reactivex.schedulers.Schedulers
 import org.junit.Assert
+import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
@@ -27,6 +29,7 @@ class MapViewModelTest {
     var instantExecRule = InstantTaskExecutorRule()
 
     private val testSavedInt = Random().nextInt()
+    private val testSavedInt2 = Random().nextInt()
     
     private val app = mock<Application>()
     private val rxSchedulersFacade = mock<RxSchedulersFacade> { 
@@ -37,6 +40,8 @@ class MapViewModelTest {
     }
     private val sharedPreferencesRepository = mock<SharedPreferencesRepository>{
         on { getInt(SharedPreferencesRepository.mapTypeKey) }.thenReturn(testSavedInt)
+        on { getString(SharedPreferencesRepository.locationUnits, "0") }
+                .thenReturn(testSavedInt2.toString())
     }
 
     private var mapViewModel = MapViewModel(
@@ -82,6 +87,8 @@ class MapViewModelTest {
 
         Assert.assertNotNull(mapViewModel.mapType.value)
         Assert.assertEquals(testSavedInt, mapViewModel.mapType.value!!)
+        Assert.assertNotNull(mapViewModel.locationType.value)
+        Assert.assertEquals(testSavedInt2, mapViewModel.locationType.value!!)
     }
 
     /**
@@ -116,5 +123,16 @@ class MapViewModelTest {
         Assert.assertEquals(testLocation, mapViewModel.location.value)
         Assert.assertNotNull(mapViewModel.loadingStatus.value)
         Assert.assertFalse(mapViewModel.loadingStatus.value!!)
+    }
+
+    companion object {
+        @JvmStatic
+        @BeforeClass
+        fun beforeClass() {
+            SharedPreferencesRepository.locationUnits = TestUtils.randomString()
+            SharedPreferencesRepository.altUnits = TestUtils.randomString()
+            SharedPreferencesRepository.accUnits = TestUtils.randomString()
+            SharedPreferencesRepository.speedUnits = TestUtils.randomString()
+        }
     }
 }

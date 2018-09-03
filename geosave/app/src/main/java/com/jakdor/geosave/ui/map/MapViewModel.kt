@@ -20,6 +20,7 @@ constructor(application: Application,
 
     val location = MutableLiveData<UserLocation>()
     val mapType = MutableLiveData<Int>()
+    val locationType = MutableLiveData<Int>()
 
     /**
      * Handle user changed map type
@@ -37,7 +38,10 @@ constructor(application: Application,
      */
     fun loadPreferences(){
         val mapTypeVal = sharedPreferencesRepository.getInt(SharedPreferencesRepository.mapTypeKey)
+        val locationTypeVal = sharedPreferencesRepository.getString(
+                SharedPreferencesRepository.locationUnits, "0").toInt()
         mapType.postValue(mapTypeVal)
+        locationType.postValue(locationTypeVal)
     }
 
     /**

@@ -136,19 +136,19 @@ class GpsInfoFragment: Fragment(), InjectableFragment {
         //accuracy
         when(preferences[SharedPreferencesRepository.accUnits]){
             0 -> { //meters
-                binding.accuracy = String.format("%.2f m", location.altitude)
+                binding.accuracy = String.format("%.2f m", location.accuracy)
             }
             1 -> { //kilometers
-                binding.accuracy = String.format("%.4f km", location.altitude / 1000.0)
+                binding.accuracy = String.format("%.4f km", location.accuracy / 1000.0)
             }
             2 -> { //feats
-                binding.accuracy = String.format("%.2f ft", location.altitude * 3.2808399)
+                binding.accuracy = String.format("%.2f ft", location.accuracy * 3.2808399)
             }
             3 -> { //land miles
-                binding.accuracy = String.format("%.6f mi", location.altitude * 0.000621371192)
+                binding.accuracy = String.format("%.6f mi", location.accuracy * 0.000621371192)
             }
             4 -> { //nautical miles
-                binding.accuracy = String.format("%.6f nmi", location.altitude * 0.000539956803)
+                binding.accuracy = String.format("%.6f nmi", location.accuracy * 0.000539956803)
             }
         }
 

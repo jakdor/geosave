@@ -27,10 +27,17 @@
             android:defaultValue="0"
             android:persistent="true"/>
 
-        <ListPreference android:title="@string/pref_alt_acc_units_title"
-            android:key="@string/pref_alt_acc_units_key"
-            android:entries="@array/pref_alt_acc_units_entries"
-            android:entryValues="@array/pref_alt_acc_units_values"
+        <ListPreference android:title="@string/pref_alt_units_title"
+            android:key="@string/pref_alt_units_key"
+            android:entries="@array/pref_alt_units_entries"
+            android:entryValues="@array/pref_alt_units_values"
+            android:defaultValue="0"
+            android:persistent="true"/>
+
+        <ListPreference android:title="@string/pref_acc_units_title"
+            android:key="@string/pref_acc_units_key"
+            android:entries="@array/pref_acc_units_entries"
+            android:entryValues="@array/pref_acc_units_values"
             android:defaultValue="0"
             android:persistent="true"/>
 

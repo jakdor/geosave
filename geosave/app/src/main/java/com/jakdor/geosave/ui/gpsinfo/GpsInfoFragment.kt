@@ -33,7 +33,7 @@ class GpsInfoFragment: Fragment(), InjectableFragment {
     var viewModel: GpsInfoViewModel? = null
     lateinit var binding: FragmentGpsInfoBinding
 
-    private lateinit var preferencesMap: Map<String, Int>
+    private var preferencesMap: Map<String, Int>? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -80,7 +80,7 @@ class GpsInfoFragment: Fragment(), InjectableFragment {
      */
     fun observeUserLocation(){
         viewModel?.location?.observe(this, Observer {
-            if(it != null) handleUserLocation(it)
+            if(it != null && preferencesMap != null) handleUserLocation(it, preferencesMap!!)
         })
     }
 
@@ -88,10 +88,10 @@ class GpsInfoFragment: Fragment(), InjectableFragment {
      * Handle new [UserLocation] object
      * Pass formatted String variables instead of model to layout for better testability
      */
-    fun handleUserLocation(location: UserLocation){
+    fun handleUserLocation(location: UserLocation, preferences: Map<String, Int>){
 
         //location
-        when(preferencesMap[SharedPreferencesRepository.locationUnits]){
+        when(preferences[SharedPreferencesRepository.locationUnits]){
             0 -> { //decimal
                 binding.position =
                         LocationConverter.decimalFormat(location.latitude, location.longitude)
@@ -109,22 +109,67 @@ class GpsInfoFragment: Fragment(), InjectableFragment {
             }
         }
 
+        //altitude
         if(location.altitude != -999.0){
-            val alt = String.format("%.2f m", location.altitude)
-            binding.altitude = alt
+            when(preferences[SharedPreferencesRepository.altUnits]) {
+                0 -> { //meters
+                    binding.altitude = String.format("%.2f m", location.altitude)
+                }
+                1 -> { //kilometers
+                    binding.altitude = String.format("%.4f km", location.altitude / 1000.0)
+                }
+                2 -> { //feats
+                    binding.altitude = String.format("%.2f ft", location.altitude * 3.2808399)
+                }
+                3 -> { //land miles
+                    binding.altitude = String.format("%.6f mi", location.altitude * 0.000621371192)
+                }
+                4 -> { //nautical miles
+                    binding.altitude = String.format("%.6f nmi", location.altitude * 0.000539956803)
+                }
+            }
             binding.provider = getString(R.string.provider_gps)
         } else {
             binding.provider = getString(R.string.provider_gsm)
         }
 
-        val acc = String.format("%.2f m", location.accuracy)
-        binding.accuracy = acc
+        //accuracy
+        when(preferences[SharedPreferencesRepository.accUnits]){
+            0 -> { //meters
+                binding.accuracy = String.format("%.2f m", location.altitude)
+            }
+            1 -> { //kilometers
+                binding.accuracy = String.format("%.4f km", location.altitude / 1000.0)
+            }
+            2 -> { //feats
+                binding.accuracy = String.format("%.2f ft", location.altitude * 3.2808399)
+            }
+            3 -> { //land miles
+                binding.accuracy = String.format("%.6f mi", location.altitude * 0.000621371192)
+            }
+            4 -> { //nautical miles
+                binding.accuracy = String.format("%.6f nmi", location.altitude * 0.000539956803)
+            }
+        }
 
-        val speed = String.format("%.2f m/s", location.speed)
-        binding.speed = speed
+        //speed
+        when(preferences[SharedPreferencesRepository.speedUnits]){
+            0 -> { //m/s
+                binding.speed = String.format("%.2f m/s", location.speed)
+            }
+            1 -> { //km/h
+                binding.speed = String.format("%.2f m/s", location.speed * 3.6)
+            }
+            2 -> { //ft/s
+                binding.speed = String.format("%.2f m/s", location.speed * 3.2808399)
+            }
+            3 -> { //mph
+                binding.speed = String.format("%.2f m/s", location.speed * 2.23693629)
+            }
+        }
 
-        val bearing = String.format("%.2f\u00b0", location.bearing)
-        binding.bearing = bearing
+        //bearing
+        binding.bearing = String.format("%.2f\u00b0", location.bearing)
     }
 
     /**

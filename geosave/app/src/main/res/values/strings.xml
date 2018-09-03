@@ -55,14 +55,16 @@
     <string name="pref_units_title">Units</string>
     <string name="pref_location_units_title">Location</string>
     <string name="pref_location_units_key">pref_location_units</string>
-    <string name="pref_alt_acc_units_title">Altitude / Accuracy</string>
-    <string name="pref_alt_acc_units_key">pref_alt_acc_units</string>
+    <string name="pref_alt_units_title">Altitude</string>
+    <string name="pref_alt_units_key">pref_alt_units</string>
+    <string name="pref_acc_units_title">Accuracy</string>
+    <string name="pref_acc_units_key">pref_acc_units</string>
 
     <string-array name="pref_location_units_entries">
         <item>Decimal</item>
         <item>Sexigesimal (DMS)</item>
         <item>Decimal degrees (DD)</item>
-        <item>degrees decimal minutes (DM)</item>
+        <item>Degrees decimal minutes (DM)</item>
     </string-array>
 
     <string-array name="pref_location_units_values">
@@ -72,7 +74,21 @@
         <item>3</item>
     </string-array>
 
-    <string-array name="pref_alt_acc_units_entries">
+    <string-array name="pref_alt_units_entries">
+        <item>meters (m)</item>
+        <item>kilometers (km)</item>
+        <item>feats (ft)</item>
+        <item>land miles (mi)</item>
+    </string-array>
+
+    <string-array name="pref_alt_units_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <string-array name="pref_acc_units_entries">
         <item>meters (m)</item>
         <item>kilometers (km)</item>
         <item>feats (ft)</item>
@@ -80,7 +96,7 @@
         <item>nautical miles (nmi)</item>
     </string-array>
 
-    <string-array name="pref_alt_acc_units_values">
+    <string-array name="pref_acc_units_values">
         <item>0</item>
         <item>1</item>
         <item>2</item>
@@ -91,7 +107,7 @@
     <string-array name="pref_speed_units_entries">
         <item>m/s</item>
         <item>km/h</item>
-        <item>ft/s</item>
+        <item>ft/s (fps)</item>
         <item>mph</item>
     </string-array>
 

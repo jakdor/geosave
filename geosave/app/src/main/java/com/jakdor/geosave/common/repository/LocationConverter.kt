@@ -17,8 +17,8 @@ internal object LocationConverter{
     fun dmsFormat(lat: Double, long: Double): String {
         val latSign = if(lat >= 0) "N" else "S"
         val longSign = if(long >= 0) "E" else "W"
-        return dmsConvert(Math.abs(lat)) + " " + latSign +
-                " " + dmsConvert(Math.abs(long)) + " " + longSign
+        return dmsConvert(Math.abs(lat)) + latSign +
+                " " + dmsConvert(Math.abs(long)) + longSign
     }
 
     /**

@@ -32,8 +32,10 @@ constructor(application: Application,
         val preferencesMap: MutableMap<String, Int> = mutableMapOf(
                 Pair(SharedPreferencesRepository.locationUnits, sharedPreferencesRepository
                         .getString(SharedPreferencesRepository.locationUnits, "0").toInt()),
-                Pair(SharedPreferencesRepository.altAccUnits, sharedPreferencesRepository
-                        .getString(SharedPreferencesRepository.altAccUnits, "0").toInt()),
+                Pair(SharedPreferencesRepository.altUnits, sharedPreferencesRepository
+                        .getString(SharedPreferencesRepository.altUnits, "0").toInt()),
+                Pair(SharedPreferencesRepository.accUnits, sharedPreferencesRepository
+                        .getString(SharedPreferencesRepository.accUnits, "0").toInt()),
                 Pair(SharedPreferencesRepository.speedUnits, sharedPreferencesRepository
                         .getString(SharedPreferencesRepository.speedUnits, "0").toInt()))
 

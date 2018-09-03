@@ -11,7 +11,8 @@ class SharedPreferencesRepository @Inject constructor(context: Context) {
 
     init {
         locationUnits = context.getString(R.string.pref_location_units_key)
-        altAccUnits = context.getString(R.string.pref_alt_acc_units_key)
+        altUnits = context.getString(R.string.pref_alt_units_key)
+        accUnits = context.getString(R.string.pref_acc_units_key)
         speedUnits = context.getString(R.string.pref_speed_units_key)
     }
 
@@ -53,7 +54,8 @@ class SharedPreferencesRepository @Inject constructor(context: Context) {
     companion object {
         const val mapTypeKey = "map_type"
         lateinit var locationUnits: String
-        lateinit var altAccUnits: String
+        lateinit var altUnits: String
+        lateinit var accUnits: String
         lateinit var speedUnits: String
     }
 }

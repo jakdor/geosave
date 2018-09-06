@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class ElevationApi implements Serializable {
 
-    @SerializedName("elevationApiResults")
+    @SerializedName("results")
     @Expose
     private List<ElevationApiResult> elevationApiResults = null;
     private final static long serialVersionUID = 8255691863523063062L;

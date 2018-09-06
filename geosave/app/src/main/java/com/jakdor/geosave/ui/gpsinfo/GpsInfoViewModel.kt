@@ -3,6 +3,7 @@ package com.jakdor.geosave.ui.gpsinfo
 import android.app.Application
 import android.arch.lifecycle.MutableLiveData
 import com.jakdor.geosave.arch.BaseViewModel
+import com.jakdor.geosave.common.model.ElevationApi
 import com.jakdor.geosave.common.model.UserLocation
 import com.jakdor.geosave.common.repository.GpsInfoRepository
 import com.jakdor.geosave.common.repository.RestApiRepository
@@ -45,6 +46,32 @@ constructor(application: Application,
     }
 
     /**
+     * Call for elevation update from Rest API service
+     */
+    fun callForElevationUpdate(data: UserLocation){
+        if(restApiRepository.checkNetworkStatus(getApplication()))
+            disposable.add(restApiRepository.getElevationApi(data.latitude, data.longitude)
+                    .subscribeOn(rxSchedulersFacade.io())
+                    .observeOn(rxSchedulersFacade.ui())
+                    .subscribe(
+                            { result -> handleElevationUpdate(result) },
+                            { error -> Timber.e(error)}
+                    )
+            )
+    }
+
+    /**
+     * Handle received [ElevationApi] object
+     */
+    fun handleElevationUpdate(elevationApi: ElevationApi){
+        if(elevationApi.elevationApiResults[0] != null) {
+            val elevation = elevationApi.elevationApiResults[0].elevation
+            //todo elevation handling
+            Timber.i("Got elevation update from API: %d", elevation)
+        }
+    }
+
+    /**
      * Handle copy button click
      */
     fun onCopyButtonClicked(data: String){
@@ -64,13 +91,7 @@ constructor(application: Application,
      * Forward new [UserLocation] object to [MutableLiveData]
      */
     private fun userLocationUpdate(data: UserLocation){
-        restApiRepository.getElevationApi(data.latitude, data.longitude)
-                .subscribeOn(rxSchedulersFacade.ui())
-                .observeOn(rxSchedulersFacade.io())
-                .doOnNext {
-                    Timber.i("Got it: %s", it.toString())
-                }
-
+        callForElevationUpdate(data) //quick test, todo add timer
         location.postValue(data)
         loadingStatus.postValue(false)
     }

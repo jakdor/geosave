@@ -5,6 +5,7 @@ import android.arch.lifecycle.MutableLiveData
 import com.jakdor.geosave.arch.BaseViewModel
 import com.jakdor.geosave.common.model.UserLocation
 import com.jakdor.geosave.common.repository.GpsInfoRepository
+import com.jakdor.geosave.common.repository.RestApiRepository
 import com.jakdor.geosave.common.repository.SharedPreferencesRepository
 import com.jakdor.geosave.common.repository.UserLocationObserver
 import com.jakdor.geosave.utils.RxSchedulersFacade
@@ -18,7 +19,8 @@ class GpsInfoViewModel @Inject
 constructor(application: Application,
             rxSchedulersFacade: RxSchedulersFacade,
             private val gpsInfoRepository: GpsInfoRepository,
-            private val sharedPreferencesRepository: SharedPreferencesRepository):
+            private val sharedPreferencesRepository: SharedPreferencesRepository,
+            private val restApiRepository: RestApiRepository):
         BaseViewModel(application, rxSchedulersFacade){
 
     val location = MutableLiveData<UserLocation>()
@@ -62,6 +64,13 @@ constructor(application: Application,
      * Forward new [UserLocation] object to [MutableLiveData]
      */
     private fun userLocationUpdate(data: UserLocation){
+        restApiRepository.getElevationApi(data.latitude, data.longitude)
+                .subscribeOn(rxSchedulersFacade.ui())
+                .observeOn(rxSchedulersFacade.io())
+                .doOnNext {
+                    Timber.i("Got it: %s", it.toString())
+                }
+
         location.postValue(data)
         loadingStatus.postValue(false)
     }

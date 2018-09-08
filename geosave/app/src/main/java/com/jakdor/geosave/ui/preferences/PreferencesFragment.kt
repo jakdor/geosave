@@ -7,13 +7,19 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.DialogInterface
 import android.os.Bundle
+import android.support.v14.preference.SwitchPreference
+import android.support.v4.app.DialogFragment
 import android.support.v7.preference.Preference
 import android.support.v7.preference.PreferenceFragmentCompat
 import android.widget.Toast
 import com.jakdor.geosave.R
 import com.jakdor.geosave.di.InjectableFragment
+import com.jakdor.geosave.ui.elements.PreferenceSeekBar
 import com.jakdor.geosave.ui.main.MainActivity
 import javax.inject.Inject
+import com.jakdor.geosave.ui.elements.SeekBarPreferenceDialogFragmentCompat
+
+
 
 class PreferencesFragment: PreferenceFragmentCompat(), InjectableFragment {
 
@@ -25,6 +31,8 @@ class PreferencesFragment: PreferenceFragmentCompat(), InjectableFragment {
     private lateinit var signInLogin: Preference
     private lateinit var logout: Preference
     private lateinit var deleteAccount: Preference
+    private lateinit var altApi: SwitchPreference
+    private lateinit var altApiFreq: PreferenceSeekBar
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.pref_general, rootKey)
@@ -35,6 +43,9 @@ class PreferencesFragment: PreferenceFragmentCompat(), InjectableFragment {
         logout.setOnPreferenceClickListener { viewModel?.onLogoutClicked() ?: true }
         deleteAccount = findPreference(getString(R.string.pref_delete_account_key))
         deleteAccount.setOnPreferenceClickListener { viewModel?.onDeleteAccountClicked() ?: true }
+        altApi = findPreference(getString(R.string.pref_alt_api_key)) as SwitchPreference
+        altApi.setOnPreferenceChangeListener { _, newValue -> hideShowAltApiFreq(newValue as Boolean) }
+        altApiFreq = findPreference(getString(R.string.pref_alt_api_freq_key)) as PreferenceSeekBar
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -125,6 +136,35 @@ class PreferencesFragment: PreferenceFragmentCompat(), InjectableFragment {
                         Toast.LENGTH_LONG).show()
             }
             DialogInterface.BUTTON_NEGATIVE -> dialogInterface.dismiss()
+        }
+    }
+
+    /**
+     * Hide or show altApiFreq depending on altApi state
+     */
+    private fun hideShowAltApiFreq(switch: Boolean): Boolean {
+        when(switch){
+            true -> altApiFreq.isVisible = true
+            false -> altApiFreq.isVisible = false
+        }
+        return true
+    }
+
+    /**
+     * Lunch preference dialogs
+     */
+    override fun onDisplayPreferenceDialog(preference: Preference) {
+        var dialogFragment: DialogFragment? = null
+        if (preference is PreferenceSeekBar) {
+            dialogFragment = SeekBarPreferenceDialogFragmentCompat.newInstance(preference.getKey())
+        }
+
+        if (dialogFragment != null) {
+            dialogFragment.setTargetFragment(this, 0)
+            dialogFragment.show(this.fragmentManager,
+                    "android.support.v7.preference" + ".PreferenceFragment.DIALOG")
+        } else {
+            super.onDisplayPreferenceDialog(preference)
         }
     }
 

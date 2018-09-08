@@ -124,9 +124,6 @@ class GpsInfoFragment: Fragment(), InjectableFragment {
                 3 -> { //land miles
                     binding.altitude = String.format("%.6f mi", location.altitude * 0.000621371192)
                 }
-                4 -> { //nautical miles
-                    binding.altitude = String.format("%.6f nmi", location.altitude * 0.000539956803)
-                }
             }
             binding.provider = getString(R.string.provider_gps)
         } else {

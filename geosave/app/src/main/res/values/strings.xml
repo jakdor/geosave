@@ -57,7 +57,7 @@
     <string name="pref_alt_api_title">Improve altitude accuracy</string>
     <string name="pref_alt_api_summary_on">Open-Elevation API - may increase mobile data transfer usage</string>
     <string name="pref_alt_api_summary_off">GPS provider - low accuracy</string>
-    <string name="pref_alt_api_freq_title">API call frequency (seconds)</string>
+    <string name="pref_alt_api_freq_title">API call frequency</string>
     <string name="pref_alt_api_summary">Adjust Open-Elevation API call interval</string>
 
     <string-array name="pref_location_units_entries">

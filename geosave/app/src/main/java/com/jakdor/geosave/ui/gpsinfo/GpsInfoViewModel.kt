@@ -64,7 +64,7 @@ constructor(application: Application,
      * Handle received [ElevationApi] object
      */
     fun handleElevationUpdate(elevationApi: ElevationApi){
-        if(elevationApi.elevationApiResults[0] != null) {
+        if(elevationApi.elevationApiResults.isNotEmpty()) {
             val elevation = elevationApi.elevationApiResults[0].elevation
             //todo elevation handling
             Timber.i("Got elevation update from API: %d", elevation)

@@ -93,7 +93,7 @@ class MainActivity : AppCompatActivity(),
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        if(savedInstanceState != null){
+        if(savedInstanceState != null && savedPresenter != null){
             presenter = savedPresenter
             presenter.bindView(this)
         }

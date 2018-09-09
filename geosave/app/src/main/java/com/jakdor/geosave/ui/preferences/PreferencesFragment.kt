@@ -44,6 +44,7 @@ class PreferencesFragment: PreferenceFragmentCompat(), InjectableFragment {
         altApi = findPreference(getString(R.string.pref_alt_api_key)) as SwitchPreference
         altApi.setOnPreferenceChangeListener { _, newValue -> hideShowAltApiFreq(newValue as Boolean) }
         altApiFreq = findPreference(getString(R.string.pref_alt_api_freq_key)) as PreferenceSeekBar
+        hideShowAltApiFreq(altApi.isChecked)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -57,6 +58,14 @@ class PreferencesFragment: PreferenceFragmentCompat(), InjectableFragment {
         viewModel?.updateAvailableOptions()
         observeHidePreferences()
         observeAccountOption()
+    }
+
+    /**
+     * Notify other parts off app of possible preferences update
+     */
+    override fun onPause() {
+        super.onPause()
+        (activity as MainActivity).presenter.notifyPossiblePreferencesChange()
     }
 
     /**

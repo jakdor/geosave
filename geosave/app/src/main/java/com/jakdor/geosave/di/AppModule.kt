@@ -14,7 +14,6 @@ import com.jakdor.geosave.common.wrapper.FirebaseAuthWrapper
 import com.jakdor.geosave.utils.RxSchedulersFacade
 import dagger.Module
 import dagger.Provides
-import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
@@ -42,8 +41,10 @@ class AppModule {
 
     @Singleton
     @Provides
-    fun provideGpsInfoRepository(): GpsInfoRepository {
-        return GpsInfoRepository(provideRxSchedulersFacade())
+    fun provideGpsInfoRepository(app: Application, restApiRepository: RestApiRepository,
+            sharedPreferencesRepository: SharedPreferencesRepository): GpsInfoRepository {
+        return GpsInfoRepository(app.applicationContext, provideRxSchedulersFacade(),
+                restApiRepository, sharedPreferencesRepository)
     }
 
     @Singleton

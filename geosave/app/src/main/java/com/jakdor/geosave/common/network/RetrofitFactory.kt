@@ -20,9 +20,9 @@ class RetrofitFactory {
             .addConverterFactory(GsonConverterFactory.create())
 
     private val okHttpClientBuilder = OkHttpClient.Builder()
-            .readTimeout(15, TimeUnit.SECONDS)
-            .writeTimeout(15, TimeUnit.SECONDS)
-            .connectTimeout(15, TimeUnit.SECONDS)
+            .readTimeout(45, TimeUnit.SECONDS)
+            .writeTimeout(45, TimeUnit.SECONDS)
+            .connectTimeout(45, TimeUnit.SECONDS)
 
     private val httpLoggingInterceptor = HttpLoggingInterceptor()
 

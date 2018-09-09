@@ -58,5 +58,7 @@ interface MainContract {
         fun firebaseLogin(loggedIn: Boolean)
 
         fun onFirstStartupDialogResult(response: Boolean)
+
+        fun notifyPossiblePreferencesChange()
     }
 }

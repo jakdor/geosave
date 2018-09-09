@@ -20,8 +20,7 @@ class GpsInfoViewModel @Inject
 constructor(application: Application,
             rxSchedulersFacade: RxSchedulersFacade,
             private val gpsInfoRepository: GpsInfoRepository,
-            private val sharedPreferencesRepository: SharedPreferencesRepository,
-            private val restApiRepository: RestApiRepository):
+            private val sharedPreferencesRepository: SharedPreferencesRepository):
         BaseViewModel(application, rxSchedulersFacade){
 
     val location = MutableLiveData<UserLocation>()
@@ -46,32 +45,6 @@ constructor(application: Application,
     }
 
     /**
-     * Call for elevation update from Rest API service
-     */
-    fun callForElevationUpdate(data: UserLocation){
-        if(restApiRepository.checkNetworkStatus(getApplication()))
-            disposable.add(restApiRepository.getElevationApi(data.latitude, data.longitude)
-                    .subscribeOn(rxSchedulersFacade.io())
-                    .observeOn(rxSchedulersFacade.ui())
-                    .subscribe(
-                            { result -> handleElevationUpdate(result) },
-                            { error -> Timber.e(error)}
-                    )
-            )
-    }
-
-    /**
-     * Handle received [ElevationApi] object
-     */
-    fun handleElevationUpdate(elevationApi: ElevationApi){
-        if(elevationApi.elevationApiResults.isNotEmpty()) {
-            val elevation = elevationApi.elevationApiResults[0].elevation
-            //todo elevation handling
-            Timber.i("Got elevation update from API: %d", elevation)
-        }
-    }
-
-    /**
      * Handle copy button click
      */
     fun onCopyButtonClicked(data: String){
@@ -91,7 +64,6 @@ constructor(application: Application,
      * Forward new [UserLocation] object to [MutableLiveData]
      */
     private fun userLocationUpdate(data: UserLocation){
-        callForElevationUpdate(data) //quick test, todo add timer
         location.postValue(data)
         loadingStatus.postValue(false)
     }

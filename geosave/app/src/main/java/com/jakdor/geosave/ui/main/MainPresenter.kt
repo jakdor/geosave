@@ -52,6 +52,8 @@ class MainPresenter(view: MainContract.MainView,
         super.pause()
         if(locationUpdates){
             view?.stopLocationUpdates()
+            gpsInfoRepository.stopElevationApiCalls()
+            gpsInfoRepository.clearDisposable()
         } else if (fallbackLocationUpdates){
             view?.fallbackStopLocationUpdates()
         }
@@ -64,6 +66,7 @@ class MainPresenter(view: MainContract.MainView,
         super.resume()
         if(locationUpdates){
             view?.gmsSetupLocationUpdates()
+            gpsInfoRepository.startElevationApiCalls()
         } else if (fallbackLocationUpdates){
             fallbackStartup()
         }
@@ -178,6 +181,7 @@ class MainPresenter(view: MainContract.MainView,
             true -> {
                 if(!fallBackMode){
                     view?.gmsSetupLocationUpdates()
+                    gpsInfoRepository.startElevationApiCalls()
                 } else {
                     fallbackStartup()
                 }
@@ -191,7 +195,10 @@ class MainPresenter(view: MainContract.MainView,
      */
     override fun gmsGpsEnableDialog(result: Boolean) {
         when(result){
-            true -> view?.gmsSetupLocationUpdates()
+            true -> {
+                view?.gmsSetupLocationUpdates()
+                gpsInfoRepository.startElevationApiCalls()
+            }
             false -> view?.displayToast(R.string.gps_enable_declined)
         }
     }
@@ -258,5 +265,12 @@ class MainPresenter(view: MainContract.MainView,
         } else {
             firebaseAuthWrapper.firebaseLoginAnonymous()
         }
+    }
+
+    /**
+     * Forward preferences changed event to [GpsInfoRepository]
+     */
+    override fun notifyPossiblePreferencesChange() {
+        gpsInfoRepository.checkForPreferencesChange()
     }
 }

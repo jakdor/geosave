@@ -7,6 +7,7 @@ import com.jakdor.geosave.common.network.ElevationApiService
 import com.jakdor.geosave.common.network.RetrofitFactory
 import io.reactivex.Observable
 import timber.log.Timber
+import java.util.*
 import javax.inject.Inject
 
 class RestApiRepository @Inject constructor(retrofitFactory: RetrofitFactory){
@@ -40,6 +41,6 @@ class RestApiRepository @Inject constructor(retrofitFactory: RetrofitFactory){
      * @return [Observable] with [ElevationApi]
      */
     fun getElevationApi(lat: Double, long: Double): Observable<ElevationApi>{
-        return elevationApiService.getElevationApi(String.format("%f,%f", lat, long))
+        return elevationApiService.getElevationApi(String.format(Locale.US, "%f,%f", lat, long))
     }
 }

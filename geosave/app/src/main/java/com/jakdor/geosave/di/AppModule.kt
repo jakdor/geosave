@@ -6,13 +6,14 @@ import android.content.Context
 import com.google.firebase.auth.FirebaseAuth
 import com.jakdor.geosave.App
 import com.jakdor.geosave.arch.ViewModelFactory
+import com.jakdor.geosave.common.network.RetrofitFactory
 import com.jakdor.geosave.common.repository.GpsInfoRepository
+import com.jakdor.geosave.common.repository.RestApiRepository
 import com.jakdor.geosave.common.repository.SharedPreferencesRepository
 import com.jakdor.geosave.common.wrapper.FirebaseAuthWrapper
 import com.jakdor.geosave.utils.RxSchedulersFacade
 import dagger.Module
 import dagger.Provides
-import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
@@ -40,8 +41,10 @@ class AppModule {
 
     @Singleton
     @Provides
-    fun provideGpsInfoRepository(): GpsInfoRepository {
-        return GpsInfoRepository(provideRxSchedulersFacade())
+    fun provideGpsInfoRepository(app: Application, restApiRepository: RestApiRepository,
+            sharedPreferencesRepository: SharedPreferencesRepository): GpsInfoRepository {
+        return GpsInfoRepository(app.applicationContext, provideRxSchedulersFacade(),
+                restApiRepository, sharedPreferencesRepository)
     }
 
     @Singleton
@@ -53,5 +56,11 @@ class AppModule {
     @Provides
     fun provideFirebaseAuthWrapper(): FirebaseAuthWrapper{
         return FirebaseAuthWrapper(FirebaseAuth.getInstance())
+    }
+
+    @Singleton
+    @Provides
+    fun provideRestApiRepository(): RestApiRepository{
+        return RestApiRepository(RetrofitFactory())
     }
 }

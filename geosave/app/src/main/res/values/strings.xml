@@ -24,6 +24,7 @@
     <string name="provider_title">Provider</string>
     <string name="provider_gps">GPS</string>
     <string name="provider_gsm">GSM</string>
+    <string name="provider_api_extra">+ API</string>
     <string name="clipboard_label">location</string>
     <string name="clipboard_toast">Copied to the clipboard</string>
 
@@ -42,23 +43,23 @@
 
     <string name="menu_option_add_title">Add new</string>
     <string name="menu_option_preferences_title">Preferences</string>
-
     <string name="pref_account_title">Geosave account</string>
     <string name="pref_sign_in_login_title">Sign-in/Login</string>
-    <string name="pref_sign_in_login_key">pref_sign_in_login</string>
-    <string name="pref_sign_in_login_desc">Register or login to Geosave account</string>
+    <string name="pref_sign_in_login_summary">Register or login to Geosave account</string>
     <string name="pref_logout_title">Logout</string>
-    <string name="pref_logout_key">pref_logout</string>
     <string name="pref_delete_account_title">Delete account</string>
-    <string name="pref_delete_account_key">pref_delete_account</string>
-    <string name="pref_delete_account_desc">Permanently delete local data and Geosave account</string>
+    <string name="pref_delete_account_summary">Permanently delete local data and Geosave account</string>
     <string name="pref_units_title">Units</string>
     <string name="pref_location_units_title">Location</string>
-    <string name="pref_location_units_key">pref_location_units</string>
     <string name="pref_alt_units_title">Altitude</string>
-    <string name="pref_alt_units_key">pref_alt_units</string>
+    <string name="pref_speed_units_title">Speed</string>
     <string name="pref_acc_units_title">Accuracy</string>
-    <string name="pref_acc_units_key">pref_acc_units</string>
+    <string name="pref_location_acq_title">Location acquisition</string>
+    <string name="pref_alt_api_title">Improve altitude accuracy</string>
+    <string name="pref_alt_api_summary_on">Open-Elevation API - may increase mobile data transfer usage</string>
+    <string name="pref_alt_api_summary_off">GPS provider - low accuracy</string>
+    <string name="pref_alt_api_freq_title">API call frequency</string>
+    <string name="pref_alt_api_summary">Adjust Open-Elevation API call interval</string>
 
     <string-array name="pref_location_units_entries">
         <item>Decimal</item>
@@ -123,7 +124,8 @@
     <string name="preferences_delete_account_dialog_yes">Yes</string>
     <string name="preferences_delete_account_dialog_no">No</string>
     <string name="preferences_delete_account_toast">You have deleted Geosave account, all data removed. You can continue to use Geosave locally</string>
-    <string name="pref_speed_units_title">Speed</string>
-    <string name="pref_speed_units_key">pref_speed_units</string>
+
+    <string name="dialog_seekBar_button_text">OK</string>
+    <string name="dialog_seekBar_title_text">Seconds:</string>
 
 </resources>

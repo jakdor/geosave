@@ -114,18 +114,23 @@ class GpsInfoFragment: Fragment(), InjectableFragment {
             when(preferences[SharedPreferencesRepository.altUnits]) {
                 0 -> { //meters
                     binding.altitude = String.format("%.2f m", location.altitude)
+                    addAltitudeAccuracy(location, 1.0)
+                    binding.altitude += " m"
                 }
                 1 -> { //kilometers
                     binding.altitude = String.format("%.4f km", location.altitude / 1000.0)
+                    addAltitudeAccuracy(location, 0.001)
+                    binding.altitude += " km"
                 }
                 2 -> { //feats
                     binding.altitude = String.format("%.2f ft", location.altitude * 3.2808399)
+                    addAltitudeAccuracy(location, 3.2808399)
+                    binding.altitude += " ft"
                 }
                 3 -> { //land miles
                     binding.altitude = String.format("%.6f mi", location.altitude * 0.000621371192)
-                }
-                4 -> { //nautical miles
-                    binding.altitude = String.format("%.6f nmi", location.altitude * 0.000539956803)
+                    addAltitudeAccuracy(location, 0.000621371192)
+                    binding.altitude += " mi"
                 }
             }
             binding.provider = getString(R.string.provider_gps)
@@ -170,6 +175,25 @@ class GpsInfoFragment: Fragment(), InjectableFragment {
 
         //bearing
         binding.bearing = String.format("%.2f\u00b0", location.bearing)
+
+        //provider api extra
+        if(location.elevationApi){
+            binding.provider += " " + getString(R.string.provider_api_extra)
+        }
+    }
+
+    /**
+     * Adds altitude accuracy according to provider and used units
+     * @multiplier units multiple form meters to target units
+     */
+    private fun addAltitudeAccuracy(location: UserLocation, multiplier: Double){
+        binding.altitude += " \u00B1 "
+        if(location.elevationApi){ //api accuracy
+            if(multiplier == 3.2808399) binding.altitude += String.format("%.2f", 45.0)
+            else binding.altitude += String.format("%.2f", 15 * multiplier)
+        } else { //gps accuracy
+            binding.altitude += String.format("%.2f", location.accuracy * 2.5)
+        }
     }
 
     /**

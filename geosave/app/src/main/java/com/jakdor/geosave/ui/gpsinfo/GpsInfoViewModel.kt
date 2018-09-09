@@ -3,8 +3,10 @@ package com.jakdor.geosave.ui.gpsinfo
 import android.app.Application
 import android.arch.lifecycle.MutableLiveData
 import com.jakdor.geosave.arch.BaseViewModel
+import com.jakdor.geosave.common.model.ElevationApi
 import com.jakdor.geosave.common.model.UserLocation
 import com.jakdor.geosave.common.repository.GpsInfoRepository
+import com.jakdor.geosave.common.repository.RestApiRepository
 import com.jakdor.geosave.common.repository.SharedPreferencesRepository
 import com.jakdor.geosave.common.repository.UserLocationObserver
 import com.jakdor.geosave.utils.RxSchedulersFacade

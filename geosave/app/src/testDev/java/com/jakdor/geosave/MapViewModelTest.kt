@@ -4,6 +4,7 @@ import android.app.Application
 import android.arch.core.executor.testing.InstantTaskExecutorRule
 import com.jakdor.geosave.common.model.UserLocation
 import com.jakdor.geosave.common.repository.GpsInfoRepository
+import com.jakdor.geosave.common.repository.RestApiRepository
 import com.jakdor.geosave.common.repository.SharedPreferencesRepository
 import com.jakdor.geosave.ui.map.MapViewModel
 import com.jakdor.geosave.utils.RxSchedulersFacade
@@ -38,8 +39,9 @@ class MapViewModelTest {
     private val gpsInfoRepository = mock<GpsInfoRepository> {
         on { subscribe(any()) }.thenReturn(com.nhaarman.mockito_kotlin.mock())
     }
+    private val restApiRepository = mock<RestApiRepository>()
     private val sharedPreferencesRepository = mock<SharedPreferencesRepository>{
-        on { getInt(SharedPreferencesRepository.mapTypeKey) }.thenReturn(testSavedInt)
+        on { getInt(SharedPreferencesRepository.mapTypeKey, 0) }.thenReturn(testSavedInt)
         on { getString(SharedPreferencesRepository.locationUnits, "0") }
                 .thenReturn(testSavedInt2.toString())
     }
@@ -108,7 +110,8 @@ class MapViewModelTest {
      */
     @Test
     fun passDataFromRepositoryIntegrationTest(){
-        val gpsInfoRepository = GpsInfoRepository(rxSchedulersFacade)
+        val gpsInfoRepository = GpsInfoRepository(
+                app, rxSchedulersFacade, restApiRepository, sharedPreferencesRepository)
         mapViewModel = MapViewModel(
                 app, rxSchedulersFacade, gpsInfoRepository, sharedPreferencesRepository)
 

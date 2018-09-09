@@ -115,14 +115,14 @@ class GpsInfoFragmentTest {
     }
 
     /**
-     * Check correct view formatting for provided [UserLocation] object, default formatting prefs
+     * Check correct view formatting for provided [UserLocation] object with default formatting prefs
      */
     @Test
     fun handleUserLocationTest() {
         val random = Random()
         val testUserLocation = UserLocation(random.nextDouble(), random.nextDouble(),
                 random.nextDouble(), random.nextFloat(), "Fused",
-                random.nextFloat(), random.nextFloat())
+                random.nextFloat(), random.nextFloat(), false)
 
         SharedPreferencesRepository.locationUnits =
                 gpsInfoFragment.getString(R.string.pref_location_units_key)
@@ -149,7 +149,8 @@ class GpsInfoFragmentTest {
         val prov: String
         
         if(testUserLocation.altitude != 0.0){
-            alt = String.format("%.2f m", testUserLocation.altitude)
+            alt = String.format("%.2f m ± %.2f m",
+                    testUserLocation.altitude, testUserLocation.accuracy * 2.5)
             prov = gpsInfoFragment.getString(R.string.provider_gps)
         } else {
             prov = gpsInfoFragment.getString(R.string.provider_gsm)

@@ -37,7 +37,8 @@ constructor(application: Application,
      * Load saved preferences
      */
     fun loadPreferences(){
-        val mapTypeVal = sharedPreferencesRepository.getInt(SharedPreferencesRepository.mapTypeKey)
+        val mapTypeVal = sharedPreferencesRepository.getInt(
+                SharedPreferencesRepository.mapTypeKey, 0)
         val locationTypeVal = sharedPreferencesRepository.getString(
                 SharedPreferencesRepository.locationUnits, "0").toInt()
         mapType.postValue(mapTypeVal)

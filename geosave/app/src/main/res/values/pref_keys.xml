@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_sign_in_login_key" translatable="false">pref_sign_in_login</string>
+    <string name="pref_logout_key" translatable="false">pref_logout</string>
+    <string name="pref_delete_account_key" translatable="false">pref_delete_account</string>
+    <string name="pref_location_units_key" translatable="false">pref_location_units</string>
+    <string name="pref_alt_units_key" translatable="false">pref_alt_units</string>
+    <string name="pref_speed_units_key" translatable="false">pref_speed_units</string>
+    <string name="pref_acc_units_key" translatable="false">pref_acc_units</string>
+    <string name="pref_alt_api_key" translatable="false">pref_alt_api</string>
+    <string name="pref_alt_api_freq_key" translatable="false">pref_alt_api_freq</string>
+</resources>

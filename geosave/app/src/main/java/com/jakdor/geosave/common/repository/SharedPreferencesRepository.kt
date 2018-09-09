@@ -14,10 +14,12 @@ class SharedPreferencesRepository @Inject constructor(context: Context) {
         altUnits = context.getString(R.string.pref_alt_units_key)
         accUnits = context.getString(R.string.pref_acc_units_key)
         speedUnits = context.getString(R.string.pref_speed_units_key)
+        altApi = context.getString(R.string.pref_alt_api_key)
+        altApiFreq = context.getString(R.string.pref_alt_api_freq_key)
     }
 
-    private var sharedPreferences
-            = context.getSharedPreferences(context.packageName + "_preferences", Activity.MODE_PRIVATE)
+    private var sharedPreferences = context.getSharedPreferences(
+            context.packageName + "_preferences", Activity.MODE_PRIVATE)
 
     fun save(key: String, value: Int) {
         val editor = sharedPreferences.edit()
@@ -25,8 +27,8 @@ class SharedPreferencesRepository @Inject constructor(context: Context) {
         editor.apply()
     }
 
-    fun getInt(key: String): Int {
-        return sharedPreferences.getInt(key, 0)
+    fun getInt(key: String, default: Int): Int {
+        return sharedPreferences.getInt(key, default)
     }
 
     fun save(key: String, value: String) {
@@ -37,6 +39,10 @@ class SharedPreferencesRepository @Inject constructor(context: Context) {
 
     fun getString(key: String, default: String): String {
         return sharedPreferences.getString(key, default)
+    }
+
+    fun getBoolean(key: String, default: Boolean): Boolean{
+        return sharedPreferences.getBoolean(key, default)
     }
 
     fun remove(key: String) {
@@ -57,5 +63,7 @@ class SharedPreferencesRepository @Inject constructor(context: Context) {
         lateinit var altUnits: String
         lateinit var accUnits: String
         lateinit var speedUnits: String
+        lateinit var altApi: String
+        lateinit var altApiFreq: String
     }
 }

@@ -19,4 +19,8 @@
         <item name="android:windowMinWidthMinor">90%</item>
     </style>
 
+    <style name="AppAlertDialogContent" parent="Theme.AppCompat.Light">
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
 </resources>

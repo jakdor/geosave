@@ -19,8 +19,6 @@ import com.jakdor.geosave.ui.main.MainActivity
 import javax.inject.Inject
 import com.jakdor.geosave.ui.elements.SeekBarPreferenceDialogFragmentCompat
 
-
-
 class PreferencesFragment: PreferenceFragmentCompat(), InjectableFragment {
 
     @Inject
@@ -156,13 +154,14 @@ class PreferencesFragment: PreferenceFragmentCompat(), InjectableFragment {
     override fun onDisplayPreferenceDialog(preference: Preference) {
         var dialogFragment: DialogFragment? = null
         if (preference is PreferenceSeekBar) {
-            dialogFragment = SeekBarPreferenceDialogFragmentCompat.newInstance(preference.getKey())
+            dialogFragment = SeekBarPreferenceDialogFragmentCompat.newInstance(
+                    preference.getKey(), 5, 120)
         }
 
         if (dialogFragment != null) {
             dialogFragment.setTargetFragment(this, 0)
             dialogFragment.show(this.fragmentManager,
-                    "android.support.v7.preference" + ".PreferenceFragment.DIALOG")
+                    "android.support.v7.preference.PreferenceFragment.DIALOG")
         } else {
             super.onDisplayPreferenceDialog(preference)
         }

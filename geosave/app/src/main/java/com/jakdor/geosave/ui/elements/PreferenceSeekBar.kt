@@ -8,7 +8,7 @@ import android.util.AttributeSet
 import com.jakdor.geosave.R
 
 /**
- * Custom preference with
+ * Custom preference with SeekBar dialog implemented in [SeekBarPreferenceDialogFragmentCompat]
  */
 class PreferenceSeekBar @JvmOverloads
 constructor(context: Context, attrs: AttributeSet? = null,
@@ -17,7 +17,6 @@ constructor(context: Context, attrs: AttributeSet? = null,
 
     /**
      * Saves the value to the SharedPreferences
-     * @param val value to save
      */
     var value: Int = 0
         set(`val`) {

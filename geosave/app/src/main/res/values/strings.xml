@@ -24,6 +24,7 @@
     <string name="provider_title">Provider</string>
     <string name="provider_gps">GPS</string>
     <string name="provider_gsm">GSM</string>
+    <string name="provider_api_extra">+ API</string>
     <string name="clipboard_label">location</string>
     <string name="clipboard_toast">Copied to the clipboard</string>
 

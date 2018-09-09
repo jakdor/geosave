@@ -23,13 +23,14 @@ class GpsInfoRepository(private val context: Context,
 
     private val disposable = CompositeDisposable()
     private val stream: BehaviorSubject<UserLocation> = BehaviorSubject.create()
+    private lateinit var savedLocation: UserLocation
 
-    private var appCallsOn = false
+    private var apiCallsOn = false
     private var apiCallLockFlag = true
     private var apiCallInProgress = false
     private var apiFailFlag = false
     private var apiElevation: Int = -999
-    private var apiTimer: Timer = Timer()
+    private var apiTimer: Timer? = null
     private var apiCallInterval: Long = 20
 
     /**
@@ -67,7 +68,13 @@ class GpsInfoRepository(private val context: Context,
             if(elevation != null){
                 apiElevation = elevation
                 apiFailFlag = false
+
+                next(savedLocation) //forced update
+
                 Timber.i("Got elevation update from API: %d", elevation)
+            } else {
+                apiFailFlag = true
+                Timber.e("No elevation data available for location / json parsing error")
             }
         }
     }
@@ -80,10 +87,10 @@ class GpsInfoRepository(private val context: Context,
             apiCallInterval = sharedPreferencesRepository.getInt(
                     SharedPreferencesRepository.altApiFreq, 20).toLong()
             apiTimer = Timer()
-            apiTimer.scheduleAtFixedRate(
+            apiTimer?.scheduleAtFixedRate(
                     timerTask { if(!apiCallInProgress) apiCallLockFlag = false },
                     0, apiCallInterval * 1000)
-            appCallsOn = true
+            apiCallsOn = true
             Timber.i("Started elevationApi timer")
         }
     }
@@ -92,9 +99,11 @@ class GpsInfoRepository(private val context: Context,
      * Stops timer for api calls
      */
     fun stopElevationApiCalls(){
-        apiTimer.cancel()
-        apiTimer.purge()
-        appCallsOn = false
+        if(apiTimer != null){
+            apiTimer!!.cancel()
+            apiTimer!!.purge()
+        }
+        apiCallsOn = false
         apiCallInProgress = false
         apiElevation = -999
         Timber.i("Stopped elevationApi timer")
@@ -105,10 +114,10 @@ class GpsInfoRepository(private val context: Context,
      */
     fun checkForPreferencesChange(){
         if(!sharedPreferencesRepository.getBoolean(
-                        SharedPreferencesRepository.altApi, false) && appCallsOn){
+                        SharedPreferencesRepository.altApi, false) && apiCallsOn){
             stopElevationApiCalls() //api calls off
         } else if(sharedPreferencesRepository.getBoolean(
-                        SharedPreferencesRepository.altApi, false) && !appCallsOn){
+                        SharedPreferencesRepository.altApi, false) && !apiCallsOn){
             startElevationApiCalls() //api calls on
         } else if(sharedPreferencesRepository.getBoolean(
                         SharedPreferencesRepository.altApi, false) &&
@@ -124,13 +133,16 @@ class GpsInfoRepository(private val context: Context,
      * replace altitude with apiElevation if available
      */
     fun next(userLocation: UserLocation){
+        savedLocation = userLocation
+
         if(!apiCallLockFlag) {
             callForElevationUpdate(userLocation)
             apiCallLockFlag = true
         }
 
-        if(!apiFailFlag && apiElevation != -999 && appCallsOn) {
+        if(!apiFailFlag && apiElevation != -999 && apiCallsOn) {
             userLocation.altitude = apiElevation.toDouble()
+            userLocation.elevationApi = true
         }
 
         stream.onNext(userLocation)

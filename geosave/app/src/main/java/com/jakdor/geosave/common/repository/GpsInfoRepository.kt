@@ -11,6 +11,7 @@ import timber.log.Timber
 import java.util.*
 import javax.inject.Singleton
 import kotlin.concurrent.timerTask
+import kotlin.math.abs
 
 /**
  * Repository for [UserLocation] objects managed by reactive stream
@@ -29,6 +30,7 @@ class GpsInfoRepository(private val context: Context,
     private var apiCallLockFlag = true
     private var apiCallInProgress = false
     private var apiFailFlag = false
+    private var positionChangeFlag = true
     private var apiElevation: Int = -999
     private var apiTimer: Timer? = null
     private var apiCallInterval: Long = 20
@@ -105,6 +107,7 @@ class GpsInfoRepository(private val context: Context,
         }
         apiCallsOn = false
         apiCallInProgress = false
+        positionChangeFlag = true
         apiElevation = -999
         Timber.i("Stopped elevationApi timer")
     }
@@ -130,16 +133,28 @@ class GpsInfoRepository(private val context: Context,
 
     /**
      * post new [UserLocation] to [BehaviorSubject] stream,
-     * replace altitude with apiElevation if available
+     * replace altitude with apiElevation if available, check for movement
      */
     fun next(userLocation: UserLocation){
+
+        //check for movement
+        if(::savedLocation.isInitialized)
+            if(abs(userLocation.latitude - savedLocation.latitude) >= 0.00002 ||
+                    abs(userLocation.longitude - savedLocation.longitude) >= 0.00002 ||
+                    userLocation.speed >= 0.5) {
+                positionChangeFlag = true
+            }
+
         savedLocation = userLocation
 
-        if(!apiCallLockFlag) {
+        //call api if interval requirement met and movement detected since last call
+        if(!apiCallLockFlag && positionChangeFlag) {
             callForElevationUpdate(userLocation)
+            positionChangeFlag = false
             apiCallLockFlag = true
         }
 
+        //replace default altitude with api obtained
         if(!apiFailFlag && apiElevation != -999 && apiCallsOn) {
             userLocation.altitude = apiElevation.toDouble()
             userLocation.elevationApi = true

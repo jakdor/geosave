@@ -7,7 +7,12 @@
         android:icon="@android:drawable/ic_input_add"
         app:showAsAction="ifRoom" />
 
-    <item android:id="@+id/menu_option_preferences"
+    <item android:id="@+id/menu_options_share"
+        android:title="@string/menu_options_share_title"
+        android:icon="@android:drawable/ic_menu_share"
+        app:showAsAction="ifRoom" />
+
+    <item android:id="@+id/menu_options_preferences"
         android:title="@string/menu_option_preferences_title"
         android:icon="@android:drawable/ic_menu_manage"
         app:showAsAction="ifRoom"/>

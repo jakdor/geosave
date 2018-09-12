@@ -124,6 +124,13 @@ class MainPresenter(view: MainContract.MainView,
     }
 
     /**
+     * Share menu option clicked, format text to share and lunch intent
+     */
+    override fun onShareOptionClicked() {
+        view?.shareIntent(gpsInfoRepository.lastLocation.latitude.toString()) //test
+    }
+
+    /**
      * Get back to fragment id in backTab variable
      */
     override fun switchBackFromPreferenceFragment(): Boolean {

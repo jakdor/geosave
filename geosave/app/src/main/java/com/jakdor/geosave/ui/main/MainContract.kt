@@ -16,6 +16,7 @@ interface MainContract {
         fun displayToast(strId: Int)
 
         fun displayFirstStartupDialog()
+        fun shareIntent(text: String)
 
         fun checkPermissions()
 
@@ -38,6 +39,7 @@ interface MainContract {
 
         fun onAddOptionClicked()
         fun onPreferencesOptionClicked()
+        fun onShareOptionClicked()
         fun switchBackFromPreferenceFragment(): Boolean
 
         fun onLocationChanged(userLocation: UserLocation)

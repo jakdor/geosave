@@ -24,7 +24,7 @@ class GpsInfoRepository(private val context: Context,
 
     private val disposable = CompositeDisposable()
     private val stream: BehaviorSubject<UserLocation> = BehaviorSubject.create()
-    private lateinit var savedLocation: UserLocation
+    lateinit var lastLocation: UserLocation
 
     private var apiCallsOn = false
     private var apiCallLockFlag = true
@@ -71,7 +71,7 @@ class GpsInfoRepository(private val context: Context,
                 apiElevation = elevation
                 apiFailFlag = false
 
-                next(savedLocation) //forced update
+                next(lastLocation) //forced update
 
                 Timber.i("Got elevation update from API: %d", elevation)
             } else {
@@ -138,14 +138,14 @@ class GpsInfoRepository(private val context: Context,
     fun next(userLocation: UserLocation){
 
         //check for movement
-        if(::savedLocation.isInitialized)
-            if(abs(userLocation.latitude - savedLocation.latitude) >= 0.00002 ||
-                    abs(userLocation.longitude - savedLocation.longitude) >= 0.00002 ||
+        if(::lastLocation.isInitialized)
+            if(abs(userLocation.latitude - lastLocation.latitude) >= 0.00002 ||
+                    abs(userLocation.longitude - lastLocation.longitude) >= 0.00002 ||
                     userLocation.speed >= 0.5) {
                 positionChangeFlag = true
             }
 
-        savedLocation = userLocation
+        lastLocation = userLocation
 
         //call api if interval requirement met and movement detected since last call
         if(!apiCallLockFlag && positionChangeFlag) {

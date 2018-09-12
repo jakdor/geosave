@@ -158,8 +158,12 @@ class MainActivity : AppCompatActivity(),
                 presenter.onAddOptionClicked()
                 true
             }
-            R.id.menu_option_preferences -> {
+            R.id.menu_options_preferences -> {
                 presenter.onPreferencesOptionClicked()
+                true
+            }
+            R.id.menu_options_share -> {
+                presenter.onShareOptionClicked()
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -246,6 +250,17 @@ class MainActivity : AppCompatActivity(),
             presenter.onFirstStartupDialogResult(false)
             dialog.dismiss()
         }
+    }
+
+    /**
+     * Lunch share intent
+     */
+    override fun shareIntent(text: String) {
+        val intent = Intent(Intent.ACTION_SEND)
+        intent.type = "text/plain"
+        intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.share_intent_subject))
+        intent.putExtra(Intent.EXTRA_TEXT, text)
+        startActivity(intent)
     }
 
     override fun onConnected(p0: Bundle?) {

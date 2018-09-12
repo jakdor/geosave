@@ -16,6 +16,7 @@ class SharedPreferencesRepository @Inject constructor(context: Context) {
         speedUnits = context.getString(R.string.pref_speed_units_key)
         altApi = context.getString(R.string.pref_alt_api_key)
         altApiFreq = context.getString(R.string.pref_alt_api_freq_key)
+        shareFull = context.getString(R.string.pref_share_full_key)
     }
 
     private var sharedPreferences = context.getSharedPreferences(
@@ -65,5 +66,6 @@ class SharedPreferencesRepository @Inject constructor(context: Context) {
         lateinit var speedUnits: String
         lateinit var altApi: String
         lateinit var altApiFreq: String
+        lateinit var shareFull: String
     }
 }

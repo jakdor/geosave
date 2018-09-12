@@ -13,6 +13,7 @@
     <string name="gps_fallback_dialog_no">No</string>
     <string name="gps_fallback_dialog_no_toast">Your location is not updated without GPS turned on!</string>
 
+    <string name="location_title">Location</string>
     <string name="position_title">Latitude / Longitude</string>
     <string name="position_placeholder">0.000000, 0.000000</string>
     <string name="copy_button_desc">copy button</string>
@@ -129,5 +130,9 @@
     <string name="dialog_seekBar_button_text">OK</string>
     <string name="dialog_seekBar_title_text">Seconds:</string>
     <string name="share_intent_subject">My location</string>
+    <string name="pref_share_full_key">pref_share_full</string>
+    <string name="pref_share_full_title">Share button behaviour</string>
+    <string name="pref_share_full_summary_on">Share full location info</string>
+    <string name="pref_share_full_summary_off">Share only horizontal position</string>
 
 </resources>

@@ -68,4 +68,15 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="Other">
+
+        <SwitchPreference android:key="@string/pref_share_full_key"
+            android:title="@string/pref_share_full_title"
+            android:summaryOn="@string/pref_share_full_summary_on"
+            android:summaryOff="@string/pref_share_full_summary_off"
+            android:defaultValue="true"
+            android:persistent="true"/>
+
+    </PreferenceCategory>
+
 </PreferenceScreen>

@@ -4,11 +4,13 @@ import com.jakdor.geosave.R
 import com.jakdor.geosave.common.model.UserLocation
 import com.jakdor.geosave.common.repository.GpsInfoRepository
 import com.jakdor.geosave.arch.BasePresenter
+import com.jakdor.geosave.common.repository.ShareMessageFormatter
 import com.jakdor.geosave.common.wrapper.FirebaseAuthWrapper
 
 class MainPresenter(view: MainContract.MainView,
                     private val gpsInfoRepository: GpsInfoRepository,
-                    private val firebaseAuthWrapper: FirebaseAuthWrapper):
+                    private val firebaseAuthWrapper: FirebaseAuthWrapper,
+                    private val shareMessageFormatter: ShareMessageFormatter):
         BasePresenter<MainContract.MainView>(view),
         MainContract.MainPresenter{
 
@@ -127,7 +129,7 @@ class MainPresenter(view: MainContract.MainView,
      * Share menu option clicked, format text to share and lunch intent
      */
     override fun onShareOptionClicked() {
-        view?.shareIntent(gpsInfoRepository.lastLocation.latitude.toString()) //todo text formatting class
+        view?.shareIntent(shareMessageFormatter.build(gpsInfoRepository.lastLocation))
     }
 
     /**

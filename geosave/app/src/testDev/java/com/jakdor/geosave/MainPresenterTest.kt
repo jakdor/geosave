@@ -1,6 +1,7 @@
 package com.jakdor.geosave
 
 import com.jakdor.geosave.common.repository.GpsInfoRepository
+import com.jakdor.geosave.common.repository.ShareMessageFormatter
 import com.jakdor.geosave.common.wrapper.FirebaseAuthWrapper
 import com.jakdor.geosave.ui.main.MainActivity
 import com.jakdor.geosave.ui.main.MainPresenter
@@ -22,9 +23,10 @@ class MainPresenterTest {
     private val view: MainActivity = mock()
     private val gpsInfoRepository: GpsInfoRepository = mock()
     private val firebaseAuthWrapper: FirebaseAuthWrapper = mock()
+    private val shareMessageFormatter: ShareMessageFormatter = mock()
 
     private val mainPresenter: MainPresenter =
-            MainPresenter(view, gpsInfoRepository, firebaseAuthWrapper)
+            MainPresenter(view, gpsInfoRepository, firebaseAuthWrapper, shareMessageFormatter)
 
     /**
      * Test create() - lunching correct fragment

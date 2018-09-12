@@ -124,8 +124,8 @@ class MainActivity : AppCompatActivity(),
 
     override fun onResume() {
         super.onResume()
-        presenter.resume()
         presenter.bindView(this)
+        presenter.resume()
     }
 
     /**

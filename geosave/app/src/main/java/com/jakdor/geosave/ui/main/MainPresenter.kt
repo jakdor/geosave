@@ -127,7 +127,7 @@ class MainPresenter(view: MainContract.MainView,
      * Share menu option clicked, format text to share and lunch intent
      */
     override fun onShareOptionClicked() {
-        view?.shareIntent(gpsInfoRepository.lastLocation.latitude.toString()) //test
+        view?.shareIntent(gpsInfoRepository.lastLocation.latitude.toString()) //todo text formatting class
     }
 
     /**

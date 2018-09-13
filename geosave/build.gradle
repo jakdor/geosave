@@ -1,3 +1,11 @@
+/*
+ * GeoSave - app for easy sharing and collaborating on GPS related data
+ * Copyright (C) 2018  Jakub Dorda
+ *
+ * Software under GPLv3 licence - full copyright notice available at:
+ * https://github.com/jakdor/geosave/blob/master/README.md
+ */
+
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {

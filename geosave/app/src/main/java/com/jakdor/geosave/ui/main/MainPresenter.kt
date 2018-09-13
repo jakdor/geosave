@@ -129,7 +129,11 @@ class MainPresenter(view: MainContract.MainView,
      * Share menu option clicked, format text to share and lunch intent
      */
     override fun onShareOptionClicked() {
-        view?.shareIntent(shareMessageFormatter.build(gpsInfoRepository.lastLocation))
+        if(currentTab == 1) {
+            view?.shareIntent(shareMessageFormatter.buildMapShare(gpsInfoRepository.lastLocation))
+        } else {
+            view?.shareIntent(shareMessageFormatter.buildGpsInfoShare(gpsInfoRepository.lastLocation))
+        }
     }
 
     /**

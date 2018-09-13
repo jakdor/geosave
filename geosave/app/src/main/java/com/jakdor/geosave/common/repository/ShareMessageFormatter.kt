@@ -3,6 +3,7 @@ package com.jakdor.geosave.common.repository
 import android.content.Context
 import com.jakdor.geosave.R
 import com.jakdor.geosave.common.model.UserLocation
+import java.util.*
 import javax.inject.Inject
 
 class ShareMessageFormatter @Inject constructor(
@@ -10,13 +11,30 @@ class ShareMessageFormatter @Inject constructor(
         private val sharedPreferencesRepository: SharedPreferencesRepository){
 
     /**
+     * Returns Google Maps link based on provided [UserLocation] object
+     */
+    fun buildMapShare(location: UserLocation): String {
+        var msg = "https://www.google.pl/maps/place/"
+        msg += LocationConverter.dmsFormat(location.latitude, location.longitude)
+                .replace(' ', '+') + "/@"
+        msg += String.format(Locale.US, "%.7f,%.7f/", location.latitude, location.longitude)
+        return msg
+    }
+
+    /**
      * Returns share message based on user preferences form [SharedPreferencesRepository]
      * and provided [UserLocation] object
      */
-    fun build(location: UserLocation): String {
+    fun buildGpsInfoShare(location: UserLocation): String {
+
+        var msg = ""
 
         //location
-        var msg: String = context.getString(R.string.location_title) + ": "
+        if(sharedPreferencesRepository.getBoolean(
+                        SharedPreferencesRepository.shareFull, false)) {
+             msg += context.getString(R.string.location_title) + ": "
+        }
+
         when(sharedPreferencesRepository.getString(
                 SharedPreferencesRepository.locationUnits, "0").toInt()){
             0 -> { //decimal
@@ -40,8 +58,9 @@ class ShareMessageFormatter @Inject constructor(
         }
 
         //altitude
-        msg += "\n" + context.getString(R.string.altitude_title) + ": "
         if(location.altitude != -999.0){
+            msg += "\n" + context.getString(R.string.altitude_title) + ": "
+
             when(sharedPreferencesRepository.getString(
                     SharedPreferencesRepository.altUnits, "0").toInt()) {
                 0 -> { //meters

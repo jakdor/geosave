@@ -9,6 +9,7 @@
 package com.jakdor.geosave.di
 
 import com.jakdor.geosave.ui.gpsinfo.GpsInfoViewModel
+import com.jakdor.geosave.ui.locations.LocationsViewModel
 import com.jakdor.geosave.ui.map.MapViewModel
 import com.jakdor.geosave.ui.preferences.PreferencesViewModel
 import dagger.Subcomponent
@@ -28,4 +29,5 @@ interface ViewModelSubComponent {
     fun gpsInfoViewModel(): GpsInfoViewModel
     fun mapViewModel(): MapViewModel
     fun preferencesViewModel(): PreferencesViewModel
+    fun locationsViewModel(): LocationsViewModel
 }

@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ GeoSave - app for easy sharing and collaborating on GPS related data
+  ~ Copyright (C) 2018  Jakub Dorda
+  ~
+  ~ Software under GPLv3 licence - full copyright notice available at:
+  ~ https://github.com/jakdor/geosave/blob/master/README.md
+  -->
+
 <layout>
     <data>
         <import type="android.view.View"/>

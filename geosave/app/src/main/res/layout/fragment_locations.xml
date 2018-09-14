@@ -7,7 +7,7 @@
   ~ https://github.com/jakdor/geosave/blob/master/README.md
   -->
 
-<View xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="1px"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/locations_fragment_layout"
     android:layout_width="match_parent"
-    android:background="@color/shadow" />
+    android:layout_height="match_parent" />

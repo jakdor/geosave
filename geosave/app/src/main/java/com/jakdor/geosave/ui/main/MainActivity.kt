@@ -47,6 +47,7 @@ import com.google.android.gms.location.LocationCallback
 import com.google.firebase.auth.FirebaseAuth
 import com.jakdor.geosave.common.model.UserLocation
 import com.jakdor.geosave.ui.elements.StartupDialog
+import com.jakdor.geosave.ui.locations.LocationsFragment
 import com.jakdor.geosave.ui.map.MapFragment
 import com.jakdor.geosave.ui.preferences.PreferencesFragment
 import dagger.android.DispatchingAndroidInjector
@@ -214,7 +215,22 @@ class MainActivity : AppCompatActivity(),
         Timber.i("Attached %s", MapFragment.CLASS_TAG)
     }
 
+    /**
+     * Create or reattach [LocationsFragment]
+     */
     override fun switchToLocationsFragment() {
+        if (!fragmentMap.containsKey(LocationsFragment.CLASS_TAG)) {
+            fragmentMap[LocationsFragment.CLASS_TAG] = LocationsFragment.newInstance()
+            Timber.i("Created %s", LocationsFragment.CLASS_TAG)
+        }
+
+        supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.main_fragment_layout,
+                        fragmentMap[LocationsFragment.CLASS_TAG], LocationsFragment.CLASS_TAG)
+                .commit()
+
+        Timber.i("Attached %s", LocationsFragment.CLASS_TAG)
     }
 
     /**

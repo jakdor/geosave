@@ -134,5 +134,8 @@
     <string name="pref_share_full_title">Share button behaviour</string>
     <string name="pref_share_full_summary_on">Share full location info</string>
     <string name="pref_share_full_summary_off">Share only horizontal position</string>
+    <string name="repos_fab_add_new">Create new</string>
+    <string name="repos_fab_browse_public">Browse public</string>
+    <string name="repos_fab_join_private">Join private</string>
 
 </resources>

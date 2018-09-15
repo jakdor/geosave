@@ -9,7 +9,7 @@
         <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
     </style>
 
-    <!-- The launcher theme -->
+    <!-- Launcher theme -->
     <style name="AppTheme.Launcher">
         <item name="android:windowBackground">@drawable/splash_screen</item>
     </style>
@@ -21,6 +21,12 @@
 
     <style name="AppAlertDialogContent" parent="Theme.AppCompat.Light">
         <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <!-- Fab menu label style -->
+    <style name="fab_labels_style">
+        <item name="android:background">@drawable/fab_label_background</item>
+        <item name="android:textColor">@color/white</item>
     </style>
 
 </resources>

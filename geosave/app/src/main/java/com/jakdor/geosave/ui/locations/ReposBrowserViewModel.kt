@@ -9,26 +9,15 @@
 package com.jakdor.geosave.ui.locations
 
 import android.app.Application
-import android.arch.lifecycle.MutableLiveData
 import com.jakdor.geosave.arch.BaseViewModel
 import com.jakdor.geosave.utils.RxSchedulersFacade
 import javax.inject.Inject
 
 /**
- * ViewModel for [LocationsFragment]
+ * ViewModel for [ReposBrowserFragment]
  */
-class LocationsViewModel @Inject
+class ReposBrowserViewModel @Inject
 constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade):
-        BaseViewModel(application, rxSchedulersFacade){
+    BaseViewModel(application, rxSchedulersFacade){
 
-    val currentFragmentId = MutableLiveData<String>()
-
-    /**
-     * Set initial child fragment
-     */
-    fun requestUpdatesOnCurrentFragment(){
-        if(currentFragmentId.value.isNullOrEmpty()){
-            currentFragmentId.postValue(ReposBrowserFragment.CLASS_TAG)
-        }
-    }
 }

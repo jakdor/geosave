@@ -14,6 +14,7 @@ import android.util.ArrayMap
 import com.jakdor.geosave.di.ViewModelSubComponent
 import com.jakdor.geosave.ui.gpsinfo.GpsInfoViewModel
 import com.jakdor.geosave.ui.locations.LocationsViewModel
+import com.jakdor.geosave.ui.locations.ReposBrowserViewModel
 import com.jakdor.geosave.ui.map.MapViewModel
 import com.jakdor.geosave.ui.preferences.PreferencesViewModel
 
@@ -42,6 +43,7 @@ constructor(viewModelSubComponent: ViewModelSubComponent) : ViewModelProvider.Fa
         creators[MapViewModel::class.java] = Callable { viewModelSubComponent.mapViewModel() }
         creators[PreferencesViewModel::class.java] = Callable { viewModelSubComponent.preferencesViewModel() }
         creators[LocationsViewModel::class.java] = Callable { viewModelSubComponent.locationsViewModel() }
+        creators[ReposBrowserViewModel::class.java] = Callable { viewModelSubComponent.reposBrowserViewModel() }
     }
 
     /**

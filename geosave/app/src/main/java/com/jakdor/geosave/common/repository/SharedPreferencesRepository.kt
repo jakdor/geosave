@@ -10,12 +10,13 @@ package com.jakdor.geosave.common.repository
 
 import android.app.Activity
 import android.content.Context
+import android.support.v7.preference.PreferenceManager
 import com.jakdor.geosave.R
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class SharedPreferencesRepository @Inject constructor(context: Context) {
+class SharedPreferencesRepository @Inject constructor(val context: Context) {
 
     init {
         locationUnits = context.getString(R.string.pref_location_units_key)
@@ -25,6 +26,13 @@ class SharedPreferencesRepository @Inject constructor(context: Context) {
         altApi = context.getString(R.string.pref_alt_api_key)
         altApiFreq = context.getString(R.string.pref_alt_api_freq_key)
         shareFull = context.getString(R.string.pref_share_full_key)
+    }
+
+    /**
+     * Initialize preferences before user opens [com.jakdor.geosave.ui.preferences.PreferencesFragment]
+     */
+    fun loadInitialPrefs(){
+        PreferenceManager.setDefaultValues(context, R.xml.pref_general, false)
     }
 
     private var sharedPreferences = context.getSharedPreferences(

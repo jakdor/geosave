@@ -39,6 +39,8 @@ constructor(application: Application,
      * Get update on saved preferences from [SharedPreferencesRepository]
      */
     fun requestPreferencesUpdate(){
+        sharedPreferencesRepository.loadInitialPrefs() //first app run, load initial values
+
         val preferencesMap: MutableMap<String, Int> = mutableMapOf(
                 Pair(SharedPreferencesRepository.locationUnits, sharedPreferencesRepository
                         .getString(SharedPreferencesRepository.locationUnits, "0").toInt()),

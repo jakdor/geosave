@@ -9,6 +9,8 @@
 package com.jakdor.geosave.common.wrapper
 
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.jakdor.geosave.common.model.firebase.User
 import timber.log.Timber
 
 class FirebaseAuthWrapper constructor(private var mAuth: FirebaseAuth) {
@@ -42,7 +44,10 @@ class FirebaseAuthWrapper constructor(private var mAuth: FirebaseAuth) {
      */
     fun firebaseLoginAnonymous() {
         mAuth.signInAnonymously().addOnCompleteListener {
-            if(it.isSuccessful) Timber.i("Firebase anonymous login success")
+            if(it.isSuccessful) {
+                checkUserObj()
+                Timber.i("Firebase anonymous login success")
+            }
             else Timber.wtf("Unable to login as anonymous")
         }
     }
@@ -74,5 +79,35 @@ class FirebaseAuthWrapper constructor(private var mAuth: FirebaseAuth) {
             }
             else Timber.wtf("Unable to delete user account")
         }
+    }
+
+    /**
+     * Check if user has [User] object stored on Firestore, if not create new
+     */
+    fun checkUserObj(){
+        if(mAuth.currentUser != null) {
+            val db = FirebaseFirestore.getInstance()
+
+            db.collection("users").document(mAuth.currentUser!!.uid)
+                    .get()
+                    .addOnSuccessListener {documentSnapshot ->
+                        if(documentSnapshot.exists()) Timber.i("User already has User obj")
+                        else pushNewUserObj(db)
+                    }
+                    .addOnFailureListener { pushNewUserObj(db) }
+        }
+    }
+
+    /**
+     * Creates new init [User] object and pushes it to Firestore
+     */
+    private fun pushNewUserObj(db: FirebaseFirestore){
+        val newUser = User(mAuth.currentUser!!.displayName ?: "anonymous",
+                mAuth.currentUser!!.photoUrl.toString(), mutableListOf())
+
+        db.collection("users").document(mAuth.currentUser!!.uid)
+                .set(newUser)
+                .addOnSuccessListener { Timber.i("Pushed new User object to Firestore") }
+                .addOnFailureListener { Timber.e("Error pushing new User to Firestore") }
     }
 }

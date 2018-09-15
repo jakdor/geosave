@@ -57,14 +57,14 @@ class FirebaseAuthWrapperTest{
         //null, user not initialized - false
         Assert.assertFalse(firebaseAuthWrapper.isAnonymous())
 
-        //true returned by FirebaseUser - true
+        //true returned by User - true
         user = mock { on{ isAnonymous }.thenReturn(true) }
         firebaseAuth = mock { on{ currentUser }.thenReturn(user) }
         firebaseAuthWrapper = FirebaseAuthWrapper(firebaseAuth)
 
         Assert.assertTrue(firebaseAuthWrapper.isAnonymous())
 
-        //false returned by FirebaseUser - false
+        //false returned by User - false
         user = mock { on{ isAnonymous }.thenReturn(false) }
         firebaseAuth = mock { on{ currentUser }.thenReturn(user) }
         firebaseAuthWrapper = FirebaseAuthWrapper(firebaseAuth)

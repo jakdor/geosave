@@ -141,6 +141,12 @@ class MainActivity : AppCompatActivity(),
         presenter.resume()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        googleApiClient.unregisterConnectionCallbacks(this)
+        googleApiClient.unregisterConnectionFailedListener(this)
+    }
+
     /**
      * Overrider back behaviour when returning from [PreferencesFragment]
      */

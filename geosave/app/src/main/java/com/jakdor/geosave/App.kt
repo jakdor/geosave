@@ -12,6 +12,7 @@ import android.app.Activity
 import android.app.Application
 import com.jakdor.geosave.di.AppInjector
 import com.jakdor.geosave.utils.AppLogger
+import com.squareup.leakcanary.AndroidExcludedRefs
 import com.squareup.leakcanary.LeakCanary
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasActivityInjector
@@ -33,8 +34,23 @@ class App : Application(), HasActivityInjector{
             // You should not init your app in this process.
             return
         }
-        LeakCanary.install(this)
+
+        leakCanary()
         AppInjector.init(this)
         AppLogger.init(this)
+    }
+
+    private fun leakCanary(){
+        //exclude known libs leaks
+        val excludedRefs = AndroidExcludedRefs.createAndroidDefaults()
+                .instanceField("android.view.inputmethod.InputMethodManager",
+                        "mCurRootView")
+                .instanceField("android.view.inputmethod.InputMethodManager",
+                        "mNextServedView")
+                .instanceField("android.view.inputmethod.InputMethodManager",
+                        "mServedView")
+                .build()
+
+        LeakCanary.refWatcher(this).excludedRefs(excludedRefs).buildAndInstall()
     }
 }

@@ -17,6 +17,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.jakdor.geosave.R
 import com.jakdor.geosave.di.InjectableFragment
+import kotlinx.android.synthetic.main.fragment_repos_browser.*
 import javax.inject.Inject
 
 /**
@@ -32,6 +33,13 @@ class ReposBrowserFragment: Fragment(), InjectableFragment {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_repos_browser, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        repos_fab_new.setOnClickListener { viewModel?.onFabCreateNewClicked() }
+        repos_fab_public.setOnClickListener { viewModel?.onFabBrowsePublicClicked() }
+        repos_fab_private.setOnClickListener { viewModel?.onFabJoinPrivateClicked() }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

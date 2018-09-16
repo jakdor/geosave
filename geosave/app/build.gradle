@@ -30,6 +30,7 @@ project.ext {
     retrofitVersion = "2.3.0"
     okHttpVersion = "3.9.1"
     fabMenuVersion = "1.10.1"
+    leakCanaryVersion = "1.6.1"
 
     junitVersion = "4.12"
     mockitoVersion = "2.13.0"
@@ -149,6 +150,11 @@ dependencies {
 
     //fab menu
     implementation "com.getbase:floatingactionbutton:$project.fabMenuVersion"
+
+    //LeakCanary
+    debugImplementation "com.squareup.leakcanary:leakcanary-android:$project.leakCanaryVersion"
+    releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$project.leakCanaryVersion"
+    debugImplementation "com.squareup.leakcanary:leakcanary-support-fragment:$project.leakCanaryVersion"
 
     //TESTS LOCAL
 

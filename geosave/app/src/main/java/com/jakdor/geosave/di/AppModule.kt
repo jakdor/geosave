@@ -12,6 +12,7 @@ import android.app.Application
 import android.arch.lifecycle.ViewModelProvider
 import android.content.Context
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.jakdor.geosave.App
 import com.jakdor.geosave.arch.ViewModelFactory
 import com.jakdor.geosave.common.network.RetrofitFactory
@@ -62,13 +63,18 @@ class AppModule {
     }
 
     @Provides
-    fun provideFirebaseAuthWrapper(): FirebaseAuthWrapper{
-        return FirebaseAuthWrapper(FirebaseAuth.getInstance())
+    fun provideFirebaseAuthWrapper(firestore: FirebaseFirestore): FirebaseAuthWrapper{
+        return FirebaseAuthWrapper(FirebaseAuth.getInstance(), firestore)
     }
 
     @Singleton
     @Provides
     fun provideRestApiRepository(): RestApiRepository{
         return RestApiRepository(RetrofitFactory())
+    }
+
+    @Provides
+    fun provideFirebaseFirestore(): FirebaseFirestore{
+        return FirebaseFirestore.getInstance()
     }
 }

@@ -13,7 +13,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.jakdor.geosave.common.model.firebase.User
 import timber.log.Timber
 
-class FirebaseAuthWrapper constructor(private var mAuth: FirebaseAuth) {
+class FirebaseAuthWrapper constructor(private var mAuth: FirebaseAuth,
+                                      private val db: FirebaseFirestore) {
 
     /**
      * Check if user logged in
@@ -86,8 +87,6 @@ class FirebaseAuthWrapper constructor(private var mAuth: FirebaseAuth) {
      */
     fun checkUserObj(){
         if(mAuth.currentUser != null) {
-            val db = FirebaseFirestore.getInstance()
-
             db.collection("users").document(mAuth.currentUser!!.uid)
                     .get()
                     .addOnSuccessListener {documentSnapshot ->

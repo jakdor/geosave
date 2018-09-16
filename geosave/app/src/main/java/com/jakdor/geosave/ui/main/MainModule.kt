@@ -30,8 +30,8 @@ class MainModule {
     }
 
     @Provides
-    fun provideGoogleApiClient(mainActivity: MainActivity): GoogleApiClient {
-        return GoogleApiClient.Builder(mainActivity)
+    fun provideGoogleApiClient(app: Application, mainActivity: MainActivity): GoogleApiClient {
+        return GoogleApiClient.Builder(app)
                 .enableAutoManage(mainActivity, 0, mainActivity)
                 .addConnectionCallbacks(mainActivity)
                 .addOnConnectionFailedListener(mainActivity)

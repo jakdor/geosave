@@ -10,6 +10,7 @@ package com.jakdor.geosave.di
 
 import com.jakdor.geosave.ui.gpsinfo.GpsInfoFragment
 import com.jakdor.geosave.ui.locations.LocationsFragment
+import com.jakdor.geosave.ui.locations.ReposBrowserFragment
 import com.jakdor.geosave.ui.map.MapFragment
 import com.jakdor.geosave.ui.preferences.PreferencesFragment
 import dagger.Module
@@ -31,4 +32,7 @@ abstract class MainActivityMVVMFragmentBuilderModule {
 
     @ContributesAndroidInjector
     abstract fun contributeLocationsFragmnet(): LocationsFragment
+
+    @ContributesAndroidInjector
+    abstract fun contributeReposBrowserFragment(): ReposBrowserFragment
 }

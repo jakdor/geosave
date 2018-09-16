@@ -53,6 +53,7 @@ import com.jakdor.geosave.ui.preferences.PreferencesFragment
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.dialog_first_startup.*
+import java.lang.ref.WeakReference
 
 class MainActivity : AppCompatActivity(),
         HasSupportFragmentInjector,
@@ -70,6 +71,7 @@ class MainActivity : AppCompatActivity(),
     @Inject
     lateinit var googleApiClient: GoogleApiClient
 
+    private lateinit var locationCallbackSafeWrapper: LocationCallbackSafeWrapper
     private lateinit var fallbackLocationManager: LocationManager
     private var fallbackLocationProvider: String? = null
 
@@ -102,8 +104,10 @@ class MainActivity : AppCompatActivity(),
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        if(savedInstanceState != null){
-            presenter = savedPresenter
+        //restore presenter after screen rotation
+        val savedPresenter = lastCustomNonConfigurationInstance
+        if(savedPresenter != null){
+            presenter = savedPresenter as MainPresenter
             presenter.bindView(this)
         }
 
@@ -145,9 +149,11 @@ class MainActivity : AppCompatActivity(),
             super.onBackPressed()
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
-        super.onSaveInstanceState(outState)
-        savedPresenter = presenter
+    /**
+     * Retain presenter instance between screen rotation
+     */
+    override fun onRetainCustomNonConfigurationInstance(): Any {
+        return presenter
     }
 
     /**
@@ -351,8 +357,10 @@ class MainActivity : AppCompatActivity(),
                 locationRequest.fastestInterval = 3000
                 locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
 
+                locationCallbackSafeWrapper = LocationCallbackSafeWrapper(presenter)
+
                 LocationServices.getFusedLocationProviderClient(this)
-                        .requestLocationUpdates(locationRequest, locationCallback, null)
+                        .requestLocationUpdates(locationRequest, locationCallbackSafeWrapper, null)
 
                 Timber.i("add location callback")
 
@@ -399,20 +407,9 @@ class MainActivity : AppCompatActivity(),
      * Remove location callback
      */
     override fun stopLocationUpdates() {
-        LocationServices.getFusedLocationProviderClient(this).removeLocationUpdates(locationCallback)
+        LocationServices.getFusedLocationProviderClient(this)
+                .removeLocationUpdates(locationCallbackSafeWrapper)
         Timber.i("Removed location callback")
-    }
-
-    /**
-     * GMS new location callback
-     */
-    private val locationCallback = object : LocationCallback() {
-        override fun onLocationResult(locationResult: LocationResult?) {
-            for (location in locationResult!!.locations) {
-                Timber.i(location.toString())
-                presenter.onLocationChanged(UserLocation(location))
-            }
-        }
     }
 
     /**
@@ -551,8 +548,25 @@ class MainActivity : AppCompatActivity(),
         AuthUI.getInstance()
     }
 
+    /**
+     * Wrapper for GMS [LocationCallback] mitigating memory leak,
+     * this is known since version 8.1.0, thx Google
+     */
+    private class LocationCallbackSafeWrapper
+    internal constructor(presenter: MainPresenter): LocationCallback() {
+        private val weakRef: WeakReference<MainPresenter> = WeakReference(presenter)
+
+        override fun onLocationResult(locationResult: LocationResult?) {
+            for (location in locationResult!!.locations) {
+                Timber.i(location.toString())
+                if (weakRef.get() != null) {
+                    weakRef.get()?.onLocationChanged(UserLocation(location))
+                }
+            }
+        }
+    }
+
     companion object {
-        private lateinit var savedPresenter: MainPresenter
         private const val REQUEST_CHECK_SETTINGS_GPS=0x1
         private const val REQUEST_ID_MULTIPLE_PERMISSIONS=0x2
         private const val RC_SIGN_IN = 123

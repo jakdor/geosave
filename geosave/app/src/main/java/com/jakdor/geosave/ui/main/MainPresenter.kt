@@ -35,6 +35,7 @@ class MainPresenter(view: MainContract.MainView,
     override fun start() {
         super.start()
         firebaseLogin(firebaseAuthWrapper.isLoggedIn())
+        firebaseAuthWrapper.checkUserObj()
     }
 
     /**
@@ -264,6 +265,7 @@ class MainPresenter(view: MainContract.MainView,
     override fun firebaseSignIn(status: Boolean) {
         if(status) {
             firebaseAuthWrapper.firebaseSendEmailVerification()
+            firebaseAuthWrapper.checkUserObj()
         } else {
             if(!firebaseAuthWrapper.isLoggedIn()) {
                 firebaseAuthWrapper.firebaseLoginAnonymous()

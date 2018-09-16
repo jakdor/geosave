@@ -143,6 +143,7 @@ class MainActivity : AppCompatActivity(),
 
     override fun onDestroy() {
         super.onDestroy()
+        fragmentMap.clear()
         googleApiClient.unregisterConnectionCallbacks(this)
         googleApiClient.unregisterConnectionFailedListener(this)
     }
@@ -197,13 +198,17 @@ class MainActivity : AppCompatActivity(),
     override fun switchToGpsInfoFragment() {
         if (!fragmentMap.containsKey(GpsInfoFragment.CLASS_TAG)) {
             fragmentMap[GpsInfoFragment.CLASS_TAG] = GpsInfoFragment.newInstance()
+            supportFragmentManager.beginTransaction()
+                    .add(R.id.main_fragment_layout, fragmentMap[GpsInfoFragment.CLASS_TAG],
+                            GpsInfoFragment.CLASS_TAG)
+                    .commit()
             Timber.i("Created %s", GpsInfoFragment.CLASS_TAG)
         }
        
-        supportFragmentManager
-                .beginTransaction()
-                .replace(R.id.main_fragment_layout,
-                        fragmentMap[GpsInfoFragment.CLASS_TAG], GpsInfoFragment.CLASS_TAG)
+        hideAllFragments()
+        
+        supportFragmentManager.beginTransaction()
+                .show(fragmentMap[GpsInfoFragment.CLASS_TAG])
                 .commit()
         
         Timber.i("Attached %s", GpsInfoFragment.CLASS_TAG)
@@ -215,13 +220,17 @@ class MainActivity : AppCompatActivity(),
     override fun switchToMapFragment() {
         if (!fragmentMap.containsKey(MapFragment.CLASS_TAG)) {
             fragmentMap[MapFragment.CLASS_TAG] = MapFragment.newInstance()
+            supportFragmentManager.beginTransaction()
+                    .add(R.id.main_fragment_layout, fragmentMap[MapFragment.CLASS_TAG],
+                            MapFragment.CLASS_TAG)
+                    .commit()
             Timber.i("Created %s", MapFragment.CLASS_TAG)
         }
 
-        supportFragmentManager
-                .beginTransaction()
-                .replace(R.id.main_fragment_layout,
-                        fragmentMap[MapFragment.CLASS_TAG], MapFragment.CLASS_TAG)
+        hideAllFragments()
+
+        supportFragmentManager.beginTransaction()
+                .show(fragmentMap[MapFragment.CLASS_TAG])
                 .commit()
 
         Timber.i("Attached %s", MapFragment.CLASS_TAG)
@@ -233,13 +242,17 @@ class MainActivity : AppCompatActivity(),
     override fun switchToLocationsFragment() {
         if (!fragmentMap.containsKey(LocationsFragment.CLASS_TAG)) {
             fragmentMap[LocationsFragment.CLASS_TAG] = LocationsFragment.newInstance()
+            supportFragmentManager.beginTransaction()
+                    .add(R.id.main_fragment_layout, fragmentMap[LocationsFragment.CLASS_TAG],
+                            LocationsFragment.CLASS_TAG)
+                    .commit()
             Timber.i("Created %s", LocationsFragment.CLASS_TAG)
         }
 
-        supportFragmentManager
-                .beginTransaction()
-                .replace(R.id.main_fragment_layout,
-                        fragmentMap[LocationsFragment.CLASS_TAG], LocationsFragment.CLASS_TAG)
+        hideAllFragments()
+
+        supportFragmentManager.beginTransaction()
+                .show(fragmentMap[LocationsFragment.CLASS_TAG])
                 .commit()
 
         Timber.i("Attached %s", LocationsFragment.CLASS_TAG)
@@ -251,16 +264,31 @@ class MainActivity : AppCompatActivity(),
     override fun switchToPreferencesFragment() {
         if (!fragmentMap.containsKey(PreferencesFragment.CLASS_TAG)) {
             fragmentMap[PreferencesFragment.CLASS_TAG] = PreferencesFragment.newInstance()
+            supportFragmentManager.beginTransaction()
+                    .add(R.id.main_fragment_layout, fragmentMap[PreferencesFragment.CLASS_TAG],
+                            PreferencesFragment.CLASS_TAG)
+                    .commit()
             Timber.i("Created %s", PreferencesFragment.CLASS_TAG)
         }
 
-        supportFragmentManager
-                .beginTransaction()
-                .replace(R.id.main_fragment_layout,
-                        fragmentMap[PreferencesFragment.CLASS_TAG], PreferencesFragment.CLASS_TAG)
+        hideAllFragments()
+
+        supportFragmentManager.beginTransaction()
+                .show(fragmentMap[PreferencesFragment.CLASS_TAG])
                 .commit()
 
         Timber.i("Attached %s", PreferencesFragment.CLASS_TAG)
+    }
+
+    /**
+     * Hide all fragments stored by supportFragmentManager
+     */
+    private fun hideAllFragments(){
+        for(fragment in supportFragmentManager.fragments){
+            supportFragmentManager.beginTransaction()
+                    .hide(fragment)
+                    .commit()
+        }
     }
 
     /**

@@ -9,6 +9,7 @@
 package com.jakdor.geosave.ui.locations
 
 import android.app.Application
+import android.arch.lifecycle.MutableLiveData
 import com.google.firebase.firestore.FirebaseFirestore
 import com.jakdor.geosave.arch.BaseViewModel
 import com.jakdor.geosave.utils.RxSchedulersFacade
@@ -22,25 +23,27 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
             private val db: FirebaseFirestore):
     BaseViewModel(application, rxSchedulersFacade){
 
+    val dialogLunchRequest = MutableLiveData<Int>()
+
     /**
      * Handle click on create new repo fab
      */
     fun onFabCreateNewClicked(){
-
+        dialogLunchRequest.postValue(0)
     }
 
     /**
      * Handle click on browse public repos fab
      */
     fun onFabBrowsePublicClicked(){
-
+        dialogLunchRequest.postValue(1)
     }
 
     /**
      * Handle click on join private repo fab
      */
     fun onFabJoinPrivateClicked(){
-
+        dialogLunchRequest.postValue(2)
     }
 
 }

@@ -25,5 +25,7 @@ class AddRepoDialog(context: Context?, private val viewModel: ReposBrowserViewMo
         setContentView(R.layout.dialog_add_repo)
 
         window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+
+        setCanceledOnTouchOutside(false)
     }
 }

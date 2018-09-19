@@ -137,5 +137,10 @@
     <string name="repos_fab_add_new">Create new</string>
     <string name="repos_fab_browse_public">Browse public</string>
     <string name="repos_fab_join_private">Join private</string>
+    <string name="repo_name_icon_desc">repo name icon</string>
+    <string name="repo_name_title">Name:</string>
+    <string name="add_repo_radio_private_label">private</string>
+    <string name="add_repo_radio_public_label">public</string>
+    <string name="repo_privacy_title">Visibility:</string>
 
 </resources>

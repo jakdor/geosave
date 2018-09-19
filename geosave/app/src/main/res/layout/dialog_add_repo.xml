@@ -7,14 +7,110 @@
   ~ https://github.com/jakdor/geosave/blob/master/README.md
   -->
 
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
+    <android.support.constraint.Guideline
+        android:id="@+id/dialog_add_repo_guideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="hello world"/>
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.05" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/dialog_add_repo_guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.15" />
+
+    <ImageView
+        android:id="@+id/dialog_add_repo_name_icon"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:contentDescription="@string/repo_name_icon_desc"
+        android:src="@drawable/ic_home_black_24dp"
+        app:layout_constraintDimensionRatio="w,1:1"
+        app:layout_constraintEnd_toStartOf="@+id/dialog_add_repo_guideline2"
+        app:layout_constraintStart_toStartOf="@+id/dialog_add_repo_guideline"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/dialog_add_repo_name_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/repo_name_title"
+        android:labelFor="@id/dialog_add_repo_name"
+        app:layout_constraintBottom_toBottomOf="@+id/dialog_add_repo_name_icon"
+        app:layout_constraintStart_toEndOf="@+id/dialog_add_repo_name_icon"
+        app:layout_constraintTop_toTopOf="@+id/dialog_add_repo_name_icon" />
+
+    <EditText
+        android:id="@+id/dialog_add_repo_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:inputType="text"
+        android:maxLength="64"
+        app:layout_constraintBottom_toBottomOf="@+id/dialog_add_repo_name_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/dialog_add_repo_name_title" />
+
+    <ImageView
+        android:id="@+id/dialog_add_repo_privacy_icon"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:contentDescription="@string/repo_name_icon_desc"
+        android:src="@drawable/ic_home_black_24dp"
+        app:layout_constraintDimensionRatio="w,1:1"
+        app:layout_constraintEnd_toStartOf="@+id/dialog_add_repo_guideline2"
+        app:layout_constraintStart_toStartOf="@+id/dialog_add_repo_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/dialog_add_repo_name_icon" />
+
+    <TextView
+        android:id="@+id/dialog_add_repo_privacy_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/repo_privacy_title"
+        app:layout_constraintBottom_toBottomOf="@+id/dialog_add_repo_privacy_icon"
+        app:layout_constraintStart_toEndOf="@+id/dialog_add_repo_privacy_icon"
+        app:layout_constraintTop_toTopOf="@+id/dialog_add_repo_privacy_icon" />
+
+    <RadioGroup
+        android:id="@+id/dialog_add_repo_privacy_radio_group"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:checkedButton="@+id/dialog_add_repo_radio_private"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="@+id/dialog_add_repo_privacy_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/dialog_add_repo_privacy_title"
+        app:layout_constraintTop_toTopOf="@+id/dialog_add_repo_privacy_icon">
+
+        <RadioButton
+            android:id="@+id/dialog_add_repo_radio_private"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:text="@string/add_repo_radio_private_label" />
+
+        <RadioButton
+            android:id="@+id/dialog_add_repo_radio_public"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="@string/add_repo_radio_public_label" />
+
+    </RadioGroup>
 
 </android.support.constraint.ConstraintLayout>

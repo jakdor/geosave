@@ -24,11 +24,19 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
     BaseViewModel(application, rxSchedulersFacade){
 
     val dialogLunchRequest = MutableLiveData<Int>()
+    val dialogDismissRequest = MutableLiveData<Int>()
+    val dialogLoadingStatus = MutableLiveData<Boolean>()
+
+    init {
+        loadingStatus.postValue(false)
+        dialogLoadingStatus.postValue(false)
+    }
 
     /**
      * Handle click on create new repo fab
      */
     fun onFabCreateNewClicked(){
+        dialogDismissRequest.postValue(-1)
         dialogLunchRequest.postValue(0)
     }
 
@@ -36,6 +44,7 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
      * Handle click on browse public repos fab
      */
     fun onFabBrowsePublicClicked(){
+        dialogDismissRequest.postValue(-1)
         dialogLunchRequest.postValue(1)
     }
 
@@ -43,7 +52,22 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
      * Handle click on join private repo fab
      */
     fun onFabJoinPrivateClicked(){
+        dialogDismissRequest.postValue(-1)
         dialogLunchRequest.postValue(2)
     }
 
+    /**
+     * Handle click on cancel in [com.jakdor.geosave.ui.elements.AddRepoDialog]
+     */
+    fun onAddRepoDialogCancelClicked(){
+        if(dialogLoadingStatus.value != true) dialogDismissRequest.postValue(0)
+    }
+
+    /**
+     * Handle click on crate in [com.jakdor.geosave.ui.elements.AddRepoDialog]
+     */
+    fun onAddRepoDialogCreateClicked(){
+        dialogLoadingStatus.postValue(true)
+        //todo create query
+    }
 }

@@ -20,6 +20,7 @@ import com.jakdor.geosave.R
 import com.jakdor.geosave.di.InjectableFragment
 import com.jakdor.geosave.ui.elements.AddRepoDialog
 import kotlinx.android.synthetic.main.fragment_repos_browser.*
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -80,8 +81,9 @@ class ReposBrowserFragment: Fragment(), InjectableFragment {
      * Lunch [AddRepoDialog]
      */
     fun lunchAddRepoDialog(){
-        val dialog = AddRepoDialog(context, viewModel)
+        val dialog = AddRepoDialog(context, this,  viewModel)
         dialog.show()
+        Timber.i("lunched AddRepoDialog")
     }
 
     companion object {

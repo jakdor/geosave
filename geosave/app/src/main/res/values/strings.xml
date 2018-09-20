@@ -139,8 +139,14 @@
     <string name="repos_fab_join_private">Join private</string>
     <string name="repo_name_icon_desc">repo name icon</string>
     <string name="repo_name_title">Name:</string>
-    <string name="add_repo_radio_private_label">private</string>
-    <string name="add_repo_radio_public_label">public</string>
+    <string name="add_repo_radio_private_label">Private</string>
+    <string name="add_repo_radio_public_label">Public</string>
     <string name="repo_privacy_title">Visibility:</string>
+    <string name="repo_security_title">Add/edit permission:</string>
+    <string name="add_repo_radio_selected_label">Selected users</string>
+    <string name="add_repo_radio_everybody_label">No restrictions</string>
+    <string name="add_repo_dialog_cancel_button_label">cancel</string>
+    <string name="add_repo_dialog_create_button_label">create</string>
+    <string name="dialog_add_repo_title_text">Create new repository</string>
 
 </resources>

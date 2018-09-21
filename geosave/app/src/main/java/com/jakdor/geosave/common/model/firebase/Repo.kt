@@ -11,9 +11,14 @@ package com.jakdor.geosave.common.model.firebase
 import com.google.firebase.firestore.DocumentReference
 
 /**
- * Firebase user profile
+ * Firebase repository entry/document
  */
-data class User
-constructor(var nickname: String = "",
+data class Repo
+constructor(var name: String = "",
+            var ownerUid: String = "",
+            var info: String = "",
             var picUrl: String = "",
-            var reposList: MutableList<DocumentReference> = mutableListOf())
+            var editorsUidList: MutableList<String> = mutableListOf(),
+            var visibility: Int = 0,
+            var security: Int = 0,
+            var messagesList: MutableList<DocumentReference> = mutableListOf())

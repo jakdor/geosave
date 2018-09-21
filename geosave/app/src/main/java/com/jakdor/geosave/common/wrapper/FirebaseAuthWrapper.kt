@@ -89,7 +89,7 @@ class FirebaseAuthWrapper constructor(private var mAuth: FirebaseAuth,
         if(mAuth.currentUser != null) {
             db.collection("users").document(mAuth.currentUser!!.uid)
                     .get()
-                    .addOnSuccessListener {documentSnapshot ->
+                    .addOnSuccessListener { documentSnapshot ->
                         if(documentSnapshot.exists()) Timber.i("User already has User obj")
                         else pushNewUserObj(db)
                     }
@@ -108,5 +108,12 @@ class FirebaseAuthWrapper constructor(private var mAuth: FirebaseAuth,
                 .set(newUser)
                 .addOnSuccessListener { Timber.i("Pushed new User object to Firestore") }
                 .addOnFailureListener { Timber.e("Error pushing new User to Firestore") }
+    }
+
+    /**
+     * Get user id
+     */
+    fun getUid(): String? {
+        return mAuth.currentUser?.uid
     }
 }

@@ -8,6 +8,7 @@
 
 package com.jakdor.geosave.ui.locations
 
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
@@ -17,7 +18,9 @@ import android.view.View
 import android.view.ViewGroup
 import com.jakdor.geosave.R
 import com.jakdor.geosave.di.InjectableFragment
+import com.jakdor.geosave.ui.elements.AddRepoDialog
 import kotlinx.android.synthetic.main.fragment_repos_browser.*
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -49,6 +52,38 @@ class ReposBrowserFragment: Fragment(), InjectableFragment {
             viewModel = ViewModelProviders.of(this, viewModelFactory)
                     .get(ReposBrowserViewModel::class.java)
         }
+
+        observeDialogLunchRequest()
+    }
+
+    /**
+     * Observe [ReposBrowserViewModel] dialogLunchRequest
+     */
+    fun observeDialogLunchRequest(){
+        viewModel?.dialogLunchRequest?.observe(this, Observer {
+            handleDialogLunchRequest(it)
+        })
+    }
+
+    /**
+     * Handle dialog lunch code
+     */
+    fun handleDialogLunchRequest(code: Int?){
+        if(code != null){
+            repos_fab_menu.collapse()
+            when(code){
+                0 -> lunchAddRepoDialog()
+            }
+        }
+    }
+
+    /**
+     * Lunch [AddRepoDialog]
+     */
+    fun lunchAddRepoDialog(){
+        val dialog = AddRepoDialog(context, this,  viewModel)
+        dialog.show()
+        Timber.i("lunched AddRepoDialog")
     }
 
     companion object {

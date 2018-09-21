@@ -16,9 +16,11 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.view.inputmethod.InputMethodManager
 import com.jakdor.geosave.R
 import com.jakdor.geosave.common.model.firebase.Repo
 import com.jakdor.geosave.ui.locations.ReposBrowserViewModel
+import com.jakdor.geosave.utils.GlideApp
 import kotlinx.android.synthetic.main.dialog_add_repo.*
 
 class AddRepoDialog(context: Context?,
@@ -59,7 +61,8 @@ class AddRepoDialog(context: Context?,
             when(status){
                 true -> {
                     setCancelable(false)
-                    dialog_add_repo_loading_anim.visibility = View.VISIBLE //todo replace with anim gif
+                    dialog_add_repo_loading_anim.visibility = View.VISIBLE
+                    animateLoading()
                 }
                 false -> {
                     setCancelable(true)
@@ -90,6 +93,7 @@ class AddRepoDialog(context: Context?,
      */
     fun createNewRepoObj(){
         if(validateInputs()){
+            hideKeyboard()
             val visibility = if(dialog_add_repo_radio_privacy_private.isChecked) 0 else 1
             val security = if(dialog_add_repo_radio_security_selected.isChecked) 0 else 1
 
@@ -114,5 +118,27 @@ class AddRepoDialog(context: Context?,
             return false
         }
         return true
+    }
+
+    /**
+     * Load loading gif
+     */
+    private fun animateLoading() {
+        GlideApp.with(context)
+                .asGif()
+                .load(R.drawable.load)
+                .into(dialog_add_repo_loading_anim)
+    }
+
+    /**
+     * Hide soft keyboard
+     */
+    private fun hideKeyboard(){
+        val view = currentFocus
+        if(view != null){
+            val inputManager =
+                    context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            inputManager.hideSoftInputFromWindow(view.windowToken, 0)
+        }
     }
 }

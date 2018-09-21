@@ -39,6 +39,12 @@ class AddRepoDialog(context: Context?,
 
         dialog_add_repo_cancel_button.setOnClickListener { viewModel?.onAddRepoDialogCancelClicked() }
         dialog_add_repo_create_button.setOnClickListener { createNewRepoObj() }
+        dialog_add_repo_radio_privacy_private.setOnClickListener {
+            dialog_add_repo_privacy_icon.setImageResource(R.drawable.ic_padlock)
+        }
+        dialog_add_repo_radio_privacy_public.setOnClickListener {
+            dialog_add_repo_privacy_icon.setImageResource(R.drawable.ic_padlock_unlock)
+        }
 
         observeDialogLoadingStatus()
         observeDismissDialogRequest()

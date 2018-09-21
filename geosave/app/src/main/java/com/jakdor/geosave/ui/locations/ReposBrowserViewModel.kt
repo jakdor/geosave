@@ -12,14 +12,20 @@ import android.app.Application
 import android.arch.lifecycle.MutableLiveData
 import com.google.firebase.firestore.FirebaseFirestore
 import com.jakdor.geosave.arch.BaseViewModel
+import com.jakdor.geosave.common.model.firebase.Repo
+import com.jakdor.geosave.common.model.firebase.User
+import com.jakdor.geosave.common.wrapper.FirebaseAuthWrapper
 import com.jakdor.geosave.utils.RxSchedulersFacade
+import timber.log.Timber
 import javax.inject.Inject
+import com.google.firebase.firestore.FirebaseFirestoreException
 
 /**
  * ViewModel for [ReposBrowserFragment]
  */
 class ReposBrowserViewModel @Inject
 constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
+            private val firebaseAuthWrapper: FirebaseAuthWrapper,
             private val db: FirebaseFirestore):
     BaseViewModel(application, rxSchedulersFacade){
 
@@ -64,10 +70,40 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
     }
 
     /**
-     * Handle click on crate in [com.jakdor.geosave.ui.elements.AddRepoDialog]
+     * Push new repo to firestore
      */
-    fun onAddRepoDialogCreateClicked(){
+    fun createNewRepo(repo: Repo){
         dialogLoadingStatus.postValue(true)
-        //todo create query
+
+        if(firebaseAuthWrapper.getUid() != null) {
+            repo.ownerUid = firebaseAuthWrapper.getUid()!!
+        } else {
+            Timber.wtf("User not logged in")
+            return
+        }
+
+        db.runTransaction { transaction ->
+            val userObjRef = db.collection("users").document(firebaseAuthWrapper.getUid()!!)
+            val repoRef = db.collection("repos").document()
+            val userObjSnap = transaction.get(userObjRef)
+
+            val userObj = userObjSnap.toObject(User::class.java)
+            userObj?.reposList?.add(userObj.reposList.size, repoRef)
+
+            transaction.set(repoRef, repo)
+            if(userObj != null){
+                transaction.set(userObjRef, userObj)
+            } else {
+                throw FirebaseFirestoreException("User obj nu",
+                        FirebaseFirestoreException.Code.ABORTED)
+            }
+        }.addOnSuccessListener {
+            dialogLoadingStatus.postValue(false)
+            dialogDismissRequest.postValue(0)
+            Timber.i("Created new repository")
+        }.addOnFailureListener {
+            dialogLoadingStatus.postValue(false)
+            Timber.e("Unable to create new repository")
+        }
     }
 }

@@ -9,6 +9,7 @@
 package com.jakdor.geosave.common.wrapper
 
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.jakdor.geosave.common.model.firebase.User
 import timber.log.Timber
@@ -89,7 +90,7 @@ class FirebaseAuthWrapper constructor(private var mAuth: FirebaseAuth,
         if(mAuth.currentUser != null) {
             db.collection("users").document(mAuth.currentUser!!.uid)
                     .get()
-                    .addOnSuccessListener {documentSnapshot ->
+                    .addOnSuccessListener { documentSnapshot ->
                         if(documentSnapshot.exists()) Timber.i("User already has User obj")
                         else pushNewUserObj(db)
                     }
@@ -108,5 +109,12 @@ class FirebaseAuthWrapper constructor(private var mAuth: FirebaseAuth,
                 .set(newUser)
                 .addOnSuccessListener { Timber.i("Pushed new User object to Firestore") }
                 .addOnFailureListener { Timber.e("Error pushing new User to Firestore") }
+    }
+
+    /**
+     * Get user id
+     */
+    fun getUid(): String? {
+        return mAuth.currentUser?.uid
     }
 }

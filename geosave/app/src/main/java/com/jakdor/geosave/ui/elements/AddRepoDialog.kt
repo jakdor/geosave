@@ -13,9 +13,11 @@ import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.Observer
 import android.content.Context
 import android.os.Bundle
+import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import com.jakdor.geosave.R
+import com.jakdor.geosave.common.model.firebase.Repo
 import com.jakdor.geosave.ui.locations.ReposBrowserViewModel
 import kotlinx.android.synthetic.main.dialog_add_repo.*
 
@@ -34,7 +36,7 @@ class AddRepoDialog(context: Context?,
         setCanceledOnTouchOutside(false)
 
         dialog_add_repo_cancel_button.setOnClickListener { viewModel?.onAddRepoDialogCancelClicked() }
-        dialog_add_repo_create_button.setOnClickListener { viewModel?.onAddRepoDialogCreateClicked() }
+        dialog_add_repo_create_button.setOnClickListener { createNewRepoObj() }
 
         observeDialogLoadingStatus()
         observeDismissDialogRequest()
@@ -55,8 +57,14 @@ class AddRepoDialog(context: Context?,
     fun handleNewDialogLoadingStatus(status: Boolean?){
         if(status != null){
             when(status){
-                true -> setCancelable(false)
-                false -> setCancelable(true)
+                true -> {
+                    setCancelable(false)
+                    dialog_add_repo_loading_anim.visibility = View.VISIBLE //todo replace with anim gif
+                }
+                false -> {
+                    setCancelable(true)
+                    dialog_add_repo_loading_anim.visibility = View.GONE
+                }
             }
         }
     }
@@ -75,5 +83,36 @@ class AddRepoDialog(context: Context?,
      */
     fun handleNewDismissDialogRequestValue(dialogCode: Int?){
         if(dialogCode != null && dialogCode == 0) dismiss()
+    }
+
+    /**
+     * Create new [Repo] object based on entered data, pass onto [ReposBrowserViewModel]
+     */
+    fun createNewRepoObj(){
+        if(validateInputs()){
+            val visibility = if(dialog_add_repo_radio_privacy_private.isChecked) 0 else 1
+            val security = if(dialog_add_repo_radio_security_selected.isChecked) 0 else 1
+
+            val repo = Repo(dialog_add_repo_name.text.toString(),
+                    "",
+                    "",
+                    mutableListOf(),
+                    visibility,
+                    security,
+                    mutableListOf())
+
+            viewModel?.createNewRepo(repo)
+        }
+    }
+
+    /**
+     * Validate user input
+     */
+    fun validateInputs(): Boolean{
+        if(dialog_add_repo_name.text.isEmpty()){
+            dialog_add_repo_name_error.visibility = View.VISIBLE
+            return false
+        }
+        return true
     }
 }

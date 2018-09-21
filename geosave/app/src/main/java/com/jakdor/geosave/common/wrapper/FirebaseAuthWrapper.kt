@@ -9,7 +9,6 @@
 package com.jakdor.geosave.common.wrapper
 
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.jakdor.geosave.common.model.firebase.User
 import timber.log.Timber

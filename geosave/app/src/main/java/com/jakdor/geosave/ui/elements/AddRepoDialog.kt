@@ -99,6 +99,7 @@ class AddRepoDialog(context: Context?,
 
             val repo = Repo(dialog_add_repo_name.text.toString(),
                     "",
+                    dialog_add_repo_info.text.toString(),
                     "",
                     mutableListOf(),
                     visibility,
@@ -113,6 +114,8 @@ class AddRepoDialog(context: Context?,
      * Validate user input
      */
     fun validateInputs(): Boolean{
+        dialog_add_repo_name_error.visibility = View.GONE
+
         if(dialog_add_repo_name.text.isEmpty()){
             dialog_add_repo_name_error.visibility = View.VISIBLE
             return false

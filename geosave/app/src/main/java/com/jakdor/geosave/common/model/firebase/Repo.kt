@@ -16,6 +16,7 @@ import com.google.firebase.firestore.DocumentReference
 data class Repo
 constructor(var name: String = "",
             var ownerUid: String = "",
+            var info: String = "",
             var picUrl: String = "",
             var editorsUidList: MutableList<String> = mutableListOf(),
             var visibility: Int = 0,

@@ -22,7 +22,7 @@ import timber.log.Timber
 /**
  * RecyclerView adapter for [com.jakdor.geosave.ui.locations.ReposBrowserFragment] items
  */
-class RepositoryAdapter(private val reposList: MutableList<Repo>,
+class RepositoryAdapter(private val reposList: MutableList<Repo?>,
                         private val viewModel: ReposBrowserViewModel?,
                         private val glide: RequestManager,
                         private val layoutHeight: Int?):
@@ -47,8 +47,13 @@ class RepositoryAdapter(private val reposList: MutableList<Repo>,
             return
         }
 
+        if(reposList[position] == null){
+            Timber.e("repository on position: %d is null", position)
+            return
+        }
+
         val repo = reposList[position]
-        holder.bind(repo)
+        holder.bind(repo!!)
         holder.binding.repoCardView.setOnClickListener { viewModel?.onRepositoryClicked(repo) }
     }
 

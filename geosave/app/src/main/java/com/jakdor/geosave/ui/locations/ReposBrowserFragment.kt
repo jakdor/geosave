@@ -37,6 +37,7 @@ class ReposBrowserFragment: Fragment(), InjectableFragment {
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
     var viewModel: ReposBrowserViewModel? = null
+    private var recyclerViewInit = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -48,10 +49,6 @@ class ReposBrowserFragment: Fragment(), InjectableFragment {
         repos_fab_new.setOnClickListener { viewModel?.onFabCreateNewClicked() }
         repos_fab_public.setOnClickListener { viewModel?.onFabBrowsePublicClicked() }
         repos_fab_private.setOnClickListener { viewModel?.onFabJoinPrivateClicked() }
-
-        //test
-        val dummyRepos = mutableListOf(Repo("test"), Repo("asdas"))
-        loadRecyclerView(dummyRepos)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -63,6 +60,9 @@ class ReposBrowserFragment: Fragment(), InjectableFragment {
         }
 
         observeDialogLunchRequest()
+        observeLoadingStatus()
+        observeReposList()
+        viewModel?.loadUserRepos()
     }
 
     /**
@@ -96,24 +96,57 @@ class ReposBrowserFragment: Fragment(), InjectableFragment {
     }
 
     /**
+     * Observe [ReposBrowserViewModel] loadingStatus
+     */
+    fun observeLoadingStatus(){
+        viewModel?.loadingStatus?.observe(this, Observer { handleLoadingStatus(it) })
+    }
+
+    /**
+     * Handle loadingStatus
+     */
+    fun handleLoadingStatus(status: Boolean?){
+        if(status != null)
+            when(status){
+                true -> repos_swipe_refresh.isRefreshing = true
+                false -> repos_swipe_refresh.isRefreshing = false
+            }
+    }
+
+    /**
+     * Observe [ReposBrowserViewModel] reposList
+     */
+    fun observeReposList(){
+        viewModel?.reposList?.observe(this, Observer { handleReposList(it) })
+    }
+
+    /**
+     * Handle new reposList update
+     */
+    fun handleReposList(repos: MutableList<Repo?>?){
+        if(repos != null && !recyclerViewInit) loadRecyclerView(repos)
+    }
+
+    /**
      * Load RecyclerView with user repositories
      * @param repoList loaded by [ReposBrowserViewModel]
      */
-    fun loadRecyclerView(repoList: MutableList<Repo>){
+    fun loadRecyclerView(repoList: MutableList<Repo?>){
         val linearLayoutManager = LinearLayoutManager(context)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
         repos_recycler_view.layoutManager = linearLayoutManager
         val repositoryAdapter = RepositoryAdapter(
                 repoList, viewModel, GlideApp.with(this), getHeight())
         repos_recycler_view.adapter = repositoryAdapter
+        recyclerViewInit = true
     }
 
     /**
      * Get window height for auto scaling in RecyclerView
-     * @return int window height or 0 if unable to get height
+     * @return int window height or null if unable to get height
      */
-    private fun getHeight(): Int {
-        var height = 0
+    private fun getHeight(): Int? {
+        var height: Int? = null
 
         if (activity != null) {
             val displayMetrics = DisplayMetrics()

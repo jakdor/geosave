@@ -9,12 +9,15 @@
 package com.jakdor.geosave.common.wrapper
 
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.jakdor.geosave.common.model.firebase.User
 import timber.log.Timber
 
 class FirebaseAuthWrapper constructor(private var mAuth: FirebaseAuth,
                                       private val db: FirebaseFirestore) {
+
+    var userObjectSnapshot: DocumentSnapshot? = null
 
     /**
      * Check if user logged in
@@ -90,8 +93,10 @@ class FirebaseAuthWrapper constructor(private var mAuth: FirebaseAuth,
             db.collection("users").document(mAuth.currentUser!!.uid)
                     .get()
                     .addOnSuccessListener { documentSnapshot ->
-                        if(documentSnapshot.exists()) Timber.i("User already has User obj")
-                        else pushNewUserObj(db)
+                        if(documentSnapshot.exists()){
+                            userObjectSnapshot = documentSnapshot
+                            Timber.i("User already has User obj")
+                        } else pushNewUserObj(db)
                     }
                     .addOnFailureListener { pushNewUserObj(db) }
         }

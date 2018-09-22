@@ -62,6 +62,7 @@ class AppModule {
         return SharedPreferencesRepository(app.applicationContext)
     }
 
+    @Singleton
     @Provides
     fun provideFirebaseAuthWrapper(firestore: FirebaseFirestore): FirebaseAuthWrapper{
         return FirebaseAuthWrapper(FirebaseAuth.getInstance(), firestore)

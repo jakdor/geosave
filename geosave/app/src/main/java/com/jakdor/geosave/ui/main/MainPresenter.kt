@@ -35,6 +35,7 @@ class MainPresenter(view: MainContract.MainView,
     override fun start() {
         super.start()
         firebaseLogin(firebaseAuthWrapper.isLoggedIn())
+        firebaseAuthWrapper.checkUserObj()
     }
 
     /**

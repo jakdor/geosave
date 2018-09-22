@@ -14,6 +14,8 @@ import android.support.v7.app.AppCompatActivity
 import com.crashlytics.android.Crashlytics
 import com.jakdor.geosave.ui.main.MainActivity
 import io.fabric.sdk.android.Fabric
+import com.google.firebase.firestore.FirebaseFirestoreSettings
+import com.google.firebase.firestore.FirebaseFirestore
 
 class SplashActivity: AppCompatActivity(){
 
@@ -21,6 +23,13 @@ class SplashActivity: AppCompatActivity(){
         super.onCreate(savedInstanceState)
 
         Fabric.with(this, Crashlytics())
+
+        val firestore = FirebaseFirestore.getInstance()
+        val settings = FirebaseFirestoreSettings.Builder()
+                .setPersistenceEnabled(true)
+                .setTimestampsInSnapshotsEnabled(true)
+                .build()
+        firestore.firestoreSettings = settings
 
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)

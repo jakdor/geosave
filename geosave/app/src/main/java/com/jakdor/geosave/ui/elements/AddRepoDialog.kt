@@ -107,9 +107,10 @@ class AddRepoDialog(context: Context?,
                     "",
                     dialog_add_repo_info.text.toString(),
                     "",
-                    mutableListOf(),
                     visibility,
                     security,
+                    mutableListOf(),
+                    mutableListOf(),
                     mutableListOf())
 
             viewModel?.createNewRepo(repo)

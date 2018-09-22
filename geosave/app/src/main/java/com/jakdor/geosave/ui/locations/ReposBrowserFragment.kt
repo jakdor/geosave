@@ -13,12 +13,17 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.widget.LinearLayoutManager
+import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.jakdor.geosave.R
+import com.jakdor.geosave.common.model.firebase.Repo
 import com.jakdor.geosave.di.InjectableFragment
+import com.jakdor.geosave.ui.adapters.RepositoryAdapter
 import com.jakdor.geosave.ui.elements.AddRepoDialog
+import com.jakdor.geosave.utils.GlideApp
 import kotlinx.android.synthetic.main.fragment_repos_browser.*
 import timber.log.Timber
 import javax.inject.Inject
@@ -43,6 +48,10 @@ class ReposBrowserFragment: Fragment(), InjectableFragment {
         repos_fab_new.setOnClickListener { viewModel?.onFabCreateNewClicked() }
         repos_fab_public.setOnClickListener { viewModel?.onFabBrowsePublicClicked() }
         repos_fab_private.setOnClickListener { viewModel?.onFabJoinPrivateClicked() }
+
+        //test
+        val dummyRepos = mutableListOf(Repo("test"), Repo("asdas"))
+        loadRecyclerView(dummyRepos)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -84,6 +93,35 @@ class ReposBrowserFragment: Fragment(), InjectableFragment {
         val dialog = AddRepoDialog(context, this,  viewModel)
         dialog.show()
         Timber.i("lunched AddRepoDialog")
+    }
+
+    /**
+     * Load RecyclerView with user repositories
+     * @param repoList loaded by [ReposBrowserViewModel]
+     */
+    fun loadRecyclerView(repoList: MutableList<Repo>){
+        val linearLayoutManager = LinearLayoutManager(context)
+        linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
+        repos_recycler_view.layoutManager = linearLayoutManager
+        val repositoryAdapter = RepositoryAdapter(
+                repoList, viewModel, GlideApp.with(this), getHeight())
+        repos_recycler_view.adapter = repositoryAdapter
+    }
+
+    /**
+     * Get window height for auto scaling in RecyclerView
+     * @return int window height or 0 if unable to get height
+     */
+    private fun getHeight(): Int {
+        var height = 0
+
+        if (activity != null) {
+            val displayMetrics = DisplayMetrics()
+            activity!!.windowManager.defaultDisplay.getMetrics(displayMetrics)
+            height = displayMetrics.heightPixels
+        }
+
+        return height
     }
 
     companion object {

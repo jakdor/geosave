@@ -66,7 +66,14 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
      * Handle click on cancel in [com.jakdor.geosave.ui.elements.AddRepoDialog]
      */
     fun onAddRepoDialogCancelClicked(){
-        if(dialogLoadingStatus.value != true) dialogDismissRequest.postValue(0)
+        if(dialogLoadingStatus.value == false) dialogDismissRequest.postValue(0)
+    }
+
+    /**
+     * Handle click on repository card in [com.jakdor.geosave.ui.adapters.RepositoryAdapter]
+     */
+    fun onRepositoryClicked(repo: Repo){
+        Timber.i("Repository card clicked: %s", repo.name)
     }
 
     /**
@@ -94,7 +101,7 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
             if(userObj != null){
                 transaction.set(userObjRef, userObj)
             } else {
-                throw FirebaseFirestoreException("User obj nu",
+                throw FirebaseFirestoreException("User obj null",
                         FirebaseFirestoreException.Code.ABORTED)
             }
         }.addOnSuccessListener {

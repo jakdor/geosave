@@ -31,7 +31,7 @@ class ReposRepository(private val schedulers: RxSchedulersFacade,
     val createNewRequestStatusStream: BehaviorSubject<RequestStatus> = BehaviorSubject.create()
 
     enum class RequestStatus {
-        IDLE, READY, ONGOING, ERROR
+        IDLE, READY, ONGOING, ERROR, NO_NETWORK
     }
 
     init {
@@ -177,7 +177,12 @@ class ReposRepository(private val schedulers: RxSchedulersFacade,
             createNewRequestStatusStream.onNext(RequestStatus.IDLE)
             Timber.i("Created new repository")
         }.addOnFailureListener {
-            createNewRequestStatusStream.onNext(RequestStatus.ERROR)
+            if(it.toString() == "com.google.firebase.firestore.FirebaseFirestoreException:" +
+                    " UNAVAILABLE: Unable to resolve host firestore.googleapis.com"){
+                createNewRequestStatusStream.onNext(RequestStatus.NO_NETWORK)
+            } else {
+                createNewRequestStatusStream.onNext(RequestStatus.ERROR)
+            }
             createNewRequestStatusStream.onNext(RequestStatus.IDLE)
             Timber.e("Unable to create new repository: %s", it.toString())
         }

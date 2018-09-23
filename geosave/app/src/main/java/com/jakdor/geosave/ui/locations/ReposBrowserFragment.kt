@@ -18,6 +18,7 @@ import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.jakdor.geosave.R
 import com.jakdor.geosave.common.model.firebase.Repo
 import com.jakdor.geosave.di.InjectableFragment
@@ -64,6 +65,7 @@ class ReposBrowserFragment: Fragment(), InjectableFragment {
         observeDialogLunchRequest()
         observeLoadingStatus()
         observeReposList()
+        observeToast()
         viewModel?.loadUserRepos()
     }
 
@@ -135,6 +137,20 @@ class ReposBrowserFragment: Fragment(), InjectableFragment {
     fun handleReposList(repos: MutableList<Repo?>?){
         if(repos != null && !recyclerViewInit) loadRecyclerView(repos)
         else if(repos != null && recyclerViewInit) updateRecyclerView(repos)
+    }
+
+    /**
+     * Observe [ReposBrowserViewModel] toast
+     */
+    fun observeToast(){
+        viewModel?.toast?.observe(this, Observer { displayToast(it) })
+    }
+
+    /**
+     * Display toast message
+     */
+    fun displayToast(msg: String?){
+        if(msg != null) Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
     }
 
     /**

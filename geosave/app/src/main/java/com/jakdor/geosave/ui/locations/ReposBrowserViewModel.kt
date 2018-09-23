@@ -10,6 +10,8 @@ package com.jakdor.geosave.ui.locations
 
 import android.app.Application
 import android.arch.lifecycle.MutableLiveData
+import com.jakdor.geosave.App
+import com.jakdor.geosave.R
 import com.jakdor.geosave.arch.BaseViewModel
 import com.jakdor.geosave.common.model.firebase.Repo
 import com.jakdor.geosave.utils.RxSchedulersFacade
@@ -29,6 +31,7 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
     val dialogLunchRequest = MutableLiveData<DialogRequest>()
     val dialogDismissRequest = MutableLiveData<DialogRequest>()
     val dialogLoadingStatus = MutableLiveData<Boolean>()
+    val toast = MutableLiveData<String>()
     val reposList = MutableLiveData<MutableList<Repo?>>()
 
     init {
@@ -122,14 +125,26 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
                             }
                             ReposRepository.RequestStatus.ERROR -> {
                                 dialogLoadingStatus.postValue(false)
+                                toast.postValue(getApplication<App>()
+                                        .getString(R.string.add_repo_error_toast))
                                 Timber.e("Error while creating new repo")
+                            }
+                            ReposRepository.RequestStatus.NO_NETWORK -> {
+                                dialogLoadingStatus.postValue(false)
+                                toast.postValue(getApplication<App>()
+                                        .getString(R.string.add_repo_no_network_toast))
+                                Timber.e("No network while creating new repo")
                             }
                             null -> {
                                 dialogLoadingStatus.postValue(false)
+                                toast.postValue(getApplication<App>()
+                                        .getString(R.string.add_repo_error_toast))
                                 Timber.e("Error while creating new repo")
                             }
                         } },
                         { error -> dialogLoadingStatus.postValue(false)
+                            toast.postValue(getApplication<App>()
+                                    .getString(R.string.add_repo_error_toast))
                             Timber.e("loadingStatus: %s", error.toString()) }
                 ))
 

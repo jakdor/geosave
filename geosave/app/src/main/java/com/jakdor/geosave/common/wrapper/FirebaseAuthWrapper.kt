@@ -12,11 +12,13 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.jakdor.geosave.common.model.firebase.User
+import io.reactivex.subjects.BehaviorSubject
 import timber.log.Timber
 
 class FirebaseAuthWrapper constructor(private var mAuth: FirebaseAuth,
                                       private val db: FirebaseFirestore) {
 
+    var userObjectSnapshotFlag: BehaviorSubject<Boolean> = BehaviorSubject.create()
     var userObjectSnapshot: DocumentSnapshot? = null
 
     /**
@@ -95,10 +97,10 @@ class FirebaseAuthWrapper constructor(private var mAuth: FirebaseAuth,
                     .addOnSuccessListener { documentSnapshot ->
                         if(documentSnapshot.exists()){
                             userObjectSnapshot = documentSnapshot
+                            userObjectSnapshotFlag.onNext(true)
                             Timber.i("User already has User obj")
                         } else pushNewUserObj(db)
                     }
-                    .addOnFailureListener { pushNewUserObj(db) }
         }
     }
 

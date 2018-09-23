@@ -17,6 +17,7 @@ import com.jakdor.geosave.App
 import com.jakdor.geosave.arch.ViewModelFactory
 import com.jakdor.geosave.common.network.RetrofitFactory
 import com.jakdor.geosave.common.repository.GpsInfoRepository
+import com.jakdor.geosave.common.repository.ReposRepository
 import com.jakdor.geosave.common.repository.RestApiRepository
 import com.jakdor.geosave.common.repository.SharedPreferencesRepository
 import com.jakdor.geosave.common.wrapper.FirebaseAuthWrapper
@@ -77,5 +78,13 @@ class AppModule {
     @Provides
     fun provideFirebaseFirestore(): FirebaseFirestore{
         return FirebaseFirestore.getInstance()
+    }
+
+    @Singleton
+    @Provides
+    fun provideReposRepository(schedulers: RxSchedulersFacade,
+                               firebaseAuthWrapper: FirebaseAuthWrapper,
+                               firebaseFirestore: FirebaseFirestore): ReposRepository{
+        return ReposRepository(schedulers, firebaseAuthWrapper, firebaseFirestore)
     }
 }

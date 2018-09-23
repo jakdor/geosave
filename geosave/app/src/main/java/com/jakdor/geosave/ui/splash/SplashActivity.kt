@@ -10,14 +10,23 @@ package com.jakdor.geosave.ui.splash
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import com.crashlytics.android.Crashlytics
 import com.jakdor.geosave.ui.main.MainActivity
 import io.fabric.sdk.android.Fabric
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.google.firebase.firestore.FirebaseFirestore
+import com.jakdor.geosave.common.repository.ReposRepository
+import com.jakdor.geosave.common.wrapper.FirebaseAuthWrapper
+import dagger.android.support.DaggerAppCompatActivity
+import javax.inject.Inject
 
-class SplashActivity: AppCompatActivity(){
+class SplashActivity: DaggerAppCompatActivity(){
+
+    @Inject
+    lateinit var reposRepository: ReposRepository
+
+    @Inject
+    lateinit var firebaseAuthWrapper: FirebaseAuthWrapper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +39,9 @@ class SplashActivity: AppCompatActivity(){
                 .setTimestampsInSnapshotsEnabled(true)
                 .build()
         firestore.firestoreSettings = settings
+
+        firebaseAuthWrapper.checkUserObj()
+        reposRepository.fastInitialReposLoad()
 
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)

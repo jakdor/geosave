@@ -113,6 +113,7 @@ class ReposBrowserFragment: Fragment(), InjectableFragment {
                 true -> {
                     repos_swipe_refresh.isRefreshing = true
                     repos_no_repo_message.visibility = View.GONE
+                    repos_recycler_view.visibility = View.VISIBLE
                 }
                 false -> repos_swipe_refresh.isRefreshing = false
             }
@@ -140,6 +141,7 @@ class ReposBrowserFragment: Fragment(), InjectableFragment {
     fun loadRecyclerView(repoList: MutableList<Repo?>){
         if(repoList.isEmpty()){
             repos_no_repo_message.visibility = View.VISIBLE
+            repos_recycler_view.visibility = View.GONE
             return
         }
 
@@ -157,6 +159,8 @@ class ReposBrowserFragment: Fragment(), InjectableFragment {
      * @param repoList loaded by [ReposBrowserViewModel]
      */
     fun updateRecyclerView(repoList: MutableList<Repo?>){
+        repos_no_repo_message.visibility = View.GONE
+        repos_recycler_view.visibility = View.VISIBLE
         repositoryAdapter.updateReposList(repoList)
     }
 

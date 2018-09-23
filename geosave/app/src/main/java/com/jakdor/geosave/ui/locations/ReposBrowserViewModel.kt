@@ -10,32 +10,25 @@ package com.jakdor.geosave.ui.locations
 
 import android.app.Application
 import android.arch.lifecycle.MutableLiveData
-import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.FirebaseFirestore
 import com.jakdor.geosave.arch.BaseViewModel
 import com.jakdor.geosave.common.model.firebase.Repo
-import com.jakdor.geosave.common.model.firebase.User
-import com.jakdor.geosave.common.wrapper.FirebaseAuthWrapper
 import com.jakdor.geosave.utils.RxSchedulersFacade
 import timber.log.Timber
 import javax.inject.Inject
-import com.google.firebase.firestore.FirebaseFirestoreException
+import com.jakdor.geosave.common.repository.ReposRepository
 
 /**
  * ViewModel for [ReposBrowserFragment]
  */
 class ReposBrowserViewModel @Inject
 constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
-            private val firebaseAuthWrapper: FirebaseAuthWrapper,
-            private val db: FirebaseFirestore):
+            private val reposRepository: ReposRepository):
     BaseViewModel(application, rxSchedulersFacade){
 
     val dialogLunchRequest = MutableLiveData<Int>()
     val dialogDismissRequest = MutableLiveData<Int>()
     val dialogLoadingStatus = MutableLiveData<Boolean>()
     val reposList = MutableLiveData<MutableList<Repo?>>()
-
-    private var reposRequest = false
 
     init {
         loadingStatus.postValue(false)
@@ -84,132 +77,60 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
      * Get user repos from firestore
      */
     fun loadUserRepos(){
-        if(!reposRequest){
-            reposRequest = true
-            loadingStatus.postValue(true)
+        disposable.add(reposRepository.reposLoadingStatusStream
+                .subscribeOn(rxSchedulersFacade.computation())
+                .observeOn(rxSchedulersFacade.ui())
+                .subscribe(
+                        { result -> loadingStatus.postValue(result) },
+                        { error -> loadingStatus.postValue(false)
+                            Timber.e("loadingStatus: %s", error.toString()) }
+                ))
 
-            val reposResponse = mutableListOf<Repo?>()
+        disposable.add(reposRepository.reposListStream
+                .subscribeOn(rxSchedulersFacade.computation())
+                .observeOn(rxSchedulersFacade.ui())
+                .subscribe(
+                        { result -> reposList.postValue(result) },
+                        { error -> loadingStatus.postValue(false)
+                            Timber.e("reposList: %s", error.toString()) }
+                ))
 
-            if(firebaseAuthWrapper.userObjectSnapshot != null){
-                val userObj = firebaseAuthWrapper.userObjectSnapshot?.toObject(User::class.java)
-                if(userObj?.reposList != null && userObj.reposList.isEmpty()){
-                    handleEmptyRepoList()
-                }
-                userObj?.reposList?.forEach { documentReference: DocumentReference ->
-                    documentReference.get().addOnSuccessListener { repo ->
-                        reposResponse.add(repo.toObject(Repo::class.java))
-                        if(reposResponse.size == userObj.reposList.size){
-                            handleNewRepoList(reposResponse)
-                        }
-                    }.addOnFailureListener{
-                        reposRequest = false
-                        loadingStatus.postValue(false)
-                        Timber.e("Unable to fetch user repos: %s", it.toString())
-                    }
-                }
-            } else {
-                db.collection("users").document(firebaseAuthWrapper.getUid()!!).get()
-                        .addOnSuccessListener {
-                            val reposRefList = it.toObject(User::class.java)?.reposList
-                            if (reposRefList != null) {
-                                if(reposRefList.isEmpty()){
-                                    handleEmptyRepoList()
-                                }
-                                reposRefList.forEach { documentReference: DocumentReference ->
-                                    documentReference.get().addOnSuccessListener { repo ->
-                                        reposResponse.add(repo.toObject(Repo::class.java))
-                                        if (reposResponse.size == reposRefList.size){
-                                            handleNewRepoList(reposResponse)
-                                        }
-                                    }
-                                }
-                            } else {
-                                reposRequest = false
-                                loadingStatus.postValue(false)
-                                Timber.e("Unable to fetch user repos, user object is null")
-                            }
-                        }.addOnFailureListener {
-                            reposRequest = false
-                            loadingStatus.postValue(false)
-                            Timber.e("Unable to fetch user repos: %s", it.toString())
-                        }
-            }
+        if (reposRepository.reposListStream.value != null) { //data available
+            reposList.postValue(reposRepository.reposListStream.value)
+        } else if(reposRepository.reposLoadingStatusStream.value == false){ //data not available
+            reposRepository.loadUserRepos()
         }
-    }
-
-    /**
-     * Forward new reposList to view layer
-     */
-    private fun handleNewRepoList(repos: MutableList<Repo?>){
-        reposRequest = false
-        val sortedRepos = repos.sortedBy { repo -> repo?.name } as MutableList<Repo?>
-        loadingStatus.postValue(false)
-        reposList.postValue(sortedRepos)
-        Timber.i("Fetched user repos from firestore")
-    }
-
-    /**
-     * Handle user has no repos
-     */
-    private fun handleEmptyRepoList(){
-        reposRequest = false
-        loadingStatus.postValue(false)
-        reposList.postValue(mutableListOf())
-        Timber.i("User has no repos")
     }
 
     /**
      * Push new repo to firestore
      */
     fun createNewRepo(repo: Repo){
-        dialogLoadingStatus.postValue(true)
+        disposable.add(reposRepository.createNewRequestStatusStream
+                .subscribeOn(rxSchedulersFacade.computation())
+                .observeOn(rxSchedulersFacade.ui())
+                .subscribe({ result -> when(result){
+                            ReposRepository.RequestStatus.IDLE -> {}
+                            ReposRepository.RequestStatus.READY -> {
+                                dialogLoadingStatus.postValue(false)
+                                dialogDismissRequest.postValue(0)
+                            }
+                            ReposRepository.RequestStatus.ONGOING -> {
+                                dialogLoadingStatus.postValue(true)
+                            }
+                            ReposRepository.RequestStatus.ERROR -> {
+                                dialogLoadingStatus.postValue(false)
+                                Timber.e("Error while creating new repo")
+                            }
+                            null -> {
+                                dialogLoadingStatus.postValue(false)
+                                Timber.e("Error while creating new repo")
+                            }
+                        } },
+                        { error -> dialogLoadingStatus.postValue(false)
+                            Timber.e("loadingStatus: %s", error.toString()) }
+                ))
 
-        if(firebaseAuthWrapper.getUid() != null) {
-            repo.ownerUid = firebaseAuthWrapper.getUid()!!
-        } else {
-            Timber.wtf("User not logged in")
-            return
-        }
-
-        db.runTransaction { transaction ->
-            val userObjRef = db.collection("users").document(firebaseAuthWrapper.getUid()!!)
-            val repoRef = db.collection("repos").document()
-            val userObjSnap = transaction.get(userObjRef)
-            firebaseAuthWrapper.userObjectSnapshot = userObjSnap
-
-            val userObj = userObjSnap.toObject(User::class.java)
-            userObj?.reposList?.add(userObj.reposList.size, repoRef)
-
-            transaction.set(repoRef, repo)
-            if(userObj != null){
-                transaction.set(userObjRef, userObj)
-            } else {
-                throw FirebaseFirestoreException("User obj null",
-                        FirebaseFirestoreException.Code.ABORTED)
-            }
-        }.addOnCompleteListener {
-            dialogLoadingStatus.postValue(false)
-        }.addOnSuccessListener {
-            addNewRepoToReposList(repo)
-            dialogDismissRequest.postValue(0)
-            Timber.i("Created new repository")
-        }.addOnFailureListener {
-            Timber.e("Unable to create new repository: %s", it.toString())
-        }
-    }
-
-    /**
-     * Update recyclerView locally without waiting for update from firestore
-     */
-    private fun addNewRepoToReposList(repo: Repo){
-        if(reposList.value != null){
-            val newRepos = mutableListOf<Repo?>()
-            newRepos.addAll(reposList.value!!)
-            newRepos.add(repo)
-            val sortedRepos = newRepos.sortedBy { it -> it?.name } as MutableList<Repo?>
-            reposList.postValue(sortedRepos)
-        } else {
-            reposList.postValue(mutableListOf(repo))
-        }
+        reposRepository.createNewRepo(repo)
     }
 }

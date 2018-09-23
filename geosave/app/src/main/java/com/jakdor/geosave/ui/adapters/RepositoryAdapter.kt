@@ -15,6 +15,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.bumptech.glide.RequestManager
+import com.bumptech.glide.request.RequestOptions
 import com.jakdor.geosave.R
 import com.jakdor.geosave.common.model.firebase.Repo
 import com.jakdor.geosave.databinding.RepositoryCardBinding
@@ -94,6 +95,10 @@ class RepositoryAdapter(private var reposList: Vector<Repo?>,
         fun bind(repo: Repo){
             binding.repoModel = repo
             binding.executePendingBindings()
+
+            glide.load(repo.picUrl)
+                    .apply(RequestOptions().placeholder(R.drawable.repo_icon_placeholder).circleCrop())
+                    .into(binding.repoCardIcon)
         }
     }
 }

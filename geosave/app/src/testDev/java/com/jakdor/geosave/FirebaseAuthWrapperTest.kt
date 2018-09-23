@@ -10,6 +10,7 @@ package com.jakdor.geosave
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.FirebaseFirestore
 import com.jakdor.geosave.common.wrapper.FirebaseAuthWrapper
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.times
@@ -25,11 +26,12 @@ class FirebaseAuthWrapperTest{
     var thrown = ExpectedException.none()
 
     private var user = mock<FirebaseUser>()
+    private var db = mock<FirebaseFirestore>()
 
     private var firebaseAuth = mock<FirebaseAuth>{
         on{ currentUser }.thenReturn(user)
     }
-    private var firebaseAuthWrapper = FirebaseAuthWrapper(firebaseAuth)
+    private var firebaseAuthWrapper = FirebaseAuthWrapper(firebaseAuth, db)
 
     /**
      * Test login check
@@ -60,14 +62,14 @@ class FirebaseAuthWrapperTest{
         //true returned by User - true
         user = mock { on{ isAnonymous }.thenReturn(true) }
         firebaseAuth = mock { on{ currentUser }.thenReturn(user) }
-        firebaseAuthWrapper = FirebaseAuthWrapper(firebaseAuth)
+        firebaseAuthWrapper = FirebaseAuthWrapper(firebaseAuth, db)
 
         Assert.assertTrue(firebaseAuthWrapper.isAnonymous())
 
         //false returned by User - false
         user = mock { on{ isAnonymous }.thenReturn(false) }
         firebaseAuth = mock { on{ currentUser }.thenReturn(user) }
-        firebaseAuthWrapper = FirebaseAuthWrapper(firebaseAuth)
+        firebaseAuthWrapper = FirebaseAuthWrapper(firebaseAuth, db)
 
         Assert.assertFalse(firebaseAuthWrapper.isAnonymous())
     }

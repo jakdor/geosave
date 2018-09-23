@@ -26,6 +26,7 @@ import com.jakdor.geosave.ui.elements.AddRepoDialog
 import com.jakdor.geosave.utils.GlideApp
 import kotlinx.android.synthetic.main.fragment_repos_browser.*
 import timber.log.Timber
+import java.util.*
 import javax.inject.Inject
 
 /**
@@ -38,6 +39,7 @@ class ReposBrowserFragment: Fragment(), InjectableFragment {
 
     var viewModel: ReposBrowserViewModel? = null
     private var recyclerViewInit = false
+    lateinit var repositoryAdapter: RepositoryAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -108,7 +110,10 @@ class ReposBrowserFragment: Fragment(), InjectableFragment {
     fun handleLoadingStatus(status: Boolean?){
         if(status != null)
             when(status){
-                true -> repos_swipe_refresh.isRefreshing = true
+                true -> {
+                    repos_swipe_refresh.isRefreshing = true
+                    repos_no_repo_message.visibility = View.GONE
+                }
                 false -> repos_swipe_refresh.isRefreshing = false
             }
     }
@@ -125,6 +130,7 @@ class ReposBrowserFragment: Fragment(), InjectableFragment {
      */
     fun handleReposList(repos: MutableList<Repo?>?){
         if(repos != null && !recyclerViewInit) loadRecyclerView(repos)
+        else if(repos != null && recyclerViewInit) updateRecyclerView(repos)
     }
 
     /**
@@ -132,13 +138,26 @@ class ReposBrowserFragment: Fragment(), InjectableFragment {
      * @param repoList loaded by [ReposBrowserViewModel]
      */
     fun loadRecyclerView(repoList: MutableList<Repo?>){
+        if(repoList.isEmpty()){
+            repos_no_repo_message.visibility = View.VISIBLE
+            return
+        }
+
         val linearLayoutManager = LinearLayoutManager(context)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
         repos_recycler_view.layoutManager = linearLayoutManager
-        val repositoryAdapter = RepositoryAdapter(
-                repoList, viewModel, GlideApp.with(this), getHeight())
+        repositoryAdapter = RepositoryAdapter(
+                Vector(repoList), viewModel, GlideApp.with(this), getHeight())
         repos_recycler_view.adapter = repositoryAdapter
         recyclerViewInit = true
+    }
+
+    /**
+     * update RecyclerView with new user repositories
+     * @param repoList loaded by [ReposBrowserViewModel]
+     */
+    fun updateRecyclerView(repoList: MutableList<Repo?>){
+        repositoryAdapter.updateReposList(repoList)
     }
 
     /**

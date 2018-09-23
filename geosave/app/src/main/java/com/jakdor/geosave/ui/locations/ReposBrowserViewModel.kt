@@ -92,13 +92,19 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
 
             if(firebaseAuthWrapper.userObjectSnapshot != null){
                 val userObj = firebaseAuthWrapper.userObjectSnapshot?.toObject(User::class.java)
+                if(userObj?.reposList != null && userObj.reposList.isEmpty()){
+                    handleEmptyRepoList()
+                }
                 userObj?.reposList?.forEach { documentReference: DocumentReference ->
                     documentReference.get().addOnSuccessListener { repo ->
                         reposResponse.add(repo.toObject(Repo::class.java))
                         if(reposResponse.size == userObj.reposList.size){
-                            reposRequest = false
                             handleNewRepoList(reposResponse)
                         }
+                    }.addOnFailureListener{
+                        reposRequest = false
+                        loadingStatus.postValue(false)
+                        Timber.e("Unable to fetch user repos: %s", it.toString())
                     }
                 }
             } else {
@@ -106,21 +112,25 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
                         .addOnSuccessListener {
                             val reposRefList = it.toObject(User::class.java)?.reposList
                             if (reposRefList != null) {
-                                for (repoRef in reposRefList) {
-                                    repoRef.get().addOnSuccessListener { repo ->
+                                if(reposRefList.isEmpty()){
+                                    handleEmptyRepoList()
+                                }
+                                reposRefList.forEach { documentReference: DocumentReference ->
+                                    documentReference.get().addOnSuccessListener { repo ->
                                         reposResponse.add(repo.toObject(Repo::class.java))
                                         if (reposResponse.size == reposRefList.size){
-                                            reposRequest = false
                                             handleNewRepoList(reposResponse)
                                         }
                                     }
                                 }
                             } else {
                                 reposRequest = false
+                                loadingStatus.postValue(false)
                                 Timber.e("Unable to fetch user repos, user object is null")
                             }
                         }.addOnFailureListener {
                             reposRequest = false
+                            loadingStatus.postValue(false)
                             Timber.e("Unable to fetch user repos: %s", it.toString())
                         }
             }
@@ -131,10 +141,21 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
      * Forward new reposList to view layer
      */
     private fun handleNewRepoList(repos: MutableList<Repo?>){
+        reposRequest = false
         val sortedRepos = repos.sortedBy { repo -> repo?.name } as MutableList<Repo?>
         loadingStatus.postValue(false)
         reposList.postValue(sortedRepos)
         Timber.i("Fetched user repos from firestore")
+    }
+
+    /**
+     * Handle user has no repos
+     */
+    private fun handleEmptyRepoList(){
+        reposRequest = false
+        loadingStatus.postValue(false)
+        reposList.postValue(mutableListOf())
+        Timber.i("User has no repos")
     }
 
     /**
@@ -169,10 +190,26 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
         }.addOnCompleteListener {
             dialogLoadingStatus.postValue(false)
         }.addOnSuccessListener {
+            addNewRepoToReposList(repo)
             dialogDismissRequest.postValue(0)
             Timber.i("Created new repository")
         }.addOnFailureListener {
             Timber.e("Unable to create new repository: %s", it.toString())
+        }
+    }
+
+    /**
+     * Update recyclerView locally without waiting for update from firestore
+     */
+    private fun addNewRepoToReposList(repo: Repo){
+        if(reposList.value != null){
+            val newRepos = mutableListOf<Repo?>()
+            newRepos.addAll(reposList.value!!)
+            newRepos.add(repo)
+            val sortedRepos = newRepos.sortedBy { it -> it?.name } as MutableList<Repo?>
+            reposList.postValue(sortedRepos)
+        } else {
+            reposList.postValue(mutableListOf(repo))
         }
     }
 }

@@ -151,5 +151,6 @@
     <string name="dialog_add_repo_name_error_text">This field can\'t be empty!</string>
     <string name="dialog_add_repo_loading_anim_desc">loading animation</string>
     <string name="repo_info_title">Info:</string>
+    <string name="repos_no_repo_message_text">You don\'t have any repositories yet, create one now!</string>
 
 </resources>

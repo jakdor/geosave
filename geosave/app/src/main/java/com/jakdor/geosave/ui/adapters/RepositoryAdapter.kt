@@ -9,6 +9,8 @@
 package com.jakdor.geosave.ui.adapters
 
 import android.databinding.DataBindingUtil
+import android.os.Handler
+import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -18,11 +20,12 @@ import com.jakdor.geosave.common.model.firebase.Repo
 import com.jakdor.geosave.databinding.RepositoryCardBinding
 import com.jakdor.geosave.ui.locations.ReposBrowserViewModel
 import timber.log.Timber
+import java.util.*
 
 /**
  * RecyclerView adapter for [com.jakdor.geosave.ui.locations.ReposBrowserFragment] items
  */
-class RepositoryAdapter(private val reposList: MutableList<Repo?>,
+class RepositoryAdapter(private var reposList: Vector<Repo?>,
                         private val viewModel: ReposBrowserViewModel?,
                         private val glide: RequestManager,
                         private val layoutHeight: Int?):
@@ -59,6 +62,25 @@ class RepositoryAdapter(private val reposList: MutableList<Repo?>,
 
     override fun getItemCount(): Int {
         return reposList.size
+    }
+
+    /**
+     * Update adapter content
+     */
+    fun updateReposList(newReposList: MutableList<Repo?>){
+        val oldRepoList = mutableListOf<Repo?>()
+        oldRepoList.addAll(reposList)
+
+        val handler = Handler()
+        Thread(Runnable {
+            val diffCallback = RepoDiffCallback(oldRepoList, newReposList)
+            val diffResult = DiffUtil.calculateDiff(diffCallback)
+            handler.post {
+                diffResult.dispatchUpdatesTo(this)
+                reposList.clear()
+                reposList.addAll(newReposList)
+            }
+        }).start()
     }
 
     /**

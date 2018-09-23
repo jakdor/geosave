@@ -162,6 +162,9 @@ class ReposBrowserFragment: Fragment(), InjectableFragment {
             repos_no_repo_message.visibility = View.VISIBLE
             repos_recycler_view.visibility = View.GONE
             return
+        } else {
+            repos_no_repo_message.visibility = View.GONE
+            repos_recycler_view.visibility = View.VISIBLE
         }
 
         val linearLayoutManager = LinearLayoutManager(context)

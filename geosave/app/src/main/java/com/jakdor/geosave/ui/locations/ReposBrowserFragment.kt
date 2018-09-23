@@ -24,7 +24,6 @@ import com.jakdor.geosave.common.model.firebase.Repo
 import com.jakdor.geosave.di.InjectableFragment
 import com.jakdor.geosave.ui.adapters.RepositoryAdapter
 import com.jakdor.geosave.ui.elements.AddRepoDialog
-import com.jakdor.geosave.utils.GlideApp
 import kotlinx.android.synthetic.main.fragment_repos_browser.*
 import timber.log.Timber
 import java.util.*
@@ -40,7 +39,7 @@ class ReposBrowserFragment: Fragment(), InjectableFragment {
 
     var viewModel: ReposBrowserViewModel? = null
     private var recyclerViewInit = false
-    lateinit var repositoryAdapter: RepositoryAdapter
+    private lateinit var repositoryAdapter: RepositoryAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -67,6 +66,14 @@ class ReposBrowserFragment: Fragment(), InjectableFragment {
         observeReposList()
         observeToast()
         viewModel?.loadUserRepos()
+    }
+
+    /**
+     * Fix for [RepositoryAdapter] memory leak
+     */
+    override fun onDestroyView() {
+        super.onDestroyView()
+        repos_recycler_view.adapter = null
     }
 
     /**
@@ -171,7 +178,7 @@ class ReposBrowserFragment: Fragment(), InjectableFragment {
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
         repos_recycler_view.layoutManager = linearLayoutManager
         repositoryAdapter = RepositoryAdapter(
-                Vector(repoList), viewModel, GlideApp.with(this), getHeight())
+                Vector(repoList), viewModel, getHeight())
         repos_recycler_view.adapter = repositoryAdapter
         recyclerViewInit = true
     }

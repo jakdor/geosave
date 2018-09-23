@@ -14,12 +14,12 @@ import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.bumptech.glide.RequestManager
 import com.bumptech.glide.request.RequestOptions
 import com.jakdor.geosave.R
 import com.jakdor.geosave.common.model.firebase.Repo
 import com.jakdor.geosave.databinding.RepositoryCardBinding
 import com.jakdor.geosave.ui.locations.ReposBrowserViewModel
+import com.jakdor.geosave.utils.GlideApp
 import timber.log.Timber
 import java.util.*
 
@@ -28,7 +28,6 @@ import java.util.*
  */
 class RepositoryAdapter(private var reposList: Vector<Repo?>,
                         private val viewModel: ReposBrowserViewModel?,
-                        private val glide: RequestManager,
                         private val layoutHeight: Int?):
         RecyclerView.Adapter<RepositoryAdapter.RepositoryViewHolder>() {
 
@@ -96,8 +95,12 @@ class RepositoryAdapter(private var reposList: Vector<Repo?>,
             binding.repoModel = repo
             binding.executePendingBindings()
 
-            glide.load(repo.picUrl)
-                    .apply(RequestOptions().placeholder(R.drawable.repo_icon_placeholder).circleCrop())
+            GlideApp.with(binding.root)
+                    .load(repo.picUrl)
+                    .apply(RequestOptions()
+                            .placeholder(R.drawable.repo_icon_placeholder)
+                            .centerCrop()
+                            .circleCrop())
                     .into(binding.repoCardIcon)
         }
     }

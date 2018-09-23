@@ -16,6 +16,7 @@ import com.jakdor.geosave.utils.RxSchedulersFacade
 import timber.log.Timber
 import javax.inject.Inject
 import com.jakdor.geosave.common.repository.ReposRepository
+import com.jakdor.geosave.ui.locations.ReposBrowserFragment.DialogRequest
 
 /**
  * ViewModel for [ReposBrowserFragment]
@@ -25,8 +26,8 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
             private val reposRepository: ReposRepository):
     BaseViewModel(application, rxSchedulersFacade){
 
-    val dialogLunchRequest = MutableLiveData<Int>()
-    val dialogDismissRequest = MutableLiveData<Int>()
+    val dialogLunchRequest = MutableLiveData<DialogRequest>()
+    val dialogDismissRequest = MutableLiveData<DialogRequest>()
     val dialogLoadingStatus = MutableLiveData<Boolean>()
     val reposList = MutableLiveData<MutableList<Repo?>>()
 
@@ -39,31 +40,32 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
      * Handle click on create new repo fab
      */
     fun onFabCreateNewClicked(){
-        dialogDismissRequest.postValue(-1)
-        dialogLunchRequest.postValue(0)
+        dialogDismissRequest.postValue(DialogRequest.NONE)
+        dialogLunchRequest.postValue(DialogRequest.CREATE_NEW)
     }
 
     /**
      * Handle click on browse public repos fab
      */
     fun onFabBrowsePublicClicked(){
-        dialogDismissRequest.postValue(-1)
-        dialogLunchRequest.postValue(1)
+        dialogDismissRequest.postValue(DialogRequest.NONE)
+        dialogLunchRequest.postValue(DialogRequest.BROWSE_PUBLIC)
     }
 
     /**
      * Handle click on join private repo fab
      */
     fun onFabJoinPrivateClicked(){
-        dialogDismissRequest.postValue(-1)
-        dialogLunchRequest.postValue(2)
+        dialogDismissRequest.postValue(DialogRequest.NONE)
+        dialogLunchRequest.postValue(DialogRequest.JOIN_PRIVATE)
     }
 
     /**
      * Handle click on cancel in [com.jakdor.geosave.ui.elements.AddRepoDialog]
      */
     fun onAddRepoDialogCancelClicked(){
-        if(dialogLoadingStatus.value == false) dialogDismissRequest.postValue(0)
+        if(dialogLoadingStatus.value == false)
+            dialogDismissRequest.postValue(DialogRequest.CREATE_NEW)
     }
 
     /**
@@ -113,7 +115,7 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
                             ReposRepository.RequestStatus.IDLE -> {}
                             ReposRepository.RequestStatus.READY -> {
                                 dialogLoadingStatus.postValue(false)
-                                dialogDismissRequest.postValue(0)
+                                dialogDismissRequest.postValue(DialogRequest.CREATE_NEW)
                             }
                             ReposRepository.RequestStatus.ONGOING -> {
                                 dialogLoadingStatus.postValue(true)

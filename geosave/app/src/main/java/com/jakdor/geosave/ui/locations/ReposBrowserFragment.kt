@@ -79,11 +79,14 @@ class ReposBrowserFragment: Fragment(), InjectableFragment {
     /**
      * Handle dialog lunch code
      */
-    fun handleDialogLunchRequest(code: Int?){
+    fun handleDialogLunchRequest(code: DialogRequest?){
         if(code != null){
             repos_fab_menu.collapse()
             when(code){
-                0 -> lunchAddRepoDialog()
+                ReposBrowserFragment.DialogRequest.NONE -> {}
+                ReposBrowserFragment.DialogRequest.CREATE_NEW -> lunchAddRepoDialog()
+                ReposBrowserFragment.DialogRequest.BROWSE_PUBLIC -> {}
+                ReposBrowserFragment.DialogRequest.JOIN_PRIVATE -> {}
             }
         }
     }
@@ -178,6 +181,10 @@ class ReposBrowserFragment: Fragment(), InjectableFragment {
         }
 
         return height
+    }
+
+    enum class DialogRequest{
+        NONE, CREATE_NEW, BROWSE_PUBLIC, JOIN_PRIVATE
     }
 
     companion object {

@@ -8,6 +8,7 @@
 
 package com.jakdor.geosave.ui.adapters
 
+import android.content.res.Configuration
 import android.databinding.DataBindingUtil
 import android.os.Handler
 import android.support.v7.util.DiffUtil
@@ -26,9 +27,11 @@ import java.util.*
 /**
  * RecyclerView adapter for [com.jakdor.geosave.ui.locations.ReposBrowserFragment] items
  */
-class RepositoryAdapter(private var reposList: Vector<Repo?>,
+class RepositoryAdapter(private var reposVector: Vector<Repo?>,
                         private val viewModel: ReposBrowserViewModel?,
-                        private val layoutHeight: Int?):
+                        private val layoutHeight: Int?,
+                        private val screenOrientation: Int?,
+                        private val screenRatio: Float?):
         RecyclerView.Adapter<RepositoryAdapter.RepositoryViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RepositoryViewHolder {
@@ -37,31 +40,38 @@ class RepositoryAdapter(private var reposList: Vector<Repo?>,
                 layoutInflater, R.layout.repository_card, parent, false)
 
         //height auto scaling
+        var scalingFactor = 6.0f
+        if(screenOrientation != null && screenRatio != null){
+            when(screenOrientation){
+                Configuration.ORIENTATION_PORTRAIT -> scalingFactor = 6.0f
+                Configuration.ORIENTATION_LANDSCAPE -> scalingFactor = 6.0f / screenRatio
+            }
+        }
         if(layoutHeight != null){
-            binding.root.layoutParams.height = layoutHeight / 6
+            binding.root.layoutParams.height = (layoutHeight / scalingFactor).toInt()
         }
 
         return RepositoryViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: RepositoryViewHolder, position: Int) {
-        if(position >= reposList.size){
+        if(position >= reposVector.size){
             Timber.wtf("Invalid ViewHolder position")
             return
         }
 
-        if(reposList[position] == null){
+        if(reposVector[position] == null){
             Timber.e("repository on position: %d is null", position)
             return
         }
 
-        val repo = reposList[position]
+        val repo = reposVector[position]
         holder.bind(repo!!)
         holder.binding.repoCardView.setOnClickListener { viewModel?.onRepositoryClicked(repo) }
     }
 
     override fun getItemCount(): Int {
-        return reposList.size
+        return reposVector.size
     }
 
     /**
@@ -69,7 +79,7 @@ class RepositoryAdapter(private var reposList: Vector<Repo?>,
      */
     fun updateReposList(newReposList: MutableList<Repo?>){
         val oldRepoList = mutableListOf<Repo?>()
-        oldRepoList.addAll(reposList)
+        oldRepoList.addAll(reposVector)
 
         val handler = Handler()
         Thread(Runnable {
@@ -77,8 +87,8 @@ class RepositoryAdapter(private var reposList: Vector<Repo?>,
             val diffResult = DiffUtil.calculateDiff(diffCallback)
             handler.post {
                 diffResult.dispatchUpdatesTo(this)
-                reposList.clear()
-                reposList.addAll(newReposList)
+                reposVector.clear()
+                reposVector.addAll(newReposList)
             }
         }).start()
     }

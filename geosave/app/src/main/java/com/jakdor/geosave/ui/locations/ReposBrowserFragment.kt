@@ -177,8 +177,8 @@ class ReposBrowserFragment: Fragment(), InjectableFragment {
         val linearLayoutManager = LinearLayoutManager(context)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
         repos_recycler_view.layoutManager = linearLayoutManager
-        repositoryAdapter = RepositoryAdapter(
-                Vector(repoList), viewModel, getHeight())
+        repositoryAdapter = RepositoryAdapter(Vector(repoList), viewModel, getHeight(),
+                activity?.resources?.configuration?.orientation, getScreenRatio())
         repos_recycler_view.adapter = repositoryAdapter
         recyclerViewInit = true
     }
@@ -207,6 +207,23 @@ class ReposBrowserFragment: Fragment(), InjectableFragment {
         }
 
         return height
+    }
+
+    /**
+     * Get device screen ratio for accurate height auto scaling in RecyclerView after rotation
+     */
+    private fun getScreenRatio(): Float? {
+        var screenRatio: Float? = null
+
+        if(activity != null) {
+            screenRatio = activity!!.resources.displayMetrics.widthPixels.toFloat() /
+                    activity!!.resources.displayMetrics.heightPixels.toFloat()
+            if(screenRatio < 1.0f){
+                screenRatio = 1.0f / screenRatio
+            }
+        }
+
+        return screenRatio
     }
 
     enum class DialogRequest{

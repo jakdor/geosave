@@ -35,7 +35,10 @@ import kotlinx.android.synthetic.main.fragment_map_overlay.*
 import timber.log.Timber
 import javax.inject.Inject
 
-class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment {
+/**
+ * Fragment displaying google map with user position and locations
+ */
+class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment { //todo investigate screen rotation memory leak from maps api
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory

@@ -19,6 +19,7 @@ import android.view.Window
 import android.view.inputmethod.InputMethodManager
 import com.jakdor.geosave.R
 import com.jakdor.geosave.common.model.firebase.Repo
+import com.jakdor.geosave.ui.locations.ReposBrowserFragment.DialogRequest
 import com.jakdor.geosave.ui.locations.ReposBrowserViewModel
 import com.jakdor.geosave.utils.GlideApp
 import kotlinx.android.synthetic.main.dialog_add_repo.*
@@ -90,8 +91,8 @@ class AddRepoDialog(context: Context?,
     /**
      * Handle new dismissDialogRequest value
      */
-    fun handleNewDismissDialogRequestValue(dialogCode: Int?){
-        if(dialogCode != null && dialogCode == 0) dismiss()
+    fun handleNewDismissDialogRequestValue(dialogCode: DialogRequest?){
+        if(dialogCode != null && dialogCode == DialogRequest.CREATE_NEW) dismiss()
     }
 
     /**
@@ -107,9 +108,10 @@ class AddRepoDialog(context: Context?,
                     "",
                     dialog_add_repo_info.text.toString(),
                     "",
-                    mutableListOf(),
                     visibility,
                     security,
+                    mutableListOf(),
+                    mutableListOf(),
                     mutableListOf())
 
             viewModel?.createNewRepo(repo)

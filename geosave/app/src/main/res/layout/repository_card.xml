@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ GeoSave - app for easy sharing and collaborating on GPS related data
+  ~ Copyright (C) 2018  Jakub Dorda
+  ~
+  ~ Software under GPLv3 licence - full copyright notice available at:
+  ~ https://github.com/jakdor/geosave/blob/master/README.md
+  -->
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <import type="android.view.View"/>
+        <variable name="repoModel" type="com.jakdor.geosave.common.model.firebase.Repo"/>
+    </data>
+
+    <!--layout_height="140dp" fallback height in case of auto scaling error-->
+    <android.support.v7.widget.CardView
+        android:id="@+id/repo_card_view"
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        app:cardCornerRadius="10dp">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/repo_card_title"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:text="@{repoModel.name}"
+                android:textColor="@color/textCardTitle"
+                android:textStyle="bold"
+                android:singleLine="true"
+                app:autoSizeTextType="uniform"
+                app:layout_constraintBottom_toTopOf="@+id/repo_card_guideline"
+                app:layout_constraintEnd_toStartOf="@+id/repo_card_guideline2"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <android.support.constraint.Guideline
+                android:id="@+id/repo_card_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.35" />
+
+            <android.support.constraint.Guideline
+                android:id="@+id/repo_card_guideline2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.70" />
+
+            <TextView
+                android:id="@+id/repo_card_about"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@{repoModel.info}"
+                android:lines="2"
+                android:visibility="@{repoModel.info.empty ? View.GONE : View.VISIBLE}"
+                app:autoSizeMaxTextSize="16sp"
+                app:autoSizeTextType="uniform"
+                app:layout_constraintEnd_toStartOf="@+id/repo_card_guideline2"
+                app:layout_constraintStart_toStartOf="@+id/repo_card_title"
+                app:layout_constraintTop_toTopOf="@+id/repo_card_guideline" />
+
+            <android.support.constraint.Guideline
+                android:id="@+id/repo_card_guideline3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.75" />
+
+            <TextView
+                android:id="@+id/repo_card_locations"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:text="@{@string/repo_card_location_number_label(repoModel.locationsList.size())}"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/repo_card_about" />
+
+            <TextView
+                android:id="@+id/repo_card_contributors"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:text="@{@string/repo_card_contributors_number_label(repoModel.editorsUidList.size() + 1)}"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/repo_card_locations"
+                app:layout_constraintTop_toBottomOf="@+id/repo_card_about" />
+
+            <ImageView
+                android:id="@+id/repo_card_visibility_icon"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:src="@{repoModel.visibility == 0 ? @drawable/ic_padlock : @drawable/ic_padlock_unlock}"
+                android:contentDescription="@string/visibility_icon_desc"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/repo_card_guideline3" />
+
+            <ImageView
+                android:id="@+id/repo_card_icon"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="8dp"
+                android:contentDescription="@string/repository_icon_desc"
+                app:layout_constraintBottom_toTopOf="@+id/repo_card_guideline3"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </android.support.constraint.ConstraintLayout>
+
+    </android.support.v7.widget.CardView>
+
+</layout>

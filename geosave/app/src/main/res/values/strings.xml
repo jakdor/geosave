@@ -145,11 +145,18 @@
     <string name="repo_security_title">Add/edit permission:</string>
     <string name="add_repo_radio_selected_label">Selected users</string>
     <string name="add_repo_radio_everybody_label">No restrictions</string>
-    <string name="add_repo_dialog_cancel_button_label">cancel</string>
-    <string name="add_repo_dialog_create_button_label">create</string>
+    <string name="add_repo_dialog_cancel_button_label">Cancel</string>
+    <string name="add_repo_dialog_create_button_label">Create</string>
     <string name="dialog_add_repo_title_text">Create new repository</string>
     <string name="dialog_add_repo_name_error_text">This field can\'t be empty!</string>
     <string name="dialog_add_repo_loading_anim_desc">loading animation</string>
     <string name="repo_info_title">Info:</string>
+    <string name="repos_no_repo_message_text">You don\'t have any repositories yet, create one now!</string>
+    <string name="add_repo_error_toast">Unknown error occurred, try again</string>
+    <string name="add_repo_no_network_toast">Can\'t create off-line - check internet connection</string>
+    <string name="repo_card_location_number_label">Locations: %1$d</string>
+    <string name="repo_card_contributors_number_label">Contributors: %1$d</string>
+    <string name="visibility_icon_desc">visibility icon</string>
+    <string name="repository_icon_desc">repository icon</string>
 
 </resources>

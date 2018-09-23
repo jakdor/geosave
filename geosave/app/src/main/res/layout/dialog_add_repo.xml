@@ -260,7 +260,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginEnd="8dp"
-        android:src="@drawable/ic_home_black_24dp"
         android:visibility="gone"
         android:contentDescription="@string/dialog_add_repo_loading_anim_desc"
         app:layout_constraintBottom_toBottomOf="@+id/dialog_add_repo_create_button"

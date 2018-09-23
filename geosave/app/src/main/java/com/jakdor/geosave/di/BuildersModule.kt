@@ -11,6 +11,7 @@ package com.jakdor.geosave.di
 import com.jakdor.geosave.ui.main.MainActivity
 import com.jakdor.geosave.ui.main.MainModule
 import com.jakdor.geosave.ui.main.MainViewModule
+import com.jakdor.geosave.ui.splash.SplashActivity
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
@@ -26,4 +27,6 @@ abstract class BuildersModule {
         MainActivityMVVMFragmentBuilderModule::class])
     abstract fun bindMainActivity(): MainActivity
 
+    @ContributesAndroidInjector(modules = [MainModule::class])
+    abstract fun bindSplashActivity(): SplashActivity
 }

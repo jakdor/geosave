@@ -12,6 +12,7 @@ import com.jakdor.geosave.R
 import com.jakdor.geosave.common.model.UserLocation
 import com.jakdor.geosave.common.repository.GpsInfoRepository
 import com.jakdor.geosave.arch.BasePresenter
+import com.jakdor.geosave.common.repository.ReposRepository
 import com.jakdor.geosave.common.repository.ShareMessageFormatter
 import com.jakdor.geosave.common.wrapper.FirebaseAuthWrapper
 
@@ -35,7 +36,6 @@ class MainPresenter(view: MainContract.MainView,
     override fun start() {
         super.start()
         firebaseLogin(firebaseAuthWrapper.isLoggedIn())
-        firebaseAuthWrapper.checkUserObj()
     }
 
     /**

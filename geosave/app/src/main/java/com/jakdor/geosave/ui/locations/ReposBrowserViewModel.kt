@@ -10,28 +10,29 @@ package com.jakdor.geosave.ui.locations
 
 import android.app.Application
 import android.arch.lifecycle.MutableLiveData
-import com.google.firebase.firestore.FirebaseFirestore
+import com.jakdor.geosave.App
+import com.jakdor.geosave.R
 import com.jakdor.geosave.arch.BaseViewModel
 import com.jakdor.geosave.common.model.firebase.Repo
-import com.jakdor.geosave.common.model.firebase.User
-import com.jakdor.geosave.common.wrapper.FirebaseAuthWrapper
 import com.jakdor.geosave.utils.RxSchedulersFacade
 import timber.log.Timber
 import javax.inject.Inject
-import com.google.firebase.firestore.FirebaseFirestoreException
+import com.jakdor.geosave.common.repository.ReposRepository
+import com.jakdor.geosave.ui.locations.ReposBrowserFragment.DialogRequest
 
 /**
  * ViewModel for [ReposBrowserFragment]
  */
 class ReposBrowserViewModel @Inject
 constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
-            private val firebaseAuthWrapper: FirebaseAuthWrapper,
-            private val db: FirebaseFirestore):
+            private val reposRepository: ReposRepository):
     BaseViewModel(application, rxSchedulersFacade){
 
-    val dialogLunchRequest = MutableLiveData<Int>()
-    val dialogDismissRequest = MutableLiveData<Int>()
+    val dialogLunchRequest = MutableLiveData<DialogRequest>()
+    val dialogDismissRequest = MutableLiveData<DialogRequest>()
     val dialogLoadingStatus = MutableLiveData<Boolean>()
+    val toast = MutableLiveData<String>()
+    val reposList = MutableLiveData<MutableList<Repo?>>()
 
     init {
         loadingStatus.postValue(false)
@@ -42,68 +43,111 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
      * Handle click on create new repo fab
      */
     fun onFabCreateNewClicked(){
-        dialogDismissRequest.postValue(-1)
-        dialogLunchRequest.postValue(0)
+        dialogDismissRequest.postValue(DialogRequest.NONE)
+        dialogLunchRequest.postValue(DialogRequest.CREATE_NEW)
     }
 
     /**
      * Handle click on browse public repos fab
      */
     fun onFabBrowsePublicClicked(){
-        dialogDismissRequest.postValue(-1)
-        dialogLunchRequest.postValue(1)
+        dialogDismissRequest.postValue(DialogRequest.NONE)
+        dialogLunchRequest.postValue(DialogRequest.BROWSE_PUBLIC)
     }
 
     /**
      * Handle click on join private repo fab
      */
     fun onFabJoinPrivateClicked(){
-        dialogDismissRequest.postValue(-1)
-        dialogLunchRequest.postValue(2)
+        dialogDismissRequest.postValue(DialogRequest.NONE)
+        dialogLunchRequest.postValue(DialogRequest.JOIN_PRIVATE)
     }
 
     /**
      * Handle click on cancel in [com.jakdor.geosave.ui.elements.AddRepoDialog]
      */
     fun onAddRepoDialogCancelClicked(){
-        if(dialogLoadingStatus.value != true) dialogDismissRequest.postValue(0)
+        if(dialogLoadingStatus.value == false)
+            dialogDismissRequest.postValue(DialogRequest.CREATE_NEW)
+    }
+
+    /**
+     * Handle click on repository card in [com.jakdor.geosave.ui.adapters.RepositoryAdapter]
+     */
+    fun onRepositoryClicked(repo: Repo){
+        Timber.i("Repository card clicked: %s", repo.name)
+    }
+
+    /**
+     * Get user repos from firestore
+     */
+    fun loadUserRepos(){
+        disposable.add(reposRepository.reposLoadingStatusStream
+                .subscribeOn(rxSchedulersFacade.computation())
+                .observeOn(rxSchedulersFacade.ui())
+                .subscribe(
+                        { result -> loadingStatus.postValue(result) },
+                        { error -> loadingStatus.postValue(false)
+                            Timber.e("loadingStatus: %s", error.toString()) }
+                ))
+
+        disposable.add(reposRepository.reposListStream
+                .subscribeOn(rxSchedulersFacade.computation())
+                .observeOn(rxSchedulersFacade.ui())
+                .subscribe(
+                        { result -> reposList.postValue(result) },
+                        { error -> loadingStatus.postValue(false)
+                            Timber.e("reposList: %s", error.toString()) }
+                ))
+
+        if (reposRepository.reposListStream.value != null) { //data available
+            reposList.postValue(reposRepository.reposListStream.value)
+        } else if(reposRepository.reposLoadingStatusStream.value == false){ //data not available
+            reposRepository.loadUserRepos()
+        }
     }
 
     /**
      * Push new repo to firestore
      */
     fun createNewRepo(repo: Repo){
-        dialogLoadingStatus.postValue(true)
+        disposable.add(reposRepository.createNewRequestStatusStream
+                .subscribeOn(rxSchedulersFacade.computation())
+                .observeOn(rxSchedulersFacade.ui())
+                .subscribe({ result -> when(result){
+                            ReposRepository.RequestStatus.IDLE -> {}
+                            ReposRepository.RequestStatus.READY -> {
+                                dialogLoadingStatus.postValue(false)
+                                dialogDismissRequest.postValue(DialogRequest.CREATE_NEW)
+                            }
+                            ReposRepository.RequestStatus.ONGOING -> {
+                                dialogLoadingStatus.postValue(true)
+                            }
+                            ReposRepository.RequestStatus.ERROR -> {
+                                dialogLoadingStatus.postValue(false)
+                                toast.postValue(getApplication<App>()
+                                        .getString(R.string.add_repo_error_toast))
+                                Timber.e("Error while creating new repo")
+                            }
+                            ReposRepository.RequestStatus.NO_NETWORK -> {
+                                dialogLoadingStatus.postValue(false)
+                                toast.postValue(getApplication<App>()
+                                        .getString(R.string.add_repo_no_network_toast))
+                                Timber.e("No network while creating new repo")
+                            }
+                            null -> {
+                                dialogLoadingStatus.postValue(false)
+                                toast.postValue(getApplication<App>()
+                                        .getString(R.string.add_repo_error_toast))
+                                Timber.e("Error while creating new repo")
+                            }
+                        } },
+                        { error -> dialogLoadingStatus.postValue(false)
+                            toast.postValue(getApplication<App>()
+                                    .getString(R.string.add_repo_error_toast))
+                            Timber.e("loadingStatus: %s", error.toString()) }
+                ))
 
-        if(firebaseAuthWrapper.getUid() != null) {
-            repo.ownerUid = firebaseAuthWrapper.getUid()!!
-        } else {
-            Timber.wtf("User not logged in")
-            return
-        }
-
-        db.runTransaction { transaction ->
-            val userObjRef = db.collection("users").document(firebaseAuthWrapper.getUid()!!)
-            val repoRef = db.collection("repos").document()
-            val userObjSnap = transaction.get(userObjRef)
-
-            val userObj = userObjSnap.toObject(User::class.java)
-            userObj?.reposList?.add(userObj.reposList.size, repoRef)
-
-            transaction.set(repoRef, repo)
-            if(userObj != null){
-                transaction.set(userObjRef, userObj)
-            } else {
-                throw FirebaseFirestoreException("User obj nu",
-                        FirebaseFirestoreException.Code.ABORTED)
-            }
-        }.addOnSuccessListener {
-            dialogLoadingStatus.postValue(false)
-            dialogDismissRequest.postValue(0)
-            Timber.i("Created new repository")
-        }.addOnFailureListener {
-            dialogLoadingStatus.postValue(false)
-            Timber.e("Unable to create new repository")
-        }
+        reposRepository.createNewRepo(repo)
     }
 }

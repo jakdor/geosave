@@ -40,6 +40,7 @@ class ReposBrowserFragment: Fragment(), InjectableFragment {
     var viewModel: ReposBrowserViewModel? = null
     private var recyclerViewInit = false
     private lateinit var repositoryAdapter: RepositoryAdapter
+    private lateinit var addRepoDialog: AddRepoDialog
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -69,6 +70,17 @@ class ReposBrowserFragment: Fragment(), InjectableFragment {
     }
 
     /**
+     * Fix for memory leak from open dialog during screen rotation
+     */
+    override fun onPause() {
+        super.onPause()
+        viewModel?.dismissDialog(DialogRequest.ALL)
+        if(::addRepoDialog.isInitialized && addRepoDialog.isShowing) addRepoDialog.dismiss()
+        viewModel?.dialogDismissRequest?.removeObservers(this)
+        viewModel?.dialogLoadingStatus?.removeObservers(this)
+    }
+
+    /**
      * Fix for [RepositoryAdapter] memory leak
      */
     override fun onDestroyView() {
@@ -92,10 +104,10 @@ class ReposBrowserFragment: Fragment(), InjectableFragment {
         if(code != null){
             repos_fab_menu.collapse()
             when(code){
-                ReposBrowserFragment.DialogRequest.NONE -> {}
                 ReposBrowserFragment.DialogRequest.CREATE_NEW -> lunchAddRepoDialog()
                 ReposBrowserFragment.DialogRequest.BROWSE_PUBLIC -> {}
                 ReposBrowserFragment.DialogRequest.JOIN_PRIVATE -> {}
+                else -> {}
             }
         }
     }
@@ -104,8 +116,8 @@ class ReposBrowserFragment: Fragment(), InjectableFragment {
      * Lunch [AddRepoDialog]
      */
     fun lunchAddRepoDialog(){
-        val dialog = AddRepoDialog(context, this,  viewModel)
-        dialog.show()
+        addRepoDialog = AddRepoDialog(context, this,  viewModel)
+        addRepoDialog.show()
         Timber.i("lunched AddRepoDialog")
     }
 
@@ -227,7 +239,7 @@ class ReposBrowserFragment: Fragment(), InjectableFragment {
     }
 
     enum class DialogRequest{
-        NONE, CREATE_NEW, BROWSE_PUBLIC, JOIN_PRIVATE
+        NONE, CREATE_NEW, BROWSE_PUBLIC, JOIN_PRIVATE, ALL
     }
 
     companion object {

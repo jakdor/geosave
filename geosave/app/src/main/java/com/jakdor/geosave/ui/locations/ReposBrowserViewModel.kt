@@ -72,6 +72,13 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
     }
 
     /**
+     * Dismiss dialog with given code
+     */
+    fun dismissDialog(code: DialogRequest){
+        dialogDismissRequest.postValue(code)
+    }
+
+    /**
      * Handle click on repository card in [com.jakdor.geosave.ui.adapters.RepositoryAdapter]
      */
     fun onRepositoryClicked(repo: Repo){

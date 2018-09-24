@@ -21,5 +21,5 @@ constructor(var name: String = "",
             var visibility: Int = 0,
             var security: Int = 0,
             var editorsUidList: MutableList<String> = mutableListOf(),
-            var locationsList: MutableList<DocumentReference> = mutableListOf(), //todo investigate direct saving in Repo object not by reference
-            var messagesList: MutableList<DocumentReference> = mutableListOf())
+            var locationsList: MutableList<DocumentReference> = mutableListOf(),
+            var messagesList: MutableList<DocumentReference> = mutableListOf()) //todo locations / messages storing as list of maps???

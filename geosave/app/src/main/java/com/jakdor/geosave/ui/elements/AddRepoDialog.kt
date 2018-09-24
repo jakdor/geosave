@@ -92,7 +92,8 @@ class AddRepoDialog(context: Context?,
      * Handle new dismissDialogRequest value
      */
     fun handleNewDismissDialogRequestValue(dialogCode: DialogRequest?){
-        if(dialogCode != null && dialogCode == DialogRequest.CREATE_NEW) dismiss()
+        if(dialogCode != null && dialogCode == DialogRequest.CREATE_NEW
+                || dialogCode == DialogRequest.ALL) dismiss()
     }
 
     /**

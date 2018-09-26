@@ -8,6 +8,7 @@
 
 package com.jakdor.geosave.ui.map
 
+import android.annotation.SuppressLint
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
@@ -227,11 +228,13 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
         super.onDestroyView()
     }
 
+
     /**
      * Animate showing of MapTypeCard
      */
+    @SuppressLint("RestrictedApi")
     fun onMapTypeFabClicked(){
-        binding.mapTypeFab.hide()
+        binding.mapTypeFab.visibility = View.GONE
         binding.mapTypePopup.mapTypeCard.visibility = View.VISIBLE
         binding.mapTypePopup.mapTypeLayout.visibility = View.GONE
 
@@ -256,8 +259,9 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
     /**
      * Hide MapTypeCard when user engages with the map
      */
+    @SuppressLint("RestrictedApi")
     fun onMapInteraction(){
-        binding.mapTypeFab.show()
+        binding.mapTypeFab.visibility = View.VISIBLE
         binding.mapTypePopup.mapTypeCard.visibility = View.GONE
     }
 

@@ -75,7 +75,7 @@
             android:focusable="true"
             android:clickable="true"
             android:src="@drawable/map_type_icon"
-            android:scaleType="center"
+            android:scaleType="centerInside"
             app:backgroundTint="@android:color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />

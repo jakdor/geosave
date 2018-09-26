@@ -116,9 +116,13 @@ class ReposBrowserFragment: Fragment(), InjectableFragment {
      * Lunch [AddRepoDialog]
      */
     fun lunchAddRepoDialog(){
-        addRepoDialog = AddRepoDialog(context, this,  viewModel)
-        addRepoDialog.show()
-        Timber.i("lunched AddRepoDialog")
+        if(context != null) {
+            addRepoDialog = AddRepoDialog(context!!, this, viewModel)
+            addRepoDialog.show()
+            Timber.i("lunched AddRepoDialog")
+        } else {
+            Timber.e("unable to lunch AddRepoDialog, context is null")
+        }
     }
 
     /**

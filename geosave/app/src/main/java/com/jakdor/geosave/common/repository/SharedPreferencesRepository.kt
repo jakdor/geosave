@@ -54,8 +54,9 @@ class SharedPreferencesRepository @Inject constructor(val context: Context) {
         editor.apply()
     }
 
+    //weird, api 28 getString() with default value can still return null, bug?
     fun getString(key: String, default: String): String {
-        return sharedPreferences.getString(key, default)
+        return sharedPreferences.getString(key, default)!!
     }
 
     fun getBoolean(key: String, default: Boolean): Boolean{

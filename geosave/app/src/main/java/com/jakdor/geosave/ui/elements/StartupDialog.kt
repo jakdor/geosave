@@ -20,14 +20,14 @@ import com.jakdor.geosave.R
 import com.jakdor.geosave.utils.GlideApp
 import kotlinx.android.synthetic.main.dialog_first_startup.*
 
-class StartupDialog(context: Context?) : Dialog(context, R.style.FullscreenDialog) {
+class StartupDialog(context: Context) : Dialog(context, R.style.FullscreenDialog) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.dialog_first_startup)
 
-        window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
 
         setCancelable(false)
         setCanceledOnTouchOutside(false)

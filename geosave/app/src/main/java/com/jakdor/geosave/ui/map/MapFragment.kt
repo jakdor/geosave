@@ -61,30 +61,30 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
         val overlay = binding.root
         mapView.addView(overlay)
 
-        binding.mapTypePopup?.mapTypeCard?.visibility = View.GONE
+        binding.mapTypePopup.mapTypeCard.visibility = View.GONE
         binding.mapTypeFab.setOnClickListener { onMapTypeFabClicked() }
 
         //resize map type icons to specific device dynamically
         GlideApp.with(this)
                 .load(R.drawable.map_default)
                 .fitCenter()
-                .into(binding.mapTypePopup?.mapTypeDefault?.mapTypeButtonIcon)
+                .into(binding.mapTypePopup.mapTypeDefault.mapTypeButtonIcon)
 
         GlideApp.with(this)
                 .load(R.drawable.map_satellite)
                 .fitCenter()
-                .into(binding.mapTypePopup?.mapTypeSatellite?.mapTypeButtonIcon)
+                .into(binding.mapTypePopup.mapTypeSatellite.mapTypeButtonIcon)
 
         GlideApp.with(this)
                 .load(R.drawable.map_hybrid)
                 .fitCenter()
-                .into(binding.mapTypePopup?.mapTypeHybrid?.mapTypeButtonIcon)
+                .into(binding.mapTypePopup.mapTypeHybrid.mapTypeButtonIcon)
 
         GlideApp.with(this)
                 .load(R.drawable.map_terrain)
                 .fitCenter()
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .into(binding.mapTypePopup?.mapTypeTerrain?.mapTypeButtonIcon)
+                .into(binding.mapTypePopup.mapTypeTerrain.mapTypeButtonIcon)
 
         return mapView
     }
@@ -231,17 +231,17 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
      * Animate showing of MapTypeCard
      */
     fun onMapTypeFabClicked(){
-        binding.mapTypeFab.visibility = View.GONE
-        binding.mapTypePopup?.mapTypeCard?.visibility = View.VISIBLE
-        binding.mapTypePopup?.mapTypeLayout?.visibility = View.GONE
+        binding.mapTypeFab.hide()
+        binding.mapTypePopup.mapTypeCard.visibility = View.VISIBLE
+        binding.mapTypePopup.mapTypeLayout.visibility = View.GONE
 
-        binding.mapTypePopup?.mapTypeCard?.translationY = 50.0f
-        binding.mapTypePopup?.mapTypeCard?.translationX = 100.0f
-        binding.mapTypePopup?.mapTypeCard?.scaleX = 0.75f
-        binding.mapTypePopup?.mapTypeCard?.scaleY = 0.75f
-        binding.mapTypePopup?.mapTypeCard?.alpha = 0.0f
+        binding.mapTypePopup.mapTypeCard.translationY = 50.0f
+        binding.mapTypePopup.mapTypeCard.translationX = 100.0f
+        binding.mapTypePopup.mapTypeCard.scaleX = 0.75f
+        binding.mapTypePopup.mapTypeCard.scaleY = 0.75f
+        binding.mapTypePopup.mapTypeCard.alpha = 0.0f
 
-        binding.mapTypePopup?.mapTypeCard?.animate()!!
+        binding.mapTypePopup.mapTypeCard.animate()!!
                 .scaleX(1.0f)
                 .scaleY(1.0f)
                 .alpha(1.0f)
@@ -249,7 +249,7 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
                 .translationY(0.0f)
                 .setInterpolator(FastOutLinearInInterpolator())
                 .setDuration(120)
-                .withEndAction { binding.mapTypePopup?.mapTypeLayout?.visibility = View.VISIBLE }
+                .withEndAction { binding.mapTypePopup.mapTypeLayout.visibility = View.VISIBLE }
                 .start()
     }
 
@@ -257,8 +257,8 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
      * Hide MapTypeCard when user engages with the map
      */
     fun onMapInteraction(){
-        binding.mapTypeFab.visibility = View.VISIBLE
-        binding.mapTypePopup?.mapTypeCard?.visibility = View.GONE
+        binding.mapTypeFab.show()
+        binding.mapTypePopup.mapTypeCard.visibility = View.GONE
     }
 
     companion object: InjectableFragment {

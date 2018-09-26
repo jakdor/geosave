@@ -199,7 +199,7 @@ class MainActivity : AppCompatActivity(),
         if (!fragmentMap.containsKey(GpsInfoFragment.CLASS_TAG)) {
             fragmentMap[GpsInfoFragment.CLASS_TAG] = GpsInfoFragment.newInstance()
             supportFragmentManager.beginTransaction()
-                    .add(R.id.main_fragment_layout, fragmentMap[GpsInfoFragment.CLASS_TAG],
+                    .add(R.id.main_fragment_layout, fragmentMap[GpsInfoFragment.CLASS_TAG]!!,
                             GpsInfoFragment.CLASS_TAG)
                     .commit()
             Timber.i("Created %s", GpsInfoFragment.CLASS_TAG)
@@ -208,7 +208,7 @@ class MainActivity : AppCompatActivity(),
         hideAllFragments()
         
         supportFragmentManager.beginTransaction()
-                .show(fragmentMap[GpsInfoFragment.CLASS_TAG])
+                .show(fragmentMap[GpsInfoFragment.CLASS_TAG]!!)
                 .commit()
         
         Timber.i("Attached %s", GpsInfoFragment.CLASS_TAG)
@@ -221,7 +221,7 @@ class MainActivity : AppCompatActivity(),
         if (!fragmentMap.containsKey(MapFragment.CLASS_TAG)) {
             fragmentMap[MapFragment.CLASS_TAG] = MapFragment.newInstance()
             supportFragmentManager.beginTransaction()
-                    .add(R.id.main_fragment_layout, fragmentMap[MapFragment.CLASS_TAG],
+                    .add(R.id.main_fragment_layout, fragmentMap[MapFragment.CLASS_TAG]!!,
                             MapFragment.CLASS_TAG)
                     .commit()
             Timber.i("Created %s", MapFragment.CLASS_TAG)
@@ -230,7 +230,7 @@ class MainActivity : AppCompatActivity(),
         hideAllFragments()
 
         supportFragmentManager.beginTransaction()
-                .show(fragmentMap[MapFragment.CLASS_TAG])
+                .show(fragmentMap[MapFragment.CLASS_TAG]!!)
                 .commit()
 
         Timber.i("Attached %s", MapFragment.CLASS_TAG)
@@ -243,7 +243,7 @@ class MainActivity : AppCompatActivity(),
         if (!fragmentMap.containsKey(LocationsFragment.CLASS_TAG)) {
             fragmentMap[LocationsFragment.CLASS_TAG] = LocationsFragment.newInstance()
             supportFragmentManager.beginTransaction()
-                    .add(R.id.main_fragment_layout, fragmentMap[LocationsFragment.CLASS_TAG],
+                    .add(R.id.main_fragment_layout, fragmentMap[LocationsFragment.CLASS_TAG]!!,
                             LocationsFragment.CLASS_TAG)
                     .commit()
             Timber.i("Created %s", LocationsFragment.CLASS_TAG)
@@ -252,7 +252,7 @@ class MainActivity : AppCompatActivity(),
         hideAllFragments()
 
         supportFragmentManager.beginTransaction()
-                .show(fragmentMap[LocationsFragment.CLASS_TAG])
+                .show(fragmentMap[LocationsFragment.CLASS_TAG]!!)
                 .commit()
 
         Timber.i("Attached %s", LocationsFragment.CLASS_TAG)
@@ -265,7 +265,7 @@ class MainActivity : AppCompatActivity(),
         if (!fragmentMap.containsKey(PreferencesFragment.CLASS_TAG)) {
             fragmentMap[PreferencesFragment.CLASS_TAG] = PreferencesFragment.newInstance()
             supportFragmentManager.beginTransaction()
-                    .add(R.id.main_fragment_layout, fragmentMap[PreferencesFragment.CLASS_TAG],
+                    .add(R.id.main_fragment_layout, fragmentMap[PreferencesFragment.CLASS_TAG]!!,
                             PreferencesFragment.CLASS_TAG)
                     .commit()
             Timber.i("Created %s", PreferencesFragment.CLASS_TAG)
@@ -274,7 +274,7 @@ class MainActivity : AppCompatActivity(),
         hideAllFragments()
 
         supportFragmentManager.beginTransaction()
-                .show(fragmentMap[PreferencesFragment.CLASS_TAG])
+                .show(fragmentMap[PreferencesFragment.CLASS_TAG]!!)
                 .commit()
 
         Timber.i("Attached %s", PreferencesFragment.CLASS_TAG)

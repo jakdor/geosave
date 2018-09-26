@@ -13,9 +13,8 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'io.fabric'
 
 project.ext {
-    supportLibsVersion = "27.1.1"
+    supportLibsVersion = "28.0.0"
     archVersion = "1.1.1"
-    databindingCompilerVersion = "3.1.4"
     constraintLayoutVersion = "1.1.3"
     firebaseCoreVersion = "16.0.3"
     firebaseFirestoreVersion = "17.1.0"
@@ -40,12 +39,12 @@ project.ext {
 }
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion "27.0.3"
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "com.jakdor.geosave"
         minSdkVersion 21
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         manifestPlaceholders = [crashlytics: getApiKey("crashlytics.key"), maps: getApiKey("maps.key")]
@@ -95,6 +94,7 @@ dependencies {
 
     //Support libs
     implementation "com.android.support:appcompat-v7:$project.supportLibsVersion"
+    implementation "com.android.support:customtabs:$project.supportLibsVersion"
     implementation "com.android.support:support-v4:$project.supportLibsVersion"
     implementation "com.android.support:design:$project.supportLibsVersion"
     implementation "com.android.support:cardview-v7:$project.supportLibsVersion"
@@ -106,9 +106,6 @@ dependencies {
     implementation "android.arch.lifecycle:extensions:$project.archVersion"
     implementation "android.arch.lifecycle:runtime:$project.archVersion"
     implementation "android.arch.core:core-testing:$project.archVersion"
-
-    //data binding
-    kapt "com.android.databinding:compiler:$project.databindingCompilerVersion"
 
     //Firebase
     implementation "com.google.firebase:firebase-core:$project.firebaseCoreVersion"

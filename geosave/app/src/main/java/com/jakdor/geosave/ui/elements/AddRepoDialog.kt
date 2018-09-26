@@ -24,7 +24,7 @@ import com.jakdor.geosave.ui.locations.ReposBrowserViewModel
 import com.jakdor.geosave.utils.GlideApp
 import kotlinx.android.synthetic.main.dialog_add_repo.*
 
-class AddRepoDialog(context: Context?,
+class AddRepoDialog(context: Context,
                     private val lifecycleOwner: LifecycleOwner,
                     private val viewModel: ReposBrowserViewModel?):
         Dialog(context, R.style.FullscreenDialog) {
@@ -34,7 +34,7 @@ class AddRepoDialog(context: Context?,
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.dialog_add_repo)
 
-        window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
 
         setCanceledOnTouchOutside(false)
 

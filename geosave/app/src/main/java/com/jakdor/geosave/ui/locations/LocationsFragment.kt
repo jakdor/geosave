@@ -79,7 +79,7 @@ class LocationsFragment: Fragment(), InjectableFragment {
         if (!fragmentMap.containsKey(ReposBrowserFragment.CLASS_TAG)) {
             fragmentMap[ReposBrowserFragment.CLASS_TAG] = ReposBrowserFragment.newInstance()
             childFragmentManager.beginTransaction()
-                    .add(R.id.locations_fragment_layout, fragmentMap[ReposBrowserFragment.CLASS_TAG],
+                    .add(R.id.locations_fragment_layout, fragmentMap[ReposBrowserFragment.CLASS_TAG]!!,
                             ReposBrowserFragment.CLASS_TAG)
                     .commit()
             Timber.i("Created %s", ReposBrowserFragment.CLASS_TAG)
@@ -88,7 +88,7 @@ class LocationsFragment: Fragment(), InjectableFragment {
         hideAllFragments()
 
         childFragmentManager.beginTransaction()
-                .show(fragmentMap[ReposBrowserFragment.CLASS_TAG])
+                .show(fragmentMap[ReposBrowserFragment.CLASS_TAG]!!)
                 .commit()
         
         Timber.i("Attached child fragment: %s", ReposBrowserFragment.CLASS_TAG)

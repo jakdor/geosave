@@ -29,6 +29,7 @@ class ReposRepository(private val schedulers: RxSchedulersFacade,
     val reposListStream: BehaviorSubject<MutableList<Repo?>> = BehaviorSubject.create()
     val reposLoadingStatusStream: BehaviorSubject<Boolean> = BehaviorSubject.create()
     val createNewRequestStatusStream: BehaviorSubject<RequestStatus> = BehaviorSubject.create()
+    private var reposRefsList = mutableListOf<DocumentReference>()
 
     enum class RequestStatus {
         IDLE, READY, ONGOING, ERROR, NO_NETWORK
@@ -75,7 +76,7 @@ class ReposRepository(private val schedulers: RxSchedulersFacade,
                     documentReference.get().addOnSuccessListener { repo ->
                         reposResponse.add(repo.toObject(Repo::class.java))
                         if(reposResponse.size == userObj.reposList.size){
-                            handleNewRepoList(reposResponse)
+                            handleNewRepoList(reposResponse, userObj.reposList)
                         }
                     }.addOnFailureListener{
                         reposRequest = false
@@ -103,7 +104,7 @@ class ReposRepository(private val schedulers: RxSchedulersFacade,
                                     documentReference.get().addOnSuccessListener { repo ->
                                         reposResponse.add(repo.toObject(Repo::class.java))
                                         if (reposResponse.size == reposRefList.size){
-                                            handleNewRepoList(reposResponse)
+                                            handleNewRepoList(reposResponse, reposRefList)
                                         }
                                     }
                                 }
@@ -122,11 +123,26 @@ class ReposRepository(private val schedulers: RxSchedulersFacade,
     }
 
     /**
-     * Forward new reposList to view layer
+     * Forward new reposList to view layer - sort repos by name, update reposRefsList
      */
-    private fun handleNewRepoList(repos: MutableList<Repo?>){
+    private fun handleNewRepoList(repos: MutableList<Repo?>, refs: MutableList<DocumentReference>){
         reposRequest = false
-        val sortedRepos = repos.sortedBy { repo -> repo?.name } as MutableList<Repo?>
+        val repoRefPairList = mutableListOf<Pair<Repo?, DocumentReference>>()
+
+        for (i in 0 until repos.size){
+            repoRefPairList.add(Pair(repos[i], refs[i]))
+        }
+
+        val sortedRepoRefPairList = repoRefPairList.sortedBy { pair -> pair.first?.name }
+                as MutableList<Pair<Repo?, DocumentReference>>
+
+        reposRefsList.clear()
+        val sortedRepos = mutableListOf<Repo?>()
+        sortedRepoRefPairList.forEach { t: Pair<Repo?, DocumentReference> ->
+            sortedRepos.add(t.first)
+            reposRefsList.add(t.second)
+        }
+
         reposLoadingStatusStream.onNext(false)
         reposListStream.onNext(sortedRepos)
         Timber.i("Fetched user repos from firestore")

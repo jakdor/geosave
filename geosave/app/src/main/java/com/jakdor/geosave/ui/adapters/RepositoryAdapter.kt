@@ -67,7 +67,9 @@ class RepositoryAdapter(private var reposVector: Vector<Repo?>,
 
         val repo = reposVector[position]
         holder.bind(repo!!)
-        holder.binding.repoCardView.setOnClickListener { viewModel?.onRepositoryClicked(repo) }
+        holder.binding.repoCardView.setOnClickListener {
+            viewModel?.onRepositoryClicked(reposVector.indexOf(repo))
+        }
     }
 
     override fun getItemCount(): Int {

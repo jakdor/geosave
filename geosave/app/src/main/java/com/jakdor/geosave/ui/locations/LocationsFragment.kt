@@ -44,6 +44,7 @@ class LocationsFragment: Fragment(), InjectableFragment {
         }
 
         viewModel?.requestUpdatesOnCurrentFragment()
+        viewModel?.observeChosenRepositoryIndex()
         observeCurrentFragmentId()
     }
 
@@ -68,6 +69,7 @@ class LocationsFragment: Fragment(), InjectableFragment {
         if(id != null){
             when(id){
                 ReposBrowserFragment.CLASS_TAG -> switchToReposBrowserFragement()
+                RepoFragment.CLASS_TAG -> switchToRepoFragment()
             }
         }
     }
@@ -92,6 +94,28 @@ class LocationsFragment: Fragment(), InjectableFragment {
                 .commit()
         
         Timber.i("Attached child fragment: %s", ReposBrowserFragment.CLASS_TAG)
+    }
+
+    /**
+     * Create or reattach [RepoFragment]
+     */
+    fun switchToRepoFragment(){
+        if (!fragmentMap.containsKey(RepoFragment.CLASS_TAG)) {
+            fragmentMap[RepoFragment.CLASS_TAG] = RepoFragment.newInstance()
+            childFragmentManager.beginTransaction()
+                    .add(R.id.locations_fragment_layout, fragmentMap[RepoFragment.CLASS_TAG]!!,
+                            RepoFragment.CLASS_TAG)
+                    .commit()
+            Timber.i("Created %s", RepoFragment.CLASS_TAG)
+        }
+
+        hideAllFragments()
+
+        childFragmentManager.beginTransaction()
+                .show(fragmentMap[RepoFragment.CLASS_TAG]!!)
+                .commit()
+
+        Timber.i("Attached child fragment: %s", RepoFragment.CLASS_TAG)
     }
 
     /**

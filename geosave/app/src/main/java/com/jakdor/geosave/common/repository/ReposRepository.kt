@@ -29,6 +29,7 @@ class ReposRepository(private val schedulers: RxSchedulersFacade,
     val reposListStream: BehaviorSubject<MutableList<Repo?>> = BehaviorSubject.create()
     val reposLoadingStatusStream: BehaviorSubject<Boolean> = BehaviorSubject.create()
     val createNewRequestStatusStream: BehaviorSubject<RequestStatus> = BehaviorSubject.create()
+    val chosenRepositoryIndexStream: BehaviorSubject<Int> = BehaviorSubject.create()
     private var reposRefsList = mutableListOf<DocumentReference>()
 
     enum class RequestStatus {

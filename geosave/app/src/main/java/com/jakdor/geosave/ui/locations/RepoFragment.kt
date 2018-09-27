@@ -19,6 +19,7 @@ import android.view.ViewGroup
 import com.jakdor.geosave.R
 import com.jakdor.geosave.databinding.FragmentRepoBinding
 import com.jakdor.geosave.di.InjectableFragment
+import kotlinx.android.synthetic.main.activity_main.view.*
 import javax.inject.Inject
 
 class RepoFragment: Fragment(), InjectableFragment {
@@ -33,6 +34,10 @@ class RepoFragment: Fragment(), InjectableFragment {
                               savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_repo, container, false)
+
+        binding.viewModel = viewModel
+        binding.repoToolbar.setNavigationOnClickListener{ viewModel?.returnFromRepoFragment() }
+
         return binding.root
     }
 
@@ -42,6 +47,19 @@ class RepoFragment: Fragment(), InjectableFragment {
         if(viewModel == null){
             viewModel = ViewModelProviders.of(this, viewModelFactory)
                     .get(RepoViewModel::class.java)
+        }
+    }
+
+    companion object {
+
+        const val CLASS_TAG = "RepoFragment"
+
+        fun newInstance(): RepoFragment{
+            val args = Bundle()
+            val fragment = RepoFragment()
+            fragment.arguments = args
+            fragment.retainInstance = true
+            return fragment
         }
     }
 }

@@ -82,6 +82,7 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
      * Handle click on repository card in [com.jakdor.geosave.ui.adapters.RepositoryAdapter]
      */
     fun onRepositoryClicked(repoIndex: Int){
+        reposRepository.chosenRepositoryIndexStream.onNext(repoIndex)
         Timber.i("Repository card clicked: %d", repoIndex)
     }
 

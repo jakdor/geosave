@@ -10,6 +10,7 @@ package com.jakdor.geosave.di
 
 import com.jakdor.geosave.ui.gpsinfo.GpsInfoViewModel
 import com.jakdor.geosave.ui.locations.LocationsViewModel
+import com.jakdor.geosave.ui.locations.RepoViewModel
 import com.jakdor.geosave.ui.locations.ReposBrowserViewModel
 import com.jakdor.geosave.ui.map.MapViewModel
 import com.jakdor.geosave.ui.preferences.PreferencesViewModel
@@ -32,4 +33,5 @@ interface ViewModelSubComponent {
     fun preferencesViewModel(): PreferencesViewModel
     fun locationsViewModel(): LocationsViewModel
     fun reposBrowserViewModel(): ReposBrowserViewModel
+    fun repoViewModel(): RepoViewModel
 }

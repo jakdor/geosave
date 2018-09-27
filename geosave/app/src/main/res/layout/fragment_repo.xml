@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ GeoSave - app for easy sharing and collaborating on GPS related data
+  ~ Copyright (C) 2018  Jakub Dorda
+  ~
+  ~ Software under GPLv3 licence - full copyright notice available at:
+  ~ https://github.com/jakdor/geosave/blob/master/README.md
+  -->
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/repo_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimary"
+            android:elevation="4dp"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:title="Hello world" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Hello world"
+            app:layout_constraintTop_toBottomOf="@+id/repo_toolbar" />
+
+    </android.support.constraint.ConstraintLayout>
+</layout>

@@ -61,6 +61,13 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
      * Handle on toolbar edit button click
      */
     fun onEditRepoClick(){
-        Timber.i("repoIsOwnerPair edit clicked")
+        Timber.i("repo edit clicked")
+    }
+
+    /**
+     * Handle on toolbar invite collaborators click
+     */
+    fun onInviteClick(){
+        Timber.i("invite clicked")
     }
 }

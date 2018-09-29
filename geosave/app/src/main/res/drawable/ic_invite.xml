@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Icon made by Google from www.flaticon.com
+  ~ under CC BY 3.0 licence - full licence available at:
+  ~ https://creativecommons.org/licenses/by/3.0/
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:viewportWidth="612"
+    android:viewportHeight="612"
+    android:width="64dp"
+    android:height="64dp">
+    <path
+        android:pathData="M204 267.75l-76.5 0 0 -76.5 -51 0 0 76.5 -76.5 0 0 51 76.5 0 0 76.5 51 0 0 -76.5 76.5 0 0 -51zm255 25.5c43.35 0 76.5 -33.15 76.5 -76.5 0 -43.35 -33.15 -76.5 -76.5 -76.5 -7.65 0 -15.3 2.55 -22.95 2.55 15.3 22.95 22.95 45.9 22.95 73.95 0 28.05 -7.65 51 -22.95 73.95 7.65 0 15.3 2.55 22.95 2.55zm-127.5 0c43.35 0 76.5 -33.15 76.5 -76.5 0 -43.35 -33.15 -76.5 -76.5 -76.5 -43.35 0 -76.5 33.15 -76.5 76.5 0 43.35 33.15 76.5 76.5 76.5zm168.3 56.1c20.4 17.851 35.7 43.351 35.7 71.4l0 51 76.5 0 0 -51C612 382.5 550.8 357 499.8 349.35Zm-168.3 -5.1c-51 0 -153 25.5 -153 76.5l0 51 306 0 0 -51c0 -51 -102 -76.5 -153 -76.5z"
+        android:fillColor="@color/icon_black" />
+</vector>

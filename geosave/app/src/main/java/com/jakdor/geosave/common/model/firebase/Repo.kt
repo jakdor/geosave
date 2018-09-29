@@ -21,5 +21,5 @@ constructor(var name: String = "",
             var visibility: Int = 0,
             var security: Int = 0,
             var editorsUidList: MutableList<String> = mutableListOf(),
-            var locationsList: MutableList<DocumentReference> = mutableListOf(),
-            var messagesList: MutableList<DocumentReference> = mutableListOf()) //todo locations / messages storing as list of maps???
+            var locationsList: MutableList<DocumentReference> = mutableListOf(), //todo locations as list of maps?
+            var messagesList: MutableList<DocumentReference> = mutableListOf()) //todo messages as list of references to message bundles 16-32 entries each?

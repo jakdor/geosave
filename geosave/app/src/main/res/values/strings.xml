@@ -157,6 +157,8 @@
     <string name="repo_card_location_number_label">Locations: %1$d</string>
     <string name="repo_card_contributors_number_label">Contributors: %1$d</string>
     <string name="visibility_icon_desc">visibility icon</string>
-    <string name="repository_icon_desc">repository icon</string>
+    <string name="repo_icon_desc">repository icon</string>
+    <string name="repo_icon_add_popup_text">Click to add image</string>
+    <string name="invite_icon_desc">invite icon</string>
 
 </resources>

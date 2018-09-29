@@ -8,6 +8,7 @@
   -->
 <layout xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
+        <import type="android.view.View"/>
         <variable name="viewModel" type="com.jakdor.geosave.ui.locations.RepoViewModel"/>
         <variable name="repo" type="com.jakdor.geosave.common.model.firebase.Repo"/>
     </data>
@@ -26,7 +27,6 @@
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             app:title="@{repo.name}"
-            app:titleMarginEnd="48dp"
             app:navigationIcon="@drawable/ic_back_arrow">
 
             <Button
@@ -36,10 +36,20 @@
                 android:layout_marginEnd="8dp"
                 android:layout_gravity="end"
                 android:background="@drawable/ic_edit"
-                android:scaleX="0.7"
-                android:scaleY="0.7"
+                android:scaleX="0.6"
+                android:scaleY="0.6"
                 android:layout_alignParentEnd="true"
                 android:onClick="@{() -> viewModel.onEditRepoClick()}"/>
+
+            <Button
+                android:id="@+id/repo_toolbar_invite"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginEnd="24dp"
+                android:layout_gravity="end"
+                android:background="@drawable/ic_invite"
+                android:layout_alignParentEnd="true"
+                android:onClick="@{() -> viewModel.onInviteClick()}"/>
 
         </android.support.v7.widget.Toolbar>
 
@@ -52,9 +62,74 @@
 
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:background="@color/colorSecondary">
 
+                <TextView
+                    android:id="@+id/repo_about"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="@{repo.info}"
+                    android:lines="2"
+                    app:autoSizeTextType="uniform"
+                    app:autoSizeMaxTextSize="18sp"
+                    app:layout_constraintEnd_toStartOf="@+id/repo_guideline"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
+                <android.support.constraint.Guideline
+                    android:id="@+id/repo_guideline"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.65" />
+
+                <ImageView
+                    android:id="@+id/repo_icon"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:contentDescription="@string/repo_icon_desc"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/repo_guideline"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/repo_icon_add_popup"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_margin="16dp"
+                    android:text="@string/repo_icon_add_popup_text"
+                    android:textAlignment="center"
+                    android:gravity="center"
+                    android:lines="2"
+                    android:visibility="@{repo.picUrl.isEmpty() ? View.VISIBLE : View.GONE}"
+                    app:autoSizeTextType="uniform"
+                    app:autoSizeMaxTextSize="14sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/repo_icon"
+                    app:layout_constraintEnd_toEndOf="@+id/repo_icon"
+                    app:layout_constraintStart_toStartOf="@+id/repo_icon"
+                    app:layout_constraintTop_toTopOf="@+id/repo_icon" />
+
+                <TextView
+                    android:id="@+id/repo_contributors"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="@{@string/repo_card_contributors_number_label(repo.editorsUidList.size() + 1)}"
+                    android:textColor="@color/textCardTitle"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toStartOf="@+id/repo_guideline"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/repo_about" />
 
             </android.support.constraint.ConstraintLayout>
 

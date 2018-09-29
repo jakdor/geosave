@@ -43,7 +43,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_gravity="center"
-                android:background="@color/transparent"
+                android:background="@android:color/transparent"
                 android:textAlignment="center"
                 android:text="@string/value_unknown"
                 app:autoSizeMaxTextSize="28sp"

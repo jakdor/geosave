@@ -160,7 +160,7 @@ class ReposRepository(private val schedulers: RxSchedulersFacade,
     }
 
     /**
-     * Push new repo to firestore
+     * Push new repoIsOwnerPair to firestore
      */
     fun createNewRepo(repo: Repo){
         if(firebaseAuthWrapper.getUid() != null) {

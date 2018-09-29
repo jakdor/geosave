@@ -57,7 +57,7 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
                             } else {
                                 currentFragmentId.postValue(ReposBrowserFragment.CLASS_TAG)
                             }},
-                        { e -> Timber.e("unable to receive chosen repo: %s", e.toString())}
+                        { e -> Timber.e("unable to receive chosen repoIsOwnerPair: %s", e.toString())}
                 )
         )
     }

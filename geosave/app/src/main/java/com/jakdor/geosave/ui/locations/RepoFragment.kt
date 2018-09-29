@@ -8,6 +8,7 @@
 
 package com.jakdor.geosave.ui.locations
 
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.databinding.DataBindingUtil
@@ -17,9 +18,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.jakdor.geosave.R
+import com.jakdor.geosave.common.model.firebase.Repo
 import com.jakdor.geosave.databinding.FragmentRepoBinding
 import com.jakdor.geosave.di.InjectableFragment
-import kotlinx.android.synthetic.main.activity_main.view.*
 import javax.inject.Inject
 
 class RepoFragment: Fragment(), InjectableFragment {
@@ -35,7 +36,6 @@ class RepoFragment: Fragment(), InjectableFragment {
         binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_repo, container, false)
 
-        binding.viewModel = viewModel
         binding.repoToolbar.setNavigationOnClickListener{ viewModel?.returnFromRepoFragment() }
 
         return binding.root
@@ -47,6 +47,25 @@ class RepoFragment: Fragment(), InjectableFragment {
         if(viewModel == null){
             viewModel = ViewModelProviders.of(this, viewModelFactory)
                     .get(RepoViewModel::class.java)
+        }
+        binding.viewModel = viewModel
+
+        observeRepo()
+        viewModel?.observeChosenRepository()
+    }
+
+    fun observeRepo(){
+        viewModel?.repoIsOwnerPair?.observe(this, Observer { handleNewRepoIsOwnerPair(it) })
+    }
+
+    fun handleNewRepoIsOwnerPair(repoIsOwnerPair: Pair<Repo?, Boolean>?){
+        if(repoIsOwnerPair?.first != null){
+            binding.repo = repoIsOwnerPair.first
+
+            //lock owner options for non-owner user
+            if(!repoIsOwnerPair.second){
+                binding.repoToolbarEdit.visibility = View.GONE
+            }
         }
     }
 

@@ -162,5 +162,7 @@
     <string name="repo_icon_desc">repository icon</string>
     <string name="repo_icon_add_popup_text">Click to add image</string>
     <string name="invite_icon_desc">invite icon</string>
+    <string name="contributor_icon_desc">contributor icon</string>
+    <string name="repo_contributors_more_text">+ %1$d others</string>
 
 </resources>

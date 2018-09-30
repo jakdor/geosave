@@ -12,12 +12,17 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.databinding.DataBindingUtil
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
 import com.jakdor.geosave.R
 import com.jakdor.geosave.common.model.firebase.Repo
 import com.jakdor.geosave.databinding.FragmentRepoBinding
@@ -32,6 +37,7 @@ class RepoFragment: Fragment(), InjectableFragment {
 
     var viewModel: RepoViewModel? = null
     lateinit var binding: FragmentRepoBinding
+    private var loadedPics = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -39,6 +45,7 @@ class RepoFragment: Fragment(), InjectableFragment {
                 inflater, R.layout.fragment_repo, container, false)
 
         binding.repoToolbar.setNavigationOnClickListener{ viewModel?.returnFromRepoFragment() }
+        binding.repoToolbarEdit.visibility = View.GONE
 
         return binding.root
     }
@@ -53,6 +60,7 @@ class RepoFragment: Fragment(), InjectableFragment {
         binding.viewModel = viewModel
 
         observeRepo()
+        observeContributorsPicUrl()
         viewModel?.observeChosenRepository()
     }
 
@@ -60,10 +68,19 @@ class RepoFragment: Fragment(), InjectableFragment {
         viewModel?.repoIsOwnerPair?.observe(this, Observer { handleNewRepoIsOwnerPair(it) })
     }
 
+    /**
+     * Update view with new [Repo] object and info about ownership
+     */
     fun handleNewRepoIsOwnerPair(repoIsOwnerPair: Pair<Repo?, Boolean>?){
         if(repoIsOwnerPair?.first != null){
             val repo = repoIsOwnerPair.first
             binding.repo = repo
+
+            binding.repoContributorsIcon1.visibility = View.GONE
+            binding.repoContributorsIcon2.visibility = View.GONE
+            binding.repoContributorsIcon3.visibility = View.GONE
+            loadedPics = 0
+            viewModel?.requestContributorsPicUrls(repo)
 
             GlideApp.with(binding.root)
                     .load(repo?.picUrl)
@@ -76,7 +93,56 @@ class RepoFragment: Fragment(), InjectableFragment {
             //lock owner options for non-owner user
             if(!repoIsOwnerPair.second){
                 binding.repoToolbarEdit.visibility = View.GONE
+            } else {
+                binding.repoToolbarEdit.visibility = View.VISIBLE
             }
+        }
+    }
+
+    fun observeContributorsPicUrl(){
+        viewModel?.repoContributorPicUrl?.observe(this, Observer {
+            handleContributorPicUrl(it)
+        })
+    }
+
+    /**
+     * Load received contributors pic urls onto ImageViews
+     */
+    fun handleContributorPicUrl(url: String?){
+        if(url != null){
+            val imageView = when(loadedPics){
+                0 -> binding.repoContributorsIcon1
+                1 -> binding.repoContributorsIcon2
+                2 -> binding.repoContributorsIcon3
+                else -> binding.repoContributorsIcon1
+            }
+
+            GlideApp.with(binding.root)
+                    .load(url)
+                    .apply(RequestOptions()
+                            .placeholder(R.drawable.repo_icon_placeholder)
+                            .error(R.drawable.repo_icon_placeholder)
+                            .centerCrop()
+                            .circleCrop())
+                    .listener(object : RequestListener<Drawable>{
+                        override fun onLoadFailed(e: GlideException?, model: Any?,
+                                                  target: Target<Drawable>?,
+                                                  isFirstResource: Boolean): Boolean {
+                            imageView.visibility = View.VISIBLE
+                            return false
+                        }
+
+                        override fun onResourceReady(resource: Drawable?, model: Any?,
+                                                     target: Target<Drawable>?,
+                                                     dataSource: DataSource?,
+                                                     isFirstResource: Boolean): Boolean {
+                            imageView.visibility = View.VISIBLE
+                            return false
+                        }
+                    })
+                    .into(imageView)
+
+            ++loadedPics
         }
     }
 

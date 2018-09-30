@@ -10,9 +10,12 @@ package com.jakdor.geosave.ui.locations
 
 import android.app.Application
 import android.arch.lifecycle.MutableLiveData
+import com.google.firebase.firestore.DocumentReference
 import com.jakdor.geosave.arch.BaseViewModel
 import com.jakdor.geosave.common.model.firebase.Repo
+import com.jakdor.geosave.common.model.firebase.User
 import com.jakdor.geosave.common.repository.ReposRepository
+import com.jakdor.geosave.common.repository.UserRepository
 import com.jakdor.geosave.common.wrapper.FirebaseAuthWrapper
 import com.jakdor.geosave.utils.RxSchedulersFacade
 import timber.log.Timber
@@ -21,10 +24,12 @@ import javax.inject.Inject
 class RepoViewModel @Inject
 constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
             private val reposRepository: ReposRepository,
+            private val userRepository: UserRepository,
             private val firebaseAuthWrapper: FirebaseAuthWrapper):
         BaseViewModel(application, rxSchedulersFacade) {
 
     val repoIsOwnerPair = MutableLiveData<Pair<Repo?, Boolean>>()
+    val repoContributorPicUrl = MutableLiveData<String>()
 
     /**
      * Observe [ReposRepository] chosen repository index
@@ -46,8 +51,38 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
     /**
      * Check if user is owner of repository, call after receiving current repoIsOwnerPair from [ReposRepository]
      */
-    private fun checkIsOwner(repo: Repo?): Boolean{
+    fun checkIsOwner(repo: Repo?): Boolean{
         return firebaseAuthWrapper.getUid() == repo?.ownerUid
+    }
+
+    /**
+     * Get contributors pictures urls
+     */
+    fun requestContributorsPicUrls(repo: Repo?){
+        if(repo != null){
+            disposable.add(userRepository.userPicUrlStream
+                    .subscribeOn(rxSchedulersFacade.io())
+                    .observeOn(rxSchedulersFacade.io())
+                    .take(1)
+                    .subscribe({ result -> repoContributorPicUrl.postValue(result)},
+                        { e -> Timber.e("userPicUrlStream: %s", e.toString())})
+            )
+
+            var pics = 3
+            if(checkIsOwner(repo)){
+                val user = firebaseAuthWrapper.userObjectSnapshot?.toObject(User::class.java)
+                if(user != null){
+                    repoContributorPicUrl.postValue(user.picUrl)
+                    --pics
+                }
+            }
+
+            for(i in 0 until pics){
+                if(repo.editorsUidList.size > i){
+                    userRepository.getUserPicUrl(repo.editorsUidList[i])
+                }
+            }
+        }
     }
 
     /**

@@ -102,7 +102,7 @@
                 android:layout_marginBottom="6dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                android:text="@{@string/repo_card_contributors_number_label(repoModel.editorsUidList.size() + 1)}"
+                android:text="@{@string/repo_card_contributors_number_label(repoModel.editorsUidList.size())}"
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/repo_card_locations"

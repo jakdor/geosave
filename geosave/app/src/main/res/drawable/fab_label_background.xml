@@ -8,7 +8,7 @@
   -->
 
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="@color/black_semi_transparent"/>
+    <solid android:color="@color/blackSemiTransparent"/>
     <padding
         android:left="16dp"
         android:top="4dp"

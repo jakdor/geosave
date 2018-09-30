@@ -210,6 +210,8 @@ class MainActivity : AppCompatActivity(),
         supportFragmentManager.beginTransaction()
                 .show(fragmentMap[GpsInfoFragment.CLASS_TAG]!!)
                 .commit()
+
+        supportActionBar?.setTitle(R.string.title_gps_info)
         
         Timber.i("Attached %s", GpsInfoFragment.CLASS_TAG)
     }
@@ -233,6 +235,8 @@ class MainActivity : AppCompatActivity(),
                 .show(fragmentMap[MapFragment.CLASS_TAG]!!)
                 .commit()
 
+        supportActionBar?.setTitle(R.string.title_map)
+
         Timber.i("Attached %s", MapFragment.CLASS_TAG)
     }
 
@@ -255,6 +259,8 @@ class MainActivity : AppCompatActivity(),
                 .show(fragmentMap[LocationsFragment.CLASS_TAG]!!)
                 .commit()
 
+        supportActionBar?.setTitle(R.string.title_locations_short)
+
         Timber.i("Attached %s", LocationsFragment.CLASS_TAG)
     }
 
@@ -276,6 +282,8 @@ class MainActivity : AppCompatActivity(),
         supportFragmentManager.beginTransaction()
                 .show(fragmentMap[PreferencesFragment.CLASS_TAG]!!)
                 .commit()
+
+        supportActionBar?.setTitle(R.string.title_preferences)
 
         Timber.i("Attached %s", PreferencesFragment.CLASS_TAG)
     }

@@ -49,8 +49,8 @@
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         fab:fab_addButtonColorNormal="@color/white"
-        fab:fab_addButtonColorPressed="@color/white_pressed"
-        fab:fab_addButtonPlusIconColor="@color/half_black"
+        fab:fab_addButtonColorPressed="@color/whitePressed"
+        fab:fab_addButtonPlusIconColor="@color/halfBlack"
         fab:fab_addButtonSize="normal"
         fab:fab_addButtonStrokeVisible="false"
         fab:fab_expandDirection="up"
@@ -63,7 +63,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             fab:fab_colorNormal="@color/white"
-            fab:fab_colorPressed="@color/white_pressed"
+            fab:fab_colorPressed="@color/whitePressed"
             fab:fab_size="mini"
             fab:fab_title="@string/repos_fab_join_private" />
 
@@ -72,7 +72,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             fab:fab_colorNormal="@color/white"
-            fab:fab_colorPressed="@color/white_pressed"
+            fab:fab_colorPressed="@color/whitePressed"
             fab:fab_size="mini"
             fab:fab_title="@string/repos_fab_browse_public" />
 
@@ -81,7 +81,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             fab:fab_colorNormal="@color/white"
-            fab:fab_colorPressed="@color/white_pressed"
+            fab:fab_colorPressed="@color/whitePressed"
             fab:fab_size="mini"
             fab:fab_title="@string/repos_fab_add_new" />
 

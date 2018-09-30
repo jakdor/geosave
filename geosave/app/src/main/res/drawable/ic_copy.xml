@@ -12,5 +12,5 @@
     android:height="64dp">
     <path
         android:pathData="M395.25 0l-306 0c-28.05 0 -51 22.95 -51 51l0 357 51 0 0 -357 306 0 0 -51zm76.5 102l-280.5 0c-28.05 0 -51 22.95 -51 51l0 357c0 28.05 22.95 51 51 51l280.5 0c28.05 0 51 -22.95 51 -51l0 -357c0 -28.05 -22.95 -51 -51 -51zm0 408l-280.5 0 0 -357 280.5 0 0 357z"
-        android:fillColor="@color/icon_black" />
+        android:fillColor="@color/iconBlack" />
 </vector>

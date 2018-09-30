@@ -11,14 +11,15 @@
     <color name="materialTransparent">#d2ffffff</color>
 
     <color name="selected_highlight">@color/colorAccent</color>
-    <color name="icon_black">#aa000000</color>
+    <color name="iconBlack">#aa000000</color>
+    <color name="iconBlackDark">#c0000000</color>
 
     <color name="textCardTitle">#000000</color>
     <color name="textError">#d50000</color>
 
-    <color name="half_black">#808080</color>
+    <color name="halfBlack">#808080</color>
     <color name="white">#fafafa</color>
-    <color name="white_pressed">#f1f1f1</color>
-    <color name="black_semi_transparent">#a0000000</color>
+    <color name="whitePressed">#f1f1f1</color>
+    <color name="blackSemiTransparent">#a0000000</color>
 
 </resources>

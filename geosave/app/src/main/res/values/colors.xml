@@ -11,7 +11,7 @@
     <color name="materialTransparent">#d2ffffff</color>
 
     <color name="selected_highlight">@color/colorAccent</color>
-    <color name="icon_black">#000000</color>
+    <color name="icon_black">#aa000000</color>
 
     <color name="textCardTitle">#000000</color>
     <color name="textError">#d50000</color>

@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Based on icon made by Cole Bemis(colebemis.com) from www.flaticon.com
+  ~ under CC BY 3.0 licence - full licence available at:
+  ~ https://creativecommons.org/licenses/by/3.0/
+  -->
+
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp"
     android:height="24dp"
@@ -8,9 +14,9 @@
     <group android:translateY="55">
         <path
             android:pathData="M500.563 119.845L265.25 2.189c-5.823 -2.911 -12.677 -2.911 -18.499 0L11.437 119.845C4.43 123.349 0.004 130.51 0.004 138.344c0 7.834 4.426 14.996 11.433 18.499L246.751 274.5c2.912 1.455 6.08 2.183 9.25 2.183 3.168 0 6.339 -0.728 9.249 -2.183L500.564 156.843c7.007 -3.504 11.433 -10.664 11.433 -18.499 -0.001 -7.834 -4.428 -14.996 -11.434 -18.499zM256.001 232.878L66.933 138.344 256 43.81 445.067 138.344 256.001 232.878Z"
-            android:fillColor="#000000" />
+            android:fillColor="@color/icon_black" />
         <path
             android:pathData="M509.814 246.751c-5.108 -10.216 -17.533 -14.357 -27.749 -9.249L256.001 350.534 29.936 237.502c-10.216 -5.108 -22.64 -0.967 -27.748 9.249 -5.109 10.217 -0.967 22.64 9.249 27.749l235.314 117.657c2.912 1.455 6.08 2.183 9.25 2.183 3.168 0 6.339 -0.728 9.25 -2.183L500.564 274.5c10.217 -5.109 14.358 -17.533 9.25 -27.749z"
-            android:fillColor="#000000" />
+            android:fillColor="@color/icon_black" />
     </group>
 </vector>

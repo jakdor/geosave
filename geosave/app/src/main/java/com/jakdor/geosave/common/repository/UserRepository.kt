@@ -44,7 +44,10 @@ class UserRepository(private val db: FirebaseFirestore) {
         }
     }
 
-    fun onUserPicSuccess(snap: DocumentSnapshot){
+    /**
+     * Forward picture url to userPicUrlStream form [User] obj [DocumentSnapshot]
+     */
+    private fun onUserPicSuccess(snap: DocumentSnapshot){
         val user = snap.toObject(User::class.java)
         if (user != null) userPicUrlStream.onNext(user.picUrl)
         else Timber.e("Unable to get user pic - user obj is null")

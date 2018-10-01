@@ -9,6 +9,7 @@
 package com.jakdor.geosave.common.repository
 
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.jakdor.geosave.common.model.firebase.User
 import io.reactivex.subjects.PublishSubject
@@ -26,11 +27,26 @@ class UserRepository(private val db: FirebaseFirestore) {
      */
     fun getUserPicUrl(ref: DocumentReference){
         ref.get().addOnSuccessListener {
-            val user = it.toObject(User::class.java)
-            if (user != null) userPicUrlStream.onNext(user.picUrl)
-            else Timber.e("Unable to get user pic - user obj is null")
+            onUserPicSuccess(it)
         }.addOnFailureListener{
             Timber.e("Unable to get user pic: %s", it.toString())
         }
+    }
+
+    /**
+     * Get pic url from given [User] uid as [String]
+     */
+    fun getUserPicUrl(path: String){
+        db.collection("users").document(path).get().addOnSuccessListener {
+            onUserPicSuccess(it)
+        }.addOnFailureListener{
+            Timber.e("Unable to get user pic: %s", it.toString())
+        }
+    }
+
+    fun onUserPicSuccess(snap: DocumentSnapshot){
+        val user = snap.toObject(User::class.java)
+        if (user != null) userPicUrlStream.onNext(user.picUrl)
+        else Timber.e("Unable to get user pic - user obj is null")
     }
 }

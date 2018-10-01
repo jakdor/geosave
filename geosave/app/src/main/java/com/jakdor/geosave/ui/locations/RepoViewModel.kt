@@ -10,7 +10,6 @@ package com.jakdor.geosave.ui.locations
 
 import android.app.Application
 import android.arch.lifecycle.MutableLiveData
-import com.google.firebase.firestore.DocumentReference
 import com.jakdor.geosave.arch.BaseViewModel
 import com.jakdor.geosave.common.model.firebase.Repo
 import com.jakdor.geosave.common.model.firebase.User
@@ -32,7 +31,7 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
     val repoContributorPicUrl = MutableLiveData<String>()
 
     /**
-     * Observe [ReposRepository] chosen repository index
+     * Observe [ReposRepository] chosen repository index stream
      */
     fun observeChosenRepository(){
         disposable.add(reposRepository.chosenRepositoryIndexStream
@@ -56,18 +55,22 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
     }
 
     /**
+     * Observe [ReposRepository] contributors pic url stream
+     */
+    fun observeContributorsPicUrls(){
+        disposable.add(userRepository.userPicUrlStream
+                .subscribeOn(rxSchedulersFacade.io())
+                .observeOn(rxSchedulersFacade.io())
+                .subscribe({ result -> repoContributorPicUrl.postValue(result)},
+                        { e -> Timber.e("userPicUrlStream: %s", e.toString())})
+        )
+    }
+
+    /**
      * Get contributors pictures urls
      */
     fun requestContributorsPicUrls(repo: Repo?){
         if(repo != null){
-            disposable.add(userRepository.userPicUrlStream
-                    .subscribeOn(rxSchedulersFacade.io())
-                    .observeOn(rxSchedulersFacade.io())
-                    .take(1)
-                    .subscribe({ result -> repoContributorPicUrl.postValue(result)},
-                        { e -> Timber.e("userPicUrlStream: %s", e.toString())})
-            )
-
             var pics = 3
             if(checkIsOwner(repo)){
                 val user = firebaseAuthWrapper.userObjectSnapshot?.toObject(User::class.java)
@@ -75,6 +78,9 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
                     repoContributorPicUrl.postValue(user.picUrl)
                     --pics
                 }
+            } else {
+                userRepository.getUserPicUrl(repo.ownerUid)
+                --pics
             }
 
             for(i in 0 until pics){

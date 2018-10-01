@@ -28,6 +28,7 @@ import com.jakdor.geosave.common.model.firebase.Repo
 import com.jakdor.geosave.databinding.FragmentRepoBinding
 import com.jakdor.geosave.di.InjectableFragment
 import com.jakdor.geosave.utils.GlideApp
+import timber.log.Timber
 import javax.inject.Inject
 
 class RepoFragment: Fragment(), InjectableFragment {
@@ -61,6 +62,7 @@ class RepoFragment: Fragment(), InjectableFragment {
 
         observeRepo()
         observeContributorsPicUrl()
+        viewModel?.observeContributorsPicUrls()
         viewModel?.observeChosenRepository()
     }
 
@@ -117,32 +119,44 @@ class RepoFragment: Fragment(), InjectableFragment {
                 else -> binding.repoContributorsIcon1
             }
 
-            GlideApp.with(binding.root)
-                    .load(url)
-                    .apply(RequestOptions()
-                            .placeholder(R.drawable.repo_icon_placeholder)
-                            .error(R.drawable.repo_icon_placeholder)
-                            .centerCrop()
-                            .circleCrop())
-                    .listener(object : RequestListener<Drawable>{
-                        override fun onLoadFailed(e: GlideException?, model: Any?,
-                                                  target: Target<Drawable>?,
-                                                  isFirstResource: Boolean): Boolean {
-                            imageView.visibility = View.VISIBLE
-                            return false
-                        }
+            if(url.isNotEmpty() && url != "null") {
+                GlideApp.with(binding.root)
+                        .load(url)
+                        .apply(RequestOptions()
+                                .placeholder(R.drawable.repo_icon_placeholder)
+                                .error(R.drawable.repo_icon_placeholder)
+                                .centerCrop()
+                                .circleCrop())
+                        .listener(object : RequestListener<Drawable> {
+                            override fun onLoadFailed(e: GlideException?, model: Any?,
+                                                      target: Target<Drawable>?,
+                                                      isFirstResource: Boolean): Boolean {
+                                imageView.visibility = View.VISIBLE
+                                return false
+                            }
 
-                        override fun onResourceReady(resource: Drawable?, model: Any?,
-                                                     target: Target<Drawable>?,
-                                                     dataSource: DataSource?,
-                                                     isFirstResource: Boolean): Boolean {
-                            imageView.visibility = View.VISIBLE
-                            return false
-                        }
-                    })
-                    .into(imageView)
+                            override fun onResourceReady(resource: Drawable?, model: Any?,
+                                                         target: Target<Drawable>?,
+                                                         dataSource: DataSource?,
+                                                         isFirstResource: Boolean): Boolean {
+                                imageView.visibility = View.VISIBLE
+                                return false
+                            }
+                        })
+                        .into(imageView)
+            } else {
+                GlideApp.with(binding.root)
+                        .load(R.drawable.repo_icon_placeholder)
+                        .apply(RequestOptions()
+                                .centerCrop()
+                                .circleCrop())
+                        .into(imageView)
+                imageView.visibility = View.VISIBLE
+            }
 
             ++loadedPics
+
+            Timber.i("Loaded %d contributor pic", loadedPics)
         }
     }
 

@@ -15,20 +15,26 @@ import android.databinding.DataBindingUtil
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.util.DisplayMetrics
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.jakdor.geosave.R
+import com.jakdor.geosave.common.model.firebase.Location
 import com.jakdor.geosave.common.model.firebase.Repo
 import com.jakdor.geosave.databinding.FragmentRepoBinding
 import com.jakdor.geosave.di.InjectableFragment
+import com.jakdor.geosave.ui.adapters.LocationAdapter
 import com.jakdor.geosave.utils.GlideApp
+import kotlinx.android.synthetic.main.fragment_repo.*
 import timber.log.Timber
+import java.util.*
 import javax.inject.Inject
 
 class RepoFragment: Fragment(), InjectableFragment {
@@ -39,6 +45,8 @@ class RepoFragment: Fragment(), InjectableFragment {
     var viewModel: RepoViewModel? = null
     lateinit var binding: FragmentRepoBinding
     private var loadedPics = 0
+    private var recyclerViewInit = false
+    private lateinit var locationAdapter: LocationAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -64,6 +72,14 @@ class RepoFragment: Fragment(), InjectableFragment {
         observeContributorsPicUrl()
         viewModel?.observeContributorsPicUrls()
         viewModel?.observeChosenRepository()
+    }
+
+    /**
+     * Fix for [LocationAdapter] memory leak
+     */
+    override fun onDestroyView() {
+        super.onDestroyView()
+        repo_locations_recycler_view.adapter = null
     }
 
     fun observeRepo(){
@@ -98,6 +114,8 @@ class RepoFragment: Fragment(), InjectableFragment {
             } else {
                 binding.repoToolbarEdit.visibility = View.VISIBLE
             }
+
+            loadRecyclerView(repo?.locationsList)
         }
     }
 
@@ -158,6 +176,79 @@ class RepoFragment: Fragment(), InjectableFragment {
 
             Timber.i("Loaded %d contributor pic", loadedPics)
         }
+    }
+
+    /**
+     * Load RecyclerView with user repositories
+     * @param locationList loaded by [ReposBrowserViewModel]
+     */
+    fun loadRecyclerView(locationList: MutableList<Location>?){
+        if(locationList == null){
+            repo_no_locations_message_frame.visibility = View.VISIBLE
+            repo_locations_recycler_view.visibility = View.GONE
+            return
+        }
+
+        if(locationList.isEmpty()){
+            repo_no_locations_message_frame.visibility = View.VISIBLE
+            repo_locations_recycler_view.visibility = View.GONE
+            return
+        } else {
+            repo_no_locations_message_frame.visibility = View.GONE
+            repo_locations_recycler_view.visibility = View.VISIBLE
+        }
+
+        val linearLayoutManager = LinearLayoutManager(context)
+        linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
+        repo_locations_recycler_view.layoutManager = linearLayoutManager
+        locationAdapter = LocationAdapter(Vector(locationList), viewModel, getHeight(),
+                activity?.resources?.configuration?.orientation, getScreenRatio())
+        repo_locations_recycler_view.adapter = locationAdapter
+        recyclerViewInit = true
+    }
+
+    /**
+     * //todo repository location add observable
+     * update RecyclerView with new user repositories
+     * @param locationList loaded by [ReposBrowserViewModel]
+     */
+    fun updateRecyclerView(locationList: MutableList<Location?>){
+        repo_no_locations_message_frame.visibility = View.GONE
+        repo_locations_recycler_view.visibility = View.VISIBLE
+        locationAdapter.updateReposList(locationList)
+    }
+
+    /**
+     * Get window height for auto scaling in RecyclerView
+     * @return int window height or null if unable to get height
+     */
+    private fun getHeight(): Int? {
+        var height: Int? = null
+
+        if (activity != null) {
+            val displayMetrics = DisplayMetrics()
+            activity!!.windowManager.defaultDisplay.getMetrics(displayMetrics)
+            height = displayMetrics.heightPixels
+        }
+
+        return height
+    }
+
+    /**
+     * Get device screen ratio for accurate height auto scaling in RecyclerView after rotation
+     */
+    private fun getScreenRatio(): Float? {
+        var screenRatio: Float? = null
+
+        if(activity != null) {
+            screenRatio = activity!!.resources.displayMetrics.widthPixels.toFloat() /
+                    activity!!.resources.displayMetrics.heightPixels.toFloat()
+            if(screenRatio < 1.0f){
+                screenRatio = 1.0f / screenRatio
+            }
+        }
+
+        return screenRatio
     }
 
     companion object {

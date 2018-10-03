@@ -21,6 +21,9 @@ import com.jakdor.geosave.di.InjectableFragment
 import timber.log.Timber
 import javax.inject.Inject
 
+/**
+ * Manages other fragments in saved locations tab
+ */
 class LocationsFragment: Fragment(), InjectableFragment {
 
     @Inject

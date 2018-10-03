@@ -24,7 +24,7 @@ project.ext {
     rxKotlinVersion = "2.2.0"
     rxAndroidVersion = "2.0.1"
     timberVersion = "4.7.0"
-    gmsVersion = "16.0.0"
+    gmsVersion = "15.0.1"
     glideVersion = "4.4.0"
     retrofitVersion = "2.3.0"
     okHttpVersion = "3.9.1"

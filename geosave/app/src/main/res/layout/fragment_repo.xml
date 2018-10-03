@@ -6,7 +6,8 @@
   ~ Software under GPLv3 licence - full copyright notice available at:
   ~ https://github.com/jakdor/geosave/blob/master/README.md
   -->
-<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
         <import type="android.view.View"/>
         <variable name="viewModel" type="com.jakdor.geosave.ui.locations.RepoViewModel"/>
@@ -184,6 +185,32 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/repo_icon" />
+
+                <FrameLayout
+                    android:id="@+id/repo_no_locations_message_frame"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/materialGrey"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/repo_locations_recycler_view">
+
+                    <TextView
+                        android:id="@+id/repo_no_locations_message"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:text="@string/repo_no_locations_message"
+                        android:textAlignment="center"
+                        android:textColor="@color/white"
+                        android:background="@drawable/fab_label_background" />
+
+                </FrameLayout>
 
             </android.support.constraint.ConstraintLayout>
 

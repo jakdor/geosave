@@ -111,4 +111,11 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
     fun onInviteClick(){
         Timber.i("invite clicked")
     }
+
+    /**
+     * Handle on location card click
+     */
+    fun onLocationCardClick(index: Int){
+        Timber.i("Location no.%d clicked", index)
+    }
 }

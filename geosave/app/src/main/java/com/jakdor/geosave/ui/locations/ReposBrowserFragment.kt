@@ -8,17 +8,17 @@
 
 package com.jakdor.geosave.ui.locations
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.RecyclerView
 import com.jakdor.geosave.R
 import com.jakdor.geosave.common.model.firebase.Repo
 import com.jakdor.geosave.di.InjectableFragment
@@ -190,8 +190,8 @@ class ReposBrowserFragment: Fragment(), InjectableFragment {
             repos_recycler_view.visibility = View.VISIBLE
         }
 
-        val linearLayoutManager = LinearLayoutManager(context)
-        linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
+        val linearLayoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
+        linearLayoutManager.orientation = RecyclerView.VERTICAL
         repos_recycler_view.layoutManager = linearLayoutManager
         repositoryAdapter = RepositoryAdapter(Vector(repoList), viewModel, getHeight(),
                 activity?.resources?.configuration?.orientation, getScreenRatio())

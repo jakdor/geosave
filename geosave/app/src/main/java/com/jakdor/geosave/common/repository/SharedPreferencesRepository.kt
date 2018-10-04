@@ -10,7 +10,7 @@ package com.jakdor.geosave.common.repository
 
 import android.app.Activity
 import android.content.Context
-import android.support.v7.preference.PreferenceManager
+import androidx.preference.PreferenceManager
 import com.jakdor.geosave.R
 import javax.inject.Inject
 import javax.inject.Singleton

@@ -8,11 +8,11 @@
 
 package com.jakdor.geosave.ui.locations
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,7 +31,7 @@ class LocationsFragment: Fragment(), InjectableFragment {
 
     var viewModel: LocationsViewModel? = null
 
-    private val fragmentMap: MutableMap<String, Fragment> = mutableMapOf()
+    private val fragmentMap: MutableMap<String, androidx.fragment.app.Fragment> = mutableMapOf()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {

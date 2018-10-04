@@ -10,7 +10,7 @@ package com.jakdor.geosave.ui.elements
 
 import android.content.Context
 import android.content.res.TypedArray
-import android.support.v7.preference.DialogPreference
+import androidx.preference.DialogPreference
 import android.util.AttributeSet
 
 import com.jakdor.geosave.R
@@ -48,6 +48,7 @@ constructor(context: Context, attrs: AttributeSet? = null,
 
     /**
      * Implement this to set the initial value of the Preference.
+     * //todo investigate deprecated
      */
     override fun onSetInitialValue(restorePersistedValue: Boolean, defaultValue: Any?) {
         value = if (restorePersistedValue) getPersistedInt(this.value) else defaultValue as Int

@@ -9,7 +9,7 @@
 package com.jakdor.geosave.ui.locations
 
 import android.app.Application
-import android.arch.lifecycle.MutableLiveData
+import androidx.lifecycle.MutableLiveData
 import com.jakdor.geosave.App
 import com.jakdor.geosave.R
 import com.jakdor.geosave.arch.BaseViewModel

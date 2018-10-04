@@ -8,8 +8,8 @@
 
 package com.jakdor.geosave.arch
 
-import android.arch.lifecycle.ViewModel
-import android.arch.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import android.util.ArrayMap
 import com.jakdor.geosave.di.ViewModelSubComponent
 import com.jakdor.geosave.ui.gpsinfo.GpsInfoViewModel

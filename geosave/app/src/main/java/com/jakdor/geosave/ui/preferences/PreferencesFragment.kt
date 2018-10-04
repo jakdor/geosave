@@ -9,16 +9,16 @@
 package com.jakdor.geosave.ui.preferences
 
 import android.app.AlertDialog
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import android.content.DialogInterface
 import android.os.Bundle
-import android.support.v14.preference.SwitchPreference
-import android.support.v4.app.DialogFragment
-import android.support.v7.preference.Preference
-import android.support.v7.preference.PreferenceFragmentCompat
+import androidx.preference.SwitchPreference
+import androidx.fragment.app.DialogFragment
+import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
 import android.widget.Toast
 import com.jakdor.geosave.R
 import com.jakdor.geosave.di.InjectableFragment

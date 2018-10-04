@@ -20,7 +20,7 @@
         <variable name="provider" type="String"/>
     </data>
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -42,7 +42,7 @@
             app:titleStr="@{@string/position_title}"
             app:copyVisible="@{true}"/>
 
-        <android.support.constraint.Guideline
+        <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline_main"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -67,7 +67,7 @@
             app:titleStr="@{@string/altitude_title}"
             app:copyVisible="@{true}"/>
 
-        <android.support.constraint.Guideline
+        <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline_altitude"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -108,7 +108,7 @@
             app:titleStr="@{@string/speed_title}"
             app:copyVisible="@{false}"/>
 
-        <android.support.constraint.Guideline
+        <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline_accuracy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -149,5 +149,5 @@
             app:titleStr="@{@string/provider_title}"
             app:copyVisible="@{false}"/>
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

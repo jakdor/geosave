@@ -8,9 +8,9 @@
 
 package com.jakdor.geosave.ui.adapters
 
-import android.databinding.BindingAdapter
-import android.support.constraint.ConstraintLayout
-import android.support.constraint.Guideline
+import androidx.databinding.BindingAdapter
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.Guideline
 
 class GuidelineBindingAdapters {
     companion object {

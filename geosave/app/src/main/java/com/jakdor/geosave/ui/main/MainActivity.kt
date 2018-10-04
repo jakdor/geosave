@@ -15,17 +15,16 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.BottomNavigationView
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.jakdor.geosave.R
 import com.jakdor.geosave.ui.gpsinfo.GpsInfoFragment
-import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import timber.log.Timber
-import android.support.v4.app.ActivityCompat
+import androidx.core.app.ActivityCompat
 import android.content.pm.PackageManager
-import android.support.v4.content.ContextCompat
+import androidx.core.content.ContextCompat
 import android.widget.Toast
 import android.content.IntentSender
 import android.location.Criteria
@@ -33,8 +32,8 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.provider.Settings
-import android.support.v4.app.Fragment
-import android.support.v7.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import com.firebase.ui.auth.AuthUI
@@ -52,6 +51,7 @@ import com.jakdor.geosave.ui.map.MapFragment
 import com.jakdor.geosave.ui.preferences.PreferencesFragment
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.dialog_first_startup.*
 import java.lang.ref.WeakReference
 

@@ -8,18 +8,18 @@
 
 package com.jakdor.geosave.ui.locations
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
-import android.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
+import androidx.databinding.DataBindingUtil
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.util.DisplayMetrics
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
@@ -198,8 +198,8 @@ class RepoFragment: Fragment(), InjectableFragment {
             repo_locations_recycler_view.visibility = View.VISIBLE
         }
 
-        val linearLayoutManager = LinearLayoutManager(context)
-        linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
+        val linearLayoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
+        linearLayoutManager.orientation = RecyclerView.VERTICAL
         repo_locations_recycler_view.layoutManager = linearLayoutManager
         locationAdapter = LocationAdapter(Vector(locationList), viewModel, getHeight(),
                 activity?.resources?.configuration?.orientation, getScreenRatio())

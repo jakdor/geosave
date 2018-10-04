@@ -9,12 +9,12 @@
 package com.jakdor.geosave.ui.adapters
 
 import android.content.res.Configuration
-import android.databinding.DataBindingUtil
+import androidx.databinding.DataBindingUtil
 import android.os.Handler
-import android.support.v7.util.DiffUtil
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.DiffUtil
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.jakdor.geosave.R
 import com.jakdor.geosave.common.model.firebase.Location
 import com.jakdor.geosave.databinding.LocationCardBinding

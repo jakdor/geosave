@@ -13,9 +13,9 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'io.fabric'
 
 project.ext {
-    supportLibsVersion = "28.0.0"
-    archVersion = "1.1.1"
-    constraintLayoutVersion = "1.1.3"
+    androidxVersion = "1.0.0"
+    archVersion = "2.0.0"
+    constraintLayoutVersion = "2.0.0-alpha2"
     firebaseCoreVersion = "16.0.4"
     firebaseFirestoreVersion = "17.1.0"
     crashlyticsVersion = "2.9.5"
@@ -93,19 +93,19 @@ dependencies {
     //APP
 
     //Support libs
-    implementation 'androidx.appcompat:appcompat:1.0.0'
-    implementation 'androidx.browser:browser:1.0.0'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'com.google.android.material:material:1.0.0'
-    implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.preference:preference:1.0.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'
+    implementation "androidx.appcompat:appcompat:$project.androidxVersion"
+    implementation "androidx.browser:browser:$project.androidxVersion"
+    implementation "androidx.legacy:legacy-support-v4:$project.androidxVersion"
+    implementation "com.google.android.material:material:$project.androidxVersion"
+    implementation "androidx.cardview:cardview:$project.androidxVersion"
+    implementation "androidx.preference:preference:$project.androidxVersion"
+    implementation "androidx.constraintlayout:constraintlayout:$project.constraintLayoutVersion"
 
     //android architecture
-    kapt 'androidx.lifecycle:lifecycle-compiler:2.0.0'
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
-    implementation 'androidx.lifecycle:lifecycle-runtime:2.0.0'
-    implementation 'androidx.arch.core:core-testing:2.0.0'
+    kapt "androidx.lifecycle:lifecycle-compiler:$project.archVersion"
+    implementation "androidx.lifecycle:lifecycle-extensions:$project.archVersion"
+    implementation "androidx.lifecycle:lifecycle-runtime:$project.archVersion"
+    implementation "androidx.arch.core:core-testing:$project.archVersion"
 
     //Firebase
     implementation "com.google.firebase:firebase-core:$project.firebaseCoreVersion"

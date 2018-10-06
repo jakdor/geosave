@@ -11,14 +11,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
         <import type="android.view.View"/>
-        <variable name="locationModel" type="com.jakdor.geosave.common.model.firebase.Location"/>
+        <variable name="name" type="String"/>
+        <variable name="location" type="String"/>
+        <variable name="alt" type="String"/>
+        <variable name="acc" type="String"/>
     </data>
 
-    <!--layout_height="140dp" fallback height in case of auto scaling error-->
+    <!--layout_height="120dp" fallback height in case of auto scaling error-->
     <androidx.cardview.widget.CardView
         android:id="@+id/location_card_view"
         android:layout_width="match_parent"
-        android:layout_height="140dp"
+        android:layout_height="120dp"
         android:layout_marginTop="4dp"
         android:layout_marginBottom="4dp"
         android:layout_marginStart="8dp"
@@ -38,9 +41,96 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:text="@{locationModel.name}"
+                android:text="@{name}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/location_card_pic_card"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:cardCornerRadius="8dp">
+
+                <ImageView
+                    android:id="@+id/location_card_pic"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/location_picture_desc"/>
+
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/location_card_location"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="2dp"
+                android:text="@{location}"
+                android:textStyle="bold"
+                android:textColor="@color/textCardTitle"
+                app:autoSizeMaxTextSize="18sp"
+                app:autoSizeTextType="uniform"
+                app:layout_constraintBottom_toTopOf="@+id/location_card_alt"
+                app:layout_constraintEnd_toStartOf="@+id/location_card_pic_card"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/location_card_title" />
+
+            <TextView
+                android:id="@+id/location_card_alt_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="6dp"
+                android:textSize="14sp"
+                android:text="@string/location_card_alt_label_text"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/location_card_alt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="6dp"
+                android:textSize="14sp"
+                android:text="@{alt}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/location_card_alt_label" />
+
+            <TextView
+                android:id="@+id/location_card_accuracy_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:textSize="14sp"
+                android:text="@string/location_card_accuracy_label_text"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/location_card_alt" />
+
+            <TextView
+                android:id="@+id/location_card_accuracy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="8dp"
+                android:textSize="14sp"
+                android:text="@{acc}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/location_card_accuracy_label" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

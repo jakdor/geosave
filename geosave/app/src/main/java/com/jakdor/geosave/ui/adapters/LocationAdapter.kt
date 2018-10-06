@@ -15,15 +15,20 @@ import androidx.recyclerview.widget.DiffUtil
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.request.RequestOptions
 import com.jakdor.geosave.R
 import com.jakdor.geosave.common.model.firebase.Location
+import com.jakdor.geosave.common.repository.LocationConverter
+import com.jakdor.geosave.common.repository.SharedPreferencesRepository
 import com.jakdor.geosave.databinding.LocationCardBinding
 import com.jakdor.geosave.ui.locations.RepoViewModel
+import com.jakdor.geosave.utils.GlideApp
 import timber.log.Timber
 import java.util.*
 
 class LocationAdapter(private var locationVector: Vector<Location?>,
                       private var viewModel: RepoViewModel?,
+                      private val sharedPreferencesRepository: SharedPreferencesRepository,
                       private val layoutHeight: Int?,
                       private val screenOrientation: Int?,
                       private val screenRatio: Float?):
@@ -35,11 +40,11 @@ class LocationAdapter(private var locationVector: Vector<Location?>,
                 layoutInflater, R.layout.location_card, parent, false)
 
         //height auto scaling
-        var scalingFactor = 6.0f
+        var scalingFactor = 7.0f
         if(screenOrientation != null && screenRatio != null){
             when(screenOrientation){
-                Configuration.ORIENTATION_PORTRAIT -> scalingFactor = 6.0f
-                Configuration.ORIENTATION_LANDSCAPE -> scalingFactor = 6.0f / screenRatio
+                Configuration.ORIENTATION_PORTRAIT -> scalingFactor = 7.0f
+                Configuration.ORIENTATION_LANDSCAPE -> scalingFactor = 7.0f / screenRatio
             }
         }
         if(layoutHeight != null){
@@ -100,7 +105,74 @@ class LocationAdapter(private var locationVector: Vector<Location?>,
          * Bind view with data
          */
         fun bind(location: Location){
-            binding.locationModel = location
+            binding.name = location.name
+
+            //location
+            when(sharedPreferencesRepository.getString(
+                    SharedPreferencesRepository.locationUnits, "0").toInt()){
+                0 -> { //decimal
+                    binding.location =
+                            LocationConverter.decimalFormat(location.latitude, location.longitude)
+                }
+                1 -> { //sexigesimal
+                    binding.location =
+                            LocationConverter.dmsFormat(location.latitude, location.longitude)
+                }
+                2 -> { //decimal degrees
+                    binding.location = LocationConverter.
+                            decimalDegreesFormat(location.latitude, location.longitude)
+                }
+                3 -> { //degrees decimal minutes
+                    binding.location =
+                            LocationConverter.dmFormat(location.latitude, location.longitude)
+                }
+            }
+
+            //alt
+            when(sharedPreferencesRepository.getString(
+                    SharedPreferencesRepository.altUnits, "0").toInt()) {
+                0 -> { //meters
+                    binding.alt = String.format("%.2f m", location.altitude)
+                }
+                1 -> { //kilometers
+                    binding.alt = String.format("%.4f km", location.altitude / 1000.0)
+                }
+                2 -> { //feats
+                    binding.alt = String.format("%.2f ft", location.altitude * 3.2808399)
+                }
+                3 -> { //land miles
+                    binding.alt = String.format("%.6f mi", location.altitude * 0.000621371192)
+                }
+            }
+
+            //acc
+            when(sharedPreferencesRepository.getString(
+                    SharedPreferencesRepository.accUnits, "0").toInt()){
+                0 -> { //meters
+                    binding.acc = String.format("%.2f m", location.accuracy)
+                }
+                1 -> { //kilometers
+                    binding.acc = String.format("%.4f km", location.accuracy / 1000.0)
+                }
+                2 -> { //feats
+                    binding.acc = String.format("%.2f ft", location.accuracy * 3.2808399)
+                }
+                3 -> { //land miles
+                    binding.acc = String.format("%.6f mi", location.accuracy * 0.000621371192)
+                }
+                4 -> { //nautical miles
+                    binding.acc = String.format("%.6f nmi", location.accuracy * 0.000539956803)
+                }
+            }
+
+            binding.executePendingBindings()
+
+            GlideApp.with(binding.root)
+                    .load(location.picUrl)
+                    .apply(RequestOptions()
+                            .placeholder(R.drawable.repo_icon_placeholder_square)
+                            .centerCrop())
+                    .into(binding.locationCardPic)
         }
     }
 }

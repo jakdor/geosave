@@ -28,6 +28,7 @@ import com.bumptech.glide.request.target.Target
 import com.jakdor.geosave.R
 import com.jakdor.geosave.common.model.firebase.Location
 import com.jakdor.geosave.common.model.firebase.Repo
+import com.jakdor.geosave.common.repository.SharedPreferencesRepository
 import com.jakdor.geosave.databinding.FragmentRepoBinding
 import com.jakdor.geosave.di.InjectableFragment
 import com.jakdor.geosave.ui.adapters.LocationAdapter
@@ -41,6 +42,9 @@ class RepoFragment: Fragment(), InjectableFragment {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
+
+    @Inject
+    lateinit var sharedPreferencesRepository: SharedPreferencesRepository
 
     var viewModel: RepoViewModel? = null
     lateinit var binding: FragmentRepoBinding
@@ -201,7 +205,8 @@ class RepoFragment: Fragment(), InjectableFragment {
         val linearLayoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
         linearLayoutManager.orientation = RecyclerView.VERTICAL
         repo_locations_recycler_view.layoutManager = linearLayoutManager
-        locationAdapter = LocationAdapter(Vector(locationList), viewModel, getHeight(),
+        locationAdapter = LocationAdapter(Vector(locationList), viewModel,
+                sharedPreferencesRepository, getHeight(),
                 activity?.resources?.configuration?.orientation, getScreenRatio())
         repo_locations_recycler_view.adapter = locationAdapter
         recyclerViewInit = true

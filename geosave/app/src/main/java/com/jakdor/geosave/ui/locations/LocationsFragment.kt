@@ -8,11 +8,11 @@
 
 package com.jakdor.geosave.ui.locations
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,6 +21,9 @@ import com.jakdor.geosave.di.InjectableFragment
 import timber.log.Timber
 import javax.inject.Inject
 
+/**
+ * Manages other fragments in saved locations tab
+ */
 class LocationsFragment: Fragment(), InjectableFragment {
 
     @Inject
@@ -28,7 +31,7 @@ class LocationsFragment: Fragment(), InjectableFragment {
 
     var viewModel: LocationsViewModel? = null
 
-    private val fragmentMap: MutableMap<String, Fragment> = mutableMapOf()
+    private val fragmentMap: MutableMap<String, androidx.fragment.app.Fragment> = mutableMapOf()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -44,6 +47,7 @@ class LocationsFragment: Fragment(), InjectableFragment {
         }
 
         viewModel?.requestUpdatesOnCurrentFragment()
+        viewModel?.observeChosenRepositoryIndex()
         observeCurrentFragmentId()
     }
 
@@ -68,6 +72,7 @@ class LocationsFragment: Fragment(), InjectableFragment {
         if(id != null){
             when(id){
                 ReposBrowserFragment.CLASS_TAG -> switchToReposBrowserFragement()
+                RepoFragment.CLASS_TAG -> switchToRepoFragment()
             }
         }
     }
@@ -92,6 +97,28 @@ class LocationsFragment: Fragment(), InjectableFragment {
                 .commit()
         
         Timber.i("Attached child fragment: %s", ReposBrowserFragment.CLASS_TAG)
+    }
+
+    /**
+     * Create or reattach [RepoFragment]
+     */
+    fun switchToRepoFragment(){
+        if (!fragmentMap.containsKey(RepoFragment.CLASS_TAG)) {
+            fragmentMap[RepoFragment.CLASS_TAG] = RepoFragment.newInstance()
+            childFragmentManager.beginTransaction()
+                    .add(R.id.locations_fragment_layout, fragmentMap[RepoFragment.CLASS_TAG]!!,
+                            RepoFragment.CLASS_TAG)
+                    .commit()
+            Timber.i("Created %s", RepoFragment.CLASS_TAG)
+        }
+
+        hideAllFragments()
+
+        childFragmentManager.beginTransaction()
+                .show(fragmentMap[RepoFragment.CLASS_TAG]!!)
+                .commit()
+
+        Timber.i("Attached child fragment: %s", RepoFragment.CLASS_TAG)
     }
 
     /**

@@ -1,23 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#fbc02d</color>
+    <color name="colorPrimaryDark">#c49000</color>
+    <color name="colorAccent">#c43e00</color>
+    <color name="colorSecondary">#8d6e63</color>
+    <color name="colorSecondaryDark">#5f4339</color>
 
     <color name="materialGrey">#fafafa</color>
     <color name="shadow">#40000000</color>
     <color name="materialTransparent">#d2ffffff</color>
-    <color name="transparent">#00000000</color>
 
-    <color name="selected_highlight">#304FFE</color>
-    <color name="icon_black">#000000</color>
+    <color name="selected_highlight">@color/colorAccent</color>
+    <color name="iconBlack">#aa000000</color>
+    <color name="iconBlackDark">#c0000000</color>
 
     <color name="textCardTitle">#000000</color>
     <color name="textError">#d50000</color>
 
-    <color name="half_black">#808080</color>
+    <color name="halfBlack">#808080</color>
     <color name="white">#fafafa</color>
-    <color name="white_pressed">#f1f1f1</color>
-    <color name="black_semi_transparent">#a0000000</color>
+    <color name="whitePressed">#f1f1f1</color>
+    <color name="blackSemiTransparent">#a0000000</color>
 
 </resources>

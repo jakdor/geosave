@@ -9,8 +9,8 @@
 package com.jakdor.geosave.ui.elements
 
 import android.app.Dialog
-import android.arch.lifecycle.LifecycleOwner
-import android.arch.lifecycle.Observer
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
 import android.content.Context
 import android.os.Bundle
 import android.view.View

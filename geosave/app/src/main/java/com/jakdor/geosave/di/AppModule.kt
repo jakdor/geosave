@@ -9,17 +9,14 @@
 package com.jakdor.geosave.di
 
 import android.app.Application
-import android.arch.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider
 import android.content.Context
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.jakdor.geosave.App
 import com.jakdor.geosave.arch.ViewModelFactory
 import com.jakdor.geosave.common.network.RetrofitFactory
-import com.jakdor.geosave.common.repository.GpsInfoRepository
-import com.jakdor.geosave.common.repository.ReposRepository
-import com.jakdor.geosave.common.repository.RestApiRepository
-import com.jakdor.geosave.common.repository.SharedPreferencesRepository
+import com.jakdor.geosave.common.repository.*
 import com.jakdor.geosave.common.wrapper.FirebaseAuthWrapper
 import com.jakdor.geosave.utils.RxSchedulersFacade
 import dagger.Module
@@ -86,5 +83,10 @@ class AppModule {
                                firebaseAuthWrapper: FirebaseAuthWrapper,
                                firebaseFirestore: FirebaseFirestore): ReposRepository{
         return ReposRepository(schedulers, firebaseAuthWrapper, firebaseFirestore)
+    }
+
+    @Provides
+    fun provideUserRepository(firebaseFirestore: FirebaseFirestore): UserRepository{
+        return UserRepository(firebaseFirestore)
     }
 }

@@ -9,7 +9,7 @@
 package com.jakdor.geosave.ui.locations
 
 import android.app.Application
-import android.arch.lifecycle.MutableLiveData
+import androidx.lifecycle.MutableLiveData
 import com.jakdor.geosave.App
 import com.jakdor.geosave.R
 import com.jakdor.geosave.arch.BaseViewModel
@@ -40,7 +40,7 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
     }
 
     /**
-     * Handle click on create new repo fab
+     * Handle click on create new repoIsOwnerPair fab
      */
     fun onFabCreateNewClicked(){
         dialogDismissRequest.postValue(DialogRequest.NONE)
@@ -56,7 +56,7 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
     }
 
     /**
-     * Handle click on join private repo fab
+     * Handle click on join private repoIsOwnerPair fab
      */
     fun onFabJoinPrivateClicked(){
         dialogDismissRequest.postValue(DialogRequest.NONE)
@@ -81,8 +81,9 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
     /**
      * Handle click on repository card in [com.jakdor.geosave.ui.adapters.RepositoryAdapter]
      */
-    fun onRepositoryClicked(repo: Repo){
-        Timber.i("Repository card clicked: %s", repo.name)
+    fun onRepositoryClicked(repoIndex: Int){
+        reposRepository.chosenRepositoryIndexStream.onNext(repoIndex)
+        Timber.i("Repository card clicked: %d", repoIndex)
     }
 
     /**
@@ -90,7 +91,7 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
      */
     fun loadUserRepos(){
         disposable.add(reposRepository.reposLoadingStatusStream
-                .subscribeOn(rxSchedulersFacade.computation())
+                .subscribeOn(rxSchedulersFacade.io())
                 .observeOn(rxSchedulersFacade.ui())
                 .subscribe(
                         { result -> loadingStatus.postValue(result) },
@@ -99,7 +100,7 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
                 ))
 
         disposable.add(reposRepository.reposListStream
-                .subscribeOn(rxSchedulersFacade.computation())
+                .subscribeOn(rxSchedulersFacade.io())
                 .observeOn(rxSchedulersFacade.ui())
                 .subscribe(
                         { result -> reposList.postValue(result) },
@@ -115,11 +116,11 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
     }
 
     /**
-     * Push new repo to firestore
+     * Push new repoIsOwnerPair to firestore
      */
     fun createNewRepo(repo: Repo){
         disposable.add(reposRepository.createNewRequestStatusStream
-                .subscribeOn(rxSchedulersFacade.computation())
+                .subscribeOn(rxSchedulersFacade.io())
                 .observeOn(rxSchedulersFacade.ui())
                 .subscribe({ result -> when(result){
                             ReposRepository.RequestStatus.IDLE -> {}
@@ -134,19 +135,19 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
                                 dialogLoadingStatus.postValue(false)
                                 toast.postValue(getApplication<App>()
                                         .getString(R.string.add_repo_error_toast))
-                                Timber.e("Error while creating new repo")
+                                Timber.e("Error while creating new repoIsOwnerPair")
                             }
                             ReposRepository.RequestStatus.NO_NETWORK -> {
                                 dialogLoadingStatus.postValue(false)
                                 toast.postValue(getApplication<App>()
                                         .getString(R.string.add_repo_no_network_toast))
-                                Timber.e("No network while creating new repo")
+                                Timber.e("No network while creating new repoIsOwnerPair")
                             }
                             null -> {
                                 dialogLoadingStatus.postValue(false)
                                 toast.postValue(getApplication<App>()
                                         .getString(R.string.add_repo_error_toast))
-                                Timber.e("Error while creating new repo")
+                                Timber.e("Error while creating new repoIsOwnerPair")
                             }
                         } },
                         { error -> dialogLoadingStatus.postValue(false)

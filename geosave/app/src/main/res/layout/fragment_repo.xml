@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ GeoSave - app for easy sharing and collaborating on GPS related data
+  ~ Copyright (C) 2018  Jakub Dorda
+  ~
+  ~ Software under GPLv3 licence - full copyright notice available at:
+  ~ https://github.com/jakdor/geosave/blob/master/README.md
+  -->
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <import type="android.view.View"/>
+        <variable name="viewModel" type="com.jakdor.geosave.ui.locations.RepoViewModel"/>
+        <variable name="repo" type="com.jakdor.geosave.common.model.firebase.Repo"/>
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/repo_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimary"
+            android:elevation="4dp"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:title="@{repo.name}"
+            app:navigationIcon="@drawable/ic_back_arrow">
+
+            <Button
+                android:id="@+id/repo_toolbar_edit"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginEnd="8dp"
+                android:layout_gravity="end"
+                android:background="@drawable/ic_edit"
+                android:scaleX="0.6"
+                android:scaleY="0.6"
+                android:layout_alignParentEnd="true"
+                android:onClick="@{() -> viewModel.onEditRepoClick()}"/>
+
+            <Button
+                android:id="@+id/repo_toolbar_invite"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginEnd="24dp"
+                android:layout_gravity="end"
+                android:background="@drawable/ic_invite"
+                android:layout_alignParentEnd="true"
+                android:onClick="@{() -> viewModel.onInviteClick()}"/>
+
+        </androidx.appcompat.widget.Toolbar>
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/repo_main_scrollview"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/repo_toolbar">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorSecondary">
+
+                <TextView
+                    android:id="@+id/repo_about"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="@{repo.info}"
+                    android:lines="2"
+                    app:autoSizeTextType="uniform"
+                    app:autoSizeMaxTextSize="18sp"
+                    app:layout_constraintEnd_toStartOf="@+id/repo_guideline"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/repo_guideline"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.65" />
+
+                <ImageView
+                    android:id="@+id/repo_icon"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:contentDescription="@string/repo_icon_desc"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/repo_guideline"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/repo_icon_add_popup"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_margin="16dp"
+                    android:text="@string/repo_icon_add_popup_text"
+                    android:textAlignment="center"
+                    android:gravity="center"
+                    android:lines="2"
+                    android:visibility="@{repo.picUrl.isEmpty() ? View.VISIBLE : View.GONE}"
+                    app:autoSizeTextType="uniform"
+                    app:autoSizeMaxTextSize="14sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/repo_icon"
+                    app:layout_constraintEnd_toEndOf="@+id/repo_icon"
+                    app:layout_constraintStart_toStartOf="@+id/repo_icon"
+                    app:layout_constraintTop_toTopOf="@+id/repo_icon" />
+
+                <TextView
+                    android:id="@+id/repo_contributors"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="@{@string/repo_card_contributors_number_label(repo.editorsUidList.size())}"
+                    android:textColor="@color/textCardTitle"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toStartOf="@+id/repo_guideline"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/repo_about" />
+
+                <FrameLayout
+                    android:id="@+id/repo_contributors_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginStart="8dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/repo_contributors">
+
+                    <ImageView
+                        android:id="@+id/repo_contributors_icon_1"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:contentDescription="@string/contributor_icon_desc" />
+
+                    <ImageView
+                        android:id="@+id/repo_contributors_icon_2"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginStart="30dp"
+                        android:contentDescription="@string/contributor_icon_desc" />
+
+                    <ImageView
+                        android:id="@+id/repo_contributors_icon_3"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginStart="60dp"
+                        android:contentDescription="@string/contributor_icon_desc" />
+
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/repo_contributors_more"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="@{@string/repo_contributors_more_text(repo.editorsUidList.size() - 3)}"
+                    android:visibility="@{repo.editorsUidList.size() > 3 ? View.VISIBLE : View.GONE}"
+                    app:layout_constraintBottom_toBottomOf="@+id/repo_contributors_layout"
+                    app:layout_constraintStart_toEndOf="@+id/repo_contributors_layout"
+                    app:layout_constraintTop_toBottomOf="@+id/repo_contributors" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/repo_locations_recycler_view"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/materialGrey"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/repo_icon" />
+
+                <FrameLayout
+                    android:id="@+id/repo_no_locations_message_frame"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:visibility="visible"
+                    android:background="@color/materialGrey"
+                    android:backgroundTint="@color/materialGrey"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/repo_locations_recycler_view">
+
+                    <TextView
+                        android:id="@+id/repo_no_locations_message"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:text="@string/repo_no_locations_message"
+                        android:textAlignment="center"
+                        android:textColor="@color/white"
+                        android:background="@drawable/fab_label_background" />
+
+                </FrameLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -9,28 +9,28 @@
 package com.jakdor.geosave.ui.adapters
 
 import androidx.recyclerview.widget.DiffUtil
-import com.jakdor.geosave.common.model.firebase.Repo
+import com.jakdor.geosave.common.model.firebase.Location
 
 /**
- * Difference callback for smart reloading of [RepositoryAdapter] content
+ * Difference callback for smart reloading of [LocationAdapter] content
  */
-class RepoDiffCallback(private val oldRepos: List<Repo?>,
-                       private val newRepos: List<Repo?>) : DiffUtil.Callback() {
+class LocationDiffCallback(private val oldLocations: List<Location?>,
+                           private val newLocations: List<Location?>) : DiffUtil.Callback() {
 
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return oldRepos[oldItemPosition] == newRepos[newItemPosition]
+        return oldLocations[oldItemPosition] == newLocations[newItemPosition]
     }
 
     override fun getOldListSize(): Int {
-        return oldRepos.size
+        return oldLocations.size
     }
 
     override fun getNewListSize(): Int {
-        return newRepos.size
+        return newLocations.size
     }
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return oldRepos[oldItemPosition].toString() == newRepos[newItemPosition].toString()
+        return oldLocations[oldItemPosition].toString() == newLocations[newItemPosition].toString()
     }
 
 }

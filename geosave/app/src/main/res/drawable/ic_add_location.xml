@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Icon made by Pixel perfect(icon54.com) from www.flaticon.com
+  ~ under Flaticon Basic License - full licence available at:
+  ~ https://file000.flaticon.com/downloads/license/license.pdf
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:viewportWidth="512"
+    android:viewportHeight="512"
+    android:width="64dp"
+    android:height="64dp">
+    <group
+        android:scaleX="0.75"
+        android:scaleY="0.75"
+        android:translateX="64"
+        android:translateY="64">
+        <path
+            android:pathData="M192 0C86.112 0 0 86.112 0 192 0 325.088 173.312 499.936 180.672 507.328 183.808 510.432 187.904 512 192 512c4.096 0 8.192 -1.568 11.328 -4.672 2.176 -2.176 19.136 -19.36 41.664 -45.536C232 438.656 224 412.384 224 384 224 296.8 293.824 226.208 380.576 224.352 382.592 213.376 384 202.528 384 192 384 86.112 297.888 0 192 0Zm0 288c-52.928 0 -96 -43.072 -96 -96 0 -52.928 43.072 -96 96 -96 52.928 0 96 43.072 96 96 0 52.928 -43.072 96 -96 96z"
+            android:fillColor="@color/iconBlackDark" />
+        <path
+            android:pathData="M384 256c-70.688 0 -128 57.312 -128 128 0 70.688 57.312 128 128 128 70.688 0 128 -57.312 128 -128 0 -70.688 -57.312 -128 -128 -128zm48 144l-32 0 0 32c0 8.832 -7.168 16 -16 16 -8.832 0 -16 -7.168 -16 -16l0 -32 -32 0c-8.832 0 -16 -7.168 -16 -16 0 -8.832 7.168 -16 16 -16l32 0 0 -32c0 -8.832 7.168 -16 16 -16 8.832 0 16 7.168 16 16l0 32 32 0c8.832 0 16 7.168 16 16 0 8.832 -7.168 16 -16 16z"
+            android:fillColor="@color/iconBlackDark" />
+    </group>
+</vector>

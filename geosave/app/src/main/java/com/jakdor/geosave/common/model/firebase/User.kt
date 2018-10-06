@@ -11,7 +11,7 @@ package com.jakdor.geosave.common.model.firebase
 import com.google.firebase.firestore.DocumentReference
 
 /**
- * Firebase user profile
+ * Firebase user profile entry/document
  */
 data class User
 constructor(var nickname: String = "",

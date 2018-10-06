@@ -9,10 +9,10 @@
 package com.jakdor.geosave.ui.adapters
 
 import android.content.res.Configuration
-import android.databinding.DataBindingUtil
+import androidx.databinding.DataBindingUtil
 import android.os.Handler
-import android.support.v7.util.DiffUtil
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.bumptech.glide.request.RequestOptions
@@ -67,7 +67,9 @@ class RepositoryAdapter(private var reposVector: Vector<Repo?>,
 
         val repo = reposVector[position]
         holder.bind(repo!!)
-        holder.binding.repoCardView.setOnClickListener { viewModel?.onRepositoryClicked(repo) }
+        holder.binding.repoCardView.setOnClickListener {
+            viewModel?.onRepositoryClicked(reposVector.indexOf(repo))
+        }
     }
 
     override fun getItemCount(): Int {

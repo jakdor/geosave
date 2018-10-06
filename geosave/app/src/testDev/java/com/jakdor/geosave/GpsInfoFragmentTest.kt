@@ -8,7 +8,7 @@
 
 package com.jakdor.geosave
 
-import android.arch.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider
 import android.content.ClipboardManager
 import android.content.Context
 import android.view.View
@@ -34,7 +34,6 @@ import com.jakdor.geosave.utils.TestApp
 import com.jakdor.geosave.utils.TestUtils
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.shadows.ShadowToast
-
 
 @RunWith(RobolectricTestRunner::class)
 @Config(application = TestApp::class)
@@ -188,7 +187,7 @@ class GpsInfoFragmentTest {
         val clipboardManager = RuntimeEnvironment.application.getSystemService(
                 Context.CLIPBOARD_SERVICE) as ClipboardManager
 
-        Assert.assertEquals(testStr, clipboardManager.primaryClip.getItemAt(0).text.toString())
+        Assert.assertEquals(testStr, clipboardManager.primaryClip?.getItemAt(0)?.text.toString())
         Assert.assertEquals(gpsInfoFragment.getString(R.string.clipboard_toast),
                 ShadowToast.getTextOfLatestToast())
         Assert.assertEquals(Toast.LENGTH_SHORT, ShadowToast.getLatestToast().duration)

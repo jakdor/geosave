@@ -15,11 +15,11 @@
         <variable name="viewModel" type="MapViewModel"/>
     </data>
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v7.widget.CardView
+        <androidx.cardview.widget.CardView
             android:id="@+id/map_location_card"
             android:layout_width="0dp"
             android:layout_height="32dp"
@@ -42,30 +42,30 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_gravity="center"
-                android:background="@color/transparent"
+                android:background="@android:color/transparent"
                 android:textAlignment="center"
                 android:text="@string/value_unknown"
                 app:autoSizeMaxTextSize="28sp"
                 app:autoSizeMinTextSize="16sp"
                 app:autoSizeTextType="uniform" />
 
-        </android.support.v7.widget.CardView>
+        </androidx.cardview.widget.CardView>
 
-        <android.support.constraint.Guideline
+        <androidx.constraintlayout.widget.Guideline
             android:id="@+id/map_text_guideline1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.25" />
 
-        <android.support.constraint.Guideline
+        <androidx.constraintlayout.widget.Guideline
             android:id="@+id/map_text_guideline2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.75" />
 
-        <android.support.design.widget.FloatingActionButton
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/map_type_fab"
             android:layout_width="38dp"
             android:layout_height="38dp"
@@ -75,7 +75,7 @@
             android:clickable="true"
             android:scaleType="center"
             android:foregroundGravity="center"
-            android:foreground="@drawable/map_type_icon"
+            android:foreground="@drawable/ic_map_type"
             app:backgroundTint="@color/materialGrey"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -95,19 +95,19 @@
             app:selectedMapType="@{selectedMapType}"
             app:viewModel="@{viewModel}" />
 
-        <android.support.constraint.Guideline
+        <androidx.constraintlayout.widget.Guideline
             android:id="@+id/map_type_card_guideline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.4" />
 
-        <android.support.constraint.Guideline
+        <androidx.constraintlayout.widget.Guideline
             android:id="@+id/map_type_card_guideline2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.50" />
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

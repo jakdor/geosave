@@ -4,6 +4,8 @@
     <string name="title_gps_info">Gps info</string>
     <string name="title_map">Map</string>
     <string name="title_locations">Saved locations</string>
+    <string name="title_locations_short">Locations</string>
+    <string name="title_preferences">Preferences</string>
 
     <string name="gps_permissions_declined">GPS permissions are required for basic app functionality</string>
     <string name="gps_enable_declined">Enable GPS for high accuracy reading</string>
@@ -157,6 +159,14 @@
     <string name="repo_card_location_number_label">Locations: %1$d</string>
     <string name="repo_card_contributors_number_label">Contributors: %1$d</string>
     <string name="visibility_icon_desc">visibility icon</string>
-    <string name="repository_icon_desc">repository icon</string>
+    <string name="repo_icon_desc">repository icon</string>
+    <string name="repo_icon_add_popup_text">Click to add image</string>
+    <string name="invite_icon_desc">invite icon</string>
+    <string name="contributor_icon_desc">contributor icon</string>
+    <string name="repo_contributors_more_text">+ %1$d others</string>
+    <string name="repo_no_locations_message">This repository has no locations yet</string>
+    <string name="location_picture_desc">location picture</string>
+    <string name="location_card_alt_label_text">Altitude:</string>
+    <string name="location_card_accuracy_label_text">Accuracy:</string>
 
 </resources>

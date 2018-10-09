@@ -29,6 +29,7 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
 
     val repoIsOwnerPair = MutableLiveData<Pair<Repo?, Boolean>>()
     val repoContributorPicUrl = MutableLiveData<String>()
+    val dialogLunchRequest = MutableLiveData<RepoFragment.DialogRequest>()
 
     /**
      * Observe [ReposRepository] chosen repository index stream
@@ -110,6 +111,14 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
      */
     fun onInviteClick(){
         Timber.i("invite clicked")
+    }
+
+    /**
+     * Handle on add repo image cliked
+     */
+    fun onAddImageClick(){
+        dialogLunchRequest.postValue(RepoFragment.DialogRequest.ADD_IMAGE)
+        Timber.i("add image clicked")
     }
 
     /**

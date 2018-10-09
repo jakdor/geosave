@@ -168,5 +168,6 @@
     <string name="location_picture_desc">location picture</string>
     <string name="location_card_alt_label_text">Altitude:</string>
     <string name="location_card_accuracy_label_text">Accuracy:</string>
+    <string name="dialog_add_image_title_text">Add/modify image</string>
 
 </resources>

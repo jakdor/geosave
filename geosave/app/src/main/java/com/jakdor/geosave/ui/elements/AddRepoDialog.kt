@@ -27,7 +27,7 @@ import kotlinx.android.synthetic.main.dialog_add_repo.*
 class AddRepoDialog(context: Context,
                     private val lifecycleOwner: LifecycleOwner,
                     private val viewModel: ReposBrowserViewModel?):
-        Dialog(context, R.style.FullscreenDialog) {
+        Dialog(context, R.style.FullscreenDialog) { //todo decouple dialog from viewModel and lifecycleOwner
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

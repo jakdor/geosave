@@ -52,6 +52,7 @@ class RepoFragment: Fragment(), InjectableFragment {
     private var loadedPics = 0
     private var recyclerViewInit = false
     private lateinit var locationAdapter: LocationAdapter
+    private var repoMainPicUrl = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -105,6 +106,8 @@ class RepoFragment: Fragment(), InjectableFragment {
             binding.repoContributorsIcon3.visibility = View.GONE
             loadedPics = 0
             viewModel?.requestContributorsPicUrls(repo)
+
+            repoMainPicUrl = repo?.picUrl ?: ""
 
             GlideApp.with(binding.root)
                     .load(repo?.picUrl)
@@ -248,6 +251,7 @@ class RepoFragment: Fragment(), InjectableFragment {
     fun lunchAddImageDialog(){
         if(context != null) {
             val addImageDialog = AddImageDialog(context!!)
+            addImageDialog.previewPicUrl = repoMainPicUrl
             addImageDialog.show()
             Timber.i("lunched addImageDialog")
         } else {

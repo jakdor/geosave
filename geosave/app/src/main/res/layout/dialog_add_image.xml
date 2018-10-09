@@ -7,11 +7,63 @@
   -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/dialog_add_image_preview"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:contentDescription="@string/add_image_preview_desc"
+            app:layout_constraintDimensionRatio="w,1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dialog_add_image_title" />
+
+        <Button
+            android:id="@+id/dialog_add_image_camera_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="@string/dialog_add_image_camera_text"
+            app:layout_constraintEnd_toStartOf="@+id/dialog_add_image_guideline2"
+            app:layout_constraintStart_toStartOf="@+id/dialog_add_image_guideline"
+            app:layout_constraintTop_toBottomOf="@+id/dialog_add_image_preview" />
+
+        <Button
+            android:id="@+id/dialog_add_image_browse_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="@string/dialog_add_image_browse_text"
+            app:layout_constraintEnd_toStartOf="@+id/dialog_add_image_guideline2"
+            app:layout_constraintStart_toStartOf="@+id/dialog_add_image_guideline"
+            app:layout_constraintTop_toBottomOf="@+id/dialog_add_image_camera_button" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/dialog_add_image_guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.2" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/dialog_add_image_guideline2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.8" />
 
         <TextView
             android:id="@+id/dialog_add_image_title"
@@ -24,6 +76,53 @@
             android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/dialog_add_image_cancel_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="@color/colorAccent"
+            android:text="@string/add_image_dialog_cancel"
+            android:textColor="@color/materialGrey"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dialog_add_image_browse_button" />
+
+        <Button
+            android:id="@+id/dialog_add_repo_create_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="@color/colorPrimary"
+            android:text="@string/add_image_dialog_upload"
+            android:textColor="@color/materialGrey"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dialog_add_image_browse_button" />
+
+        <ImageView
+            android:id="@+id/dialog_add_repo_loading_anim"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="8dp"
+            android:contentDescription="@string/dialog_add_repo_loading_anim_desc"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/dialog_add_repo_create_button"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toStartOf="@+id/dialog_add_repo_create_button"
+            app:layout_constraintTop_toTopOf="@+id/dialog_add_repo_create_button" />
+
+        <View
+            android:id="@+id/dialog_add_repo_footer"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dialog_add_repo_create_button" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

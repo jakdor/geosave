@@ -64,20 +64,20 @@ class ReposBrowserFragment: Fragment(), InjectableFragment {
 
         observeDialogLunchRequest()
         observeLoadingStatus()
+        observeDismissDialogRequest()
+        observeDialogLoadingStatus()
         observeReposList()
         observeToast()
         viewModel?.loadUserRepos()
     }
 
     /**
-     * Fix for memory leak from open dialog during screen rotation
+     * Dismiss dialogs during screen rotation
      */
     override fun onPause() {
         super.onPause()
         viewModel?.dismissDialog(DialogRequest.ALL)
         if(::addRepoDialog.isInitialized && addRepoDialog.isShowing) addRepoDialog.dismiss()
-        viewModel?.dialogDismissRequest?.removeObservers(this)
-        viewModel?.dialogLoadingStatus?.removeObservers(this)
     }
 
     /**
@@ -117,7 +117,14 @@ class ReposBrowserFragment: Fragment(), InjectableFragment {
      */
     fun lunchAddRepoDialog(){
         if(context != null) {
-            addRepoDialog = AddRepoDialog(context!!, this, viewModel)
+            addRepoDialog = AddRepoDialog(context!!)
+            addRepoDialog.cancelButtonOnClickListener = View.OnClickListener {
+                viewModel?.onAddRepoDialogCancelClicked()
+            }
+            addRepoDialog.createButtonOnClickListener = View.OnClickListener {
+                val repo = addRepoDialog.createNewRepoObj()
+                if(repo != null) viewModel?.createNewRepo(repo)
+            }
             addRepoDialog.show()
             Timber.i("lunched AddRepoDialog")
         } else {
@@ -130,6 +137,42 @@ class ReposBrowserFragment: Fragment(), InjectableFragment {
      */
     fun observeLoadingStatus(){
         viewModel?.loadingStatus?.observe(this, Observer { handleLoadingStatus(it) })
+    }
+
+    /**
+     * Observe [ReposBrowserViewModel] dialogLoadingStatus
+     */
+    fun observeDialogLoadingStatus(){
+        viewModel?.dialogLoadingStatus?.observe(this, Observer {
+            handleNewDailogLoadinStatus(it)
+        })
+    }
+
+    fun handleNewDailogLoadinStatus(status: Boolean?) {
+        if(status != null){
+            if(::addRepoDialog.isInitialized){
+                addRepoDialog.handleNewDialogLoadingStatus(status)
+            }
+        }
+    }
+
+    /**
+     * Observe [ReposBrowserViewModel] dialogDismissDialog
+     */
+    fun observeDismissDialogRequest(){
+        viewModel?.dialogDismissRequest?.observe(this, Observer {
+            handleNewDismissDialogRequestValue(it)
+        })
+    }
+
+    /**
+     * Handle new dismissDialogRequest value
+     */
+    fun handleNewDismissDialogRequestValue(dialogCode: DialogRequest?){
+        if(dialogCode != null){
+            if(dialogCode == DialogRequest.CREATE_NEW || dialogCode == DialogRequest.ALL)
+                addRepoDialog.dismiss()
+        }
     }
 
     /**

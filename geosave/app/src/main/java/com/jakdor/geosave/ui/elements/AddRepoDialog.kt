@@ -9,8 +9,6 @@
 package com.jakdor.geosave.ui.elements
 
 import android.app.Dialog
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.Observer
 import android.content.Context
 import android.os.Bundle
 import android.view.View
@@ -19,15 +17,14 @@ import android.view.Window
 import android.view.inputmethod.InputMethodManager
 import com.jakdor.geosave.R
 import com.jakdor.geosave.common.model.firebase.Repo
-import com.jakdor.geosave.ui.locations.ReposBrowserFragment.DialogRequest
 import com.jakdor.geosave.ui.locations.ReposBrowserViewModel
 import com.jakdor.geosave.utils.GlideApp
 import kotlinx.android.synthetic.main.dialog_add_repo.*
 
-class AddRepoDialog(context: Context,
-                    private val lifecycleOwner: LifecycleOwner,
-                    private val viewModel: ReposBrowserViewModel?):
-        Dialog(context, R.style.FullscreenDialog) {
+class AddRepoDialog(context: Context): Dialog(context, R.style.FullscreenDialog) {
+
+    lateinit var cancelButtonOnClickListener: View.OnClickListener
+    lateinit var createButtonOnClickListener: View.OnClickListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,26 +35,14 @@ class AddRepoDialog(context: Context,
 
         setCanceledOnTouchOutside(false)
 
-        dialog_add_repo_cancel_button.setOnClickListener { viewModel?.onAddRepoDialogCancelClicked() }
-        dialog_add_repo_create_button.setOnClickListener { createNewRepoObj() }
+        dialog_add_repo_cancel_button.setOnClickListener(cancelButtonOnClickListener)
+        dialog_add_repo_create_button.setOnClickListener(createButtonOnClickListener)
         dialog_add_repo_radio_privacy_private.setOnClickListener {
             dialog_add_repo_privacy_icon.setImageResource(R.drawable.ic_padlock)
         }
         dialog_add_repo_radio_privacy_public.setOnClickListener {
             dialog_add_repo_privacy_icon.setImageResource(R.drawable.ic_padlock_unlock)
         }
-
-        observeDialogLoadingStatus()
-        observeDismissDialogRequest()
-    }
-
-    /**
-     * Observe [ReposBrowserViewModel] dialogLoadingStatus
-     */
-    fun observeDialogLoadingStatus(){
-        viewModel?.dialogLoadingStatus?.observe(lifecycleOwner, Observer {
-            handleNewDialogLoadingStatus(it)
-        })
     }
 
     /**
@@ -80,32 +65,15 @@ class AddRepoDialog(context: Context,
     }
 
     /**
-     * Observe [ReposBrowserViewModel] dialogDismissDialog
-     */
-    fun observeDismissDialogRequest(){
-        viewModel?.dialogDismissRequest?.observe(lifecycleOwner, Observer {
-            handleNewDismissDialogRequestValue(it)
-        })
-    }
-
-    /**
-     * Handle new dismissDialogRequest value
-     */
-    fun handleNewDismissDialogRequestValue(dialogCode: DialogRequest?){
-        if(dialogCode != null && dialogCode == DialogRequest.CREATE_NEW
-                || dialogCode == DialogRequest.ALL) dismiss()
-    }
-
-    /**
      * Create new [Repo] object based on entered data, pass onto [ReposBrowserViewModel]
      */
-    fun createNewRepoObj(){
+    fun createNewRepoObj(): Repo? {
         if(validateInputs()){
             hideKeyboard()
             val visibility = if(dialog_add_repo_radio_privacy_private.isChecked) 0 else 1
             val security = if(dialog_add_repo_radio_security_selected.isChecked) 0 else 1
 
-            val repo = Repo(dialog_add_repo_name.text.toString(),
+            return Repo(dialog_add_repo_name.text.toString(),
                     "",
                     dialog_add_repo_info.text.toString(),
                     "",
@@ -114,9 +82,8 @@ class AddRepoDialog(context: Context,
                     mutableListOf(),
                     mutableListOf(),
                     mutableListOf())
-
-            viewModel?.createNewRepo(repo)
         }
+        return null
     }
 
     /**

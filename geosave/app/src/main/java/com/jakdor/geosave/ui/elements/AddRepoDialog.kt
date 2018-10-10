@@ -35,8 +35,11 @@ class AddRepoDialog(context: Context): Dialog(context, R.style.FullscreenDialog)
 
         setCanceledOnTouchOutside(false)
 
-        dialog_add_repo_cancel_button.setOnClickListener(cancelButtonOnClickListener)
-        dialog_add_repo_create_button.setOnClickListener(createButtonOnClickListener)
+        if(::cancelButtonOnClickListener.isInitialized)
+            dialog_add_repo_cancel_button.setOnClickListener(cancelButtonOnClickListener)
+        if(::createButtonOnClickListener.isInitialized)
+            dialog_add_repo_create_button.setOnClickListener(createButtonOnClickListener)
+
         dialog_add_repo_radio_privacy_private.setOnClickListener {
             dialog_add_repo_privacy_icon.setImageResource(R.drawable.ic_padlock)
         }

@@ -168,5 +168,11 @@
     <string name="location_picture_desc">location picture</string>
     <string name="location_card_alt_label_text">Altitude:</string>
     <string name="location_card_accuracy_label_text">Accuracy:</string>
+    <string name="dialog_add_image_title_text">Add/modify image</string>
+    <string name="add_image_dialog_cancel">cancel</string>
+    <string name="add_image_dialog_upload">upload</string>
+    <string name="add_image_preview_desc">add image preview</string>
+    <string name="dialog_add_image_camera_text">Take new photo</string>
+    <string name="dialog_add_image_browse_text">Browse files</string>
 
 </resources>

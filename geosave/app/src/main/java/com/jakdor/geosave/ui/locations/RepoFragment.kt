@@ -32,6 +32,7 @@ import com.jakdor.geosave.common.repository.SharedPreferencesRepository
 import com.jakdor.geosave.databinding.FragmentRepoBinding
 import com.jakdor.geosave.di.InjectableFragment
 import com.jakdor.geosave.ui.adapters.LocationAdapter
+import com.jakdor.geosave.ui.elements.AddImageDialog
 import com.jakdor.geosave.utils.GlideApp
 import kotlinx.android.synthetic.main.fragment_repo.*
 import timber.log.Timber
@@ -51,6 +52,7 @@ class RepoFragment: Fragment(), InjectableFragment {
     private var loadedPics = 0
     private var recyclerViewInit = false
     private lateinit var locationAdapter: LocationAdapter
+    private var repoMainPicUrl = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -74,6 +76,7 @@ class RepoFragment: Fragment(), InjectableFragment {
 
         observeRepo()
         observeContributorsPicUrl()
+        observeDialogLunchRequest()
         viewModel?.observeContributorsPicUrls()
         viewModel?.observeChosenRepository()
     }
@@ -103,6 +106,8 @@ class RepoFragment: Fragment(), InjectableFragment {
             binding.repoContributorsIcon3.visibility = View.GONE
             loadedPics = 0
             viewModel?.requestContributorsPicUrls(repo)
+
+            repoMainPicUrl = repo?.picUrl ?: ""
 
             GlideApp.with(binding.root)
                     .load(repo?.picUrl)
@@ -182,6 +187,23 @@ class RepoFragment: Fragment(), InjectableFragment {
         }
     }
 
+    fun observeDialogLunchRequest(){
+        viewModel?.dialogLunchRequest?.observe(this, Observer { handleDialogLunchRequest(it) })
+    }
+
+    /**
+     * Lunch dialog after receiving lunch request from viewModel
+     */
+    fun handleDialogLunchRequest(request: DialogRequest?){
+        if(request != null){
+           when(request){
+               DialogRequest.ADD_IMAGE -> lunchAddImageDialog()
+               DialogRequest.ALL -> {}
+               DialogRequest.NONE -> {}
+           }
+        }
+    }
+
     /**
      * Load RecyclerView with user repositories
      * @param locationList loaded by [ReposBrowserViewModel]
@@ -224,6 +246,20 @@ class RepoFragment: Fragment(), InjectableFragment {
     }
 
     /**
+     * Lunch [AddImageDialog]
+     */
+    fun lunchAddImageDialog(){
+        if(context != null) {
+            val addImageDialog = AddImageDialog(context!!)
+            addImageDialog.previewPicUrl = repoMainPicUrl
+            addImageDialog.show()
+            Timber.i("lunched addImageDialog")
+        } else {
+            Timber.e("unable to lunch addImageDialog, context is null")
+        }
+    }
+
+    /**
      * Get window height for auto scaling in RecyclerView
      * @return int window height or null if unable to get height
      */
@@ -254,6 +290,10 @@ class RepoFragment: Fragment(), InjectableFragment {
         }
 
         return screenRatio
+    }
+
+    enum class DialogRequest{
+        NONE, ADD_IMAGE, ALL
     }
 
     companion object {

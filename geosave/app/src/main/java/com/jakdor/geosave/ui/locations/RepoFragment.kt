@@ -221,10 +221,12 @@ class RepoFragment: Fragment(), InjectableFragment {
         if(dialogRequest != null){
             when(dialogRequest){
                 DialogRequest.ADD_IMAGE -> {
-                    if(::addImageDialog.isInitialized) addImageDialog.dismiss()
+                    if(::addImageDialog.isInitialized && addImageDialog.isShowing)
+                        addImageDialog.dismiss()
                 }
                 DialogRequest.ALL -> {
-                    if(::addImageDialog.isInitialized) addImageDialog.dismiss()
+                    if(::addImageDialog.isInitialized && addImageDialog.isShowing)
+                        addImageDialog.dismiss()
                 }
                 DialogRequest.NONE -> {}
             }
@@ -341,6 +343,10 @@ class RepoFragment: Fragment(), InjectableFragment {
 
     enum class DialogRequest{
         NONE, ADD_IMAGE, ALL
+    }
+
+    enum class PhotoRequest{
+        NONE, CAMERA, ROLL
     }
 
     companion object {

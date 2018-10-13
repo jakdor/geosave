@@ -57,11 +57,13 @@ class AddRepoDialog(context: Context): Dialog(context, R.style.FullscreenDialog)
                 true -> {
                     setCancelable(false)
                     dialog_add_repo_loading_anim.visibility = View.VISIBLE
+                    dialog_add_repo_cancel_button.visibility = View.GONE
                     animateLoading()
                 }
                 false -> {
                     setCancelable(true)
                     dialog_add_repo_loading_anim.visibility = View.GONE
+                    dialog_add_repo_cancel_button.visibility = View.VISIBLE
                 }
             }
         }

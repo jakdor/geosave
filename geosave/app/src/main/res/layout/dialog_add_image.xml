@@ -51,6 +51,18 @@
             app:layout_constraintStart_toStartOf="@+id/dialog_add_image_guideline"
             app:layout_constraintTop_toBottomOf="@+id/dialog_add_image_camera_button" />
 
+        <Button
+            android:id="@+id/dialog_add_image_browse_files_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="@string/dialog_add_image_browse_files_text"
+            app:layout_constraintEnd_toStartOf="@+id/dialog_add_image_guideline2"
+            app:layout_constraintStart_toStartOf="@+id/dialog_add_image_guideline"
+            app:layout_constraintTop_toBottomOf="@+id/dialog_add_image_browse_button" />
+
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/dialog_add_image_guideline"
             android:layout_width="wrap_content"
@@ -88,41 +100,41 @@
             android:textColor="@color/materialGrey"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/dialog_add_image_browse_button" />
+            app:layout_constraintTop_toBottomOf="@+id/dialog_add_image_browse_files_button" />
 
         <Button
-            android:id="@+id/dialog_add_repo_create_button"
+            android:id="@+id/dialog_add_image_upload_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="12dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="12dp"
             android:backgroundTint="@color/colorPrimary"
             android:text="@string/add_image_dialog_upload"
             android:textColor="@color/materialGrey"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/dialog_add_image_browse_button" />
+            app:layout_constraintTop_toBottomOf="@+id/dialog_add_image_browse_files_button" />
 
         <ImageView
-            android:id="@+id/dialog_add_repo_loading_anim"
+            android:id="@+id/dialog_add_image_loading_anim"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginEnd="8dp"
             android:contentDescription="@string/dialog_add_repo_loading_anim_desc"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/dialog_add_repo_create_button"
+            app:layout_constraintBottom_toBottomOf="@+id/dialog_add_image_upload_button"
             app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintEnd_toStartOf="@+id/dialog_add_repo_create_button"
-            app:layout_constraintTop_toTopOf="@+id/dialog_add_repo_create_button" />
+            app:layout_constraintEnd_toStartOf="@+id/dialog_add_image_upload_button"
+            app:layout_constraintTop_toTopOf="@+id/dialog_add_image_upload_button" />
 
         <View
-            android:id="@+id/dialog_add_repo_footer"
+            android:id="@+id/dialog_add_image_footer"
             android:layout_width="match_parent"
             android:layout_height="4dp"
             android:layout_marginTop="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/dialog_add_repo_create_button" />
+            app:layout_constraintTop_toBottomOf="@+id/dialog_add_image_upload_button" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

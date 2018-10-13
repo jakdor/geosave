@@ -54,6 +54,8 @@ class RepoFragment: Fragment(), InjectableFragment {
     private lateinit var locationAdapter: LocationAdapter
     private var repoMainPicUrl = ""
 
+    private lateinit var addImageDialog: AddImageDialog
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(
@@ -77,6 +79,8 @@ class RepoFragment: Fragment(), InjectableFragment {
         observeRepo()
         observeContributorsPicUrl()
         observeDialogLunchRequest()
+        observeDialogDismissRequest()
+        observeDialogLoadingStatus()
         viewModel?.observeContributorsPicUrls()
         viewModel?.observeChosenRepository()
     }
@@ -204,6 +208,45 @@ class RepoFragment: Fragment(), InjectableFragment {
         }
     }
 
+    fun observeDialogDismissRequest(){
+        viewModel?.dialogDismissRequest?.observe(this, Observer {
+            handleDialogDismissRequest(it)
+        })
+    }
+
+    /**
+     * Dismiss dialog/s
+     */
+    fun handleDialogDismissRequest(dialogRequest: DialogRequest?){
+        if(dialogRequest != null){
+            when(dialogRequest){
+                DialogRequest.ADD_IMAGE -> {
+                    if(::addImageDialog.isInitialized && addImageDialog.isShowing)
+                        addImageDialog.dismiss()
+                }
+                DialogRequest.ALL -> {
+                    if(::addImageDialog.isInitialized && addImageDialog.isShowing)
+                        addImageDialog.dismiss()
+                }
+                DialogRequest.NONE -> {}
+            }
+        }
+    }
+
+    fun observeDialogLoadingStatus(){
+        viewModel?.dialogLoadingStatus?.observe(this, Observer {
+            handleNewDailogLoadinStatus(it)
+        })
+    }
+
+    fun handleNewDailogLoadinStatus(status: Boolean?) {
+        if(status != null){
+            if(::addImageDialog.isInitialized){
+                addImageDialog.handleNewDialogLoadingStatus(status)
+            }
+        }
+    }
+
     /**
      * Load RecyclerView with user repositories
      * @param locationList loaded by [ReposBrowserViewModel]
@@ -250,7 +293,13 @@ class RepoFragment: Fragment(), InjectableFragment {
      */
     fun lunchAddImageDialog(){
         if(context != null) {
-            val addImageDialog = AddImageDialog(context!!)
+            addImageDialog = AddImageDialog(context!!)
+            addImageDialog.cancelButtonOnClickListener = View.OnClickListener {
+                viewModel?.dismissDialog(DialogRequest.ADD_IMAGE)
+            }
+            addImageDialog.uploadButtonOnClickListener = View.OnClickListener {
+                viewModel?.uploadPic()
+            }
             addImageDialog.previewPicUrl = repoMainPicUrl
             addImageDialog.show()
             Timber.i("lunched addImageDialog")
@@ -294,6 +343,10 @@ class RepoFragment: Fragment(), InjectableFragment {
 
     enum class DialogRequest{
         NONE, ADD_IMAGE, ALL
+    }
+
+    enum class PhotoRequest{
+        NONE, CAMERA, ROLL
     }
 
     companion object {

@@ -30,6 +30,9 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
     val repoIsOwnerPair = MutableLiveData<Pair<Repo?, Boolean>>()
     val repoContributorPicUrl = MutableLiveData<String>()
     val dialogLunchRequest = MutableLiveData<RepoFragment.DialogRequest>()
+    val dialogDismissRequest = MutableLiveData<RepoFragment.DialogRequest>()
+    val dialogLoadingStatus = MutableLiveData<Boolean>()
+    val getPhotoRequest = MutableLiveData<RepoFragment.PhotoRequest>()
 
     /**
      * Observe [ReposRepository] chosen repository index stream
@@ -114,7 +117,7 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
     }
 
     /**
-     * Handle on add repo image cliked
+     * Handle on add repo image clicked
      */
     fun onAddImageClick(){
         dialogLunchRequest.postValue(RepoFragment.DialogRequest.ADD_IMAGE)
@@ -126,5 +129,27 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
      */
     fun onLocationCardClick(index: Int){
         Timber.i("Location no.%d clicked", index)
+    }
+
+    /**
+     * Forward dialogRequest to view layer
+     */
+    fun dismissDialog(dialogRequest: RepoFragment.DialogRequest){
+        dialogDismissRequest.postValue(dialogRequest)
+        Timber.i("Dismissed %s dialog", dialogRequest.name)
+    }
+
+    /**
+     * Handle AddImageDialog get photo option
+     */
+    fun onTakePhotoClicked(photoRequest: RepoFragment.PhotoRequest){
+        getPhotoRequest.postValue(photoRequest)
+    }
+
+    /**
+     * Initiate picture upload to firestore
+     */
+    fun uploadPic(){
+        dialogLoadingStatus.postValue(true)
     }
 }

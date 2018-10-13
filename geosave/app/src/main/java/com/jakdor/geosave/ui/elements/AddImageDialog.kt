@@ -11,6 +11,7 @@ package com.jakdor.geosave.ui.elements
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
+import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import com.jakdor.geosave.R
@@ -18,6 +19,9 @@ import com.jakdor.geosave.utils.GlideApp
 import kotlinx.android.synthetic.main.dialog_add_image.*
 
 class AddImageDialog(context: Context): Dialog(context, R.style.FullscreenDialog) {
+
+    lateinit var cancelButtonOnClickListener: View.OnClickListener
+    lateinit var uploadButtonOnClickListener: View.OnClickListener
 
     var previewPicUrl = ""
 
@@ -28,11 +32,47 @@ class AddImageDialog(context: Context): Dialog(context, R.style.FullscreenDialog
 
         window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
 
+        if(::cancelButtonOnClickListener.isInitialized)
+            dialog_add_image_cancel_button.setOnClickListener(cancelButtonOnClickListener)
+        if(::uploadButtonOnClickListener.isInitialized)
+            dialog_add_image_upload_button.setOnClickListener(uploadButtonOnClickListener)
+
         GlideApp.with(context)
                 .load(previewPicUrl)
                 .placeholder(R.drawable.repo_icon_placeholder)
                 .centerCrop()
                 .circleCrop()
                 .into(dialog_add_image_preview)
+    }
+
+    /**
+     * Handle new dialogLoadingStatus value
+     */
+    fun handleNewDialogLoadingStatus(status: Boolean?){
+        if(status != null){
+            when(status){
+                true -> {
+                    setCancelable(false)
+                    dialog_add_image_loading_anim.visibility = View.VISIBLE
+                    dialog_add_image_cancel_button.visibility = View.GONE
+                    animateLoading()
+                }
+                false -> {
+                    setCancelable(true)
+                    dialog_add_image_loading_anim.visibility = View.GONE
+                    dialog_add_image_cancel_button.visibility = View.VISIBLE
+                }
+            }
+        }
+    }
+
+    /**
+     * Load loading gif
+     */
+    private fun animateLoading() {
+        GlideApp.with(context)
+                .asGif()
+                .load(R.drawable.load)
+                .into(dialog_add_image_loading_anim)
     }
 }

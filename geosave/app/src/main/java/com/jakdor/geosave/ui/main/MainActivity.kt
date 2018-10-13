@@ -75,6 +75,8 @@ class MainActivity : AppCompatActivity(),
     private lateinit var fallbackLocationManager: LocationManager
     private var fallbackLocationProvider: String? = null
 
+    private lateinit var startupDialog: StartupDialog
+
     private val fragmentMap: MutableMap<String, Fragment> = mutableMapOf()
 
     private val mOnNavigationItemSelectedListener
@@ -160,6 +162,7 @@ class MainActivity : AppCompatActivity(),
      * Retain presenter instance between screen rotation
      */
     override fun onRetainCustomNonConfigurationInstance(): Any {
+        if(::startupDialog.isInitialized && startupDialog.isShowing) startupDialog.dismiss()
         return presenter
     }
 
@@ -310,17 +313,17 @@ class MainActivity : AppCompatActivity(),
      * Display [StartupDialog]
      */
     override fun displayFirstStartupDialog() {
-        val dialog = StartupDialog(this)
-        dialog.show()
+        startupDialog = StartupDialog(this)
+        startupDialog.show()
 
-        dialog.dialog_startup_yes_button.setOnClickListener {
+        startupDialog.dialog_startup_yes_button.setOnClickListener {
             presenter.onFirstStartupDialogResult(true)
-            dialog.dismiss()
+            startupDialog.dismiss()
         }
 
-        dialog.dialog_startup_no_button.setOnClickListener {
+        startupDialog.dialog_startup_no_button.setOnClickListener {
             presenter.onFirstStartupDialogResult(false)
-            dialog.dismiss()
+            startupDialog.dismiss()
         }
     }
 

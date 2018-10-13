@@ -35,7 +35,7 @@ class StartupDialog(context: Context) : Dialog(context, R.style.FullscreenDialog
         //don't load dialog_startup_image in landscape screen orientation
         if(context.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
             GlideApp.with(context)
-                    .load(R.drawable.placeholder)
+                    .load(R.drawable.logo_horizontal)
                     .fitCenter()
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(dialog_startup_image)

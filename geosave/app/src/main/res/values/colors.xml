@@ -6,6 +6,8 @@
     <color name="colorSecondary">#8d6e63</color>
     <color name="colorSecondaryDark">#5f4339</color>
 
+    <color name="ic_launcher_background">#FFFFFF</color>
+
     <color name="materialGrey">#fafafa</color>
     <color name="shadow">#40000000</color>
     <color name="materialTransparent">#d2ffffff</color>

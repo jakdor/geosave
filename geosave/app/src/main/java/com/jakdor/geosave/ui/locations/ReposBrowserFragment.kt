@@ -171,7 +171,7 @@ class ReposBrowserFragment: Fragment(), InjectableFragment {
     fun handleNewDismissDialogRequestValue(dialogCode: DialogRequest?){
         if(dialogCode != null){
             if(dialogCode == DialogRequest.CREATE_NEW || dialogCode == DialogRequest.ALL)
-                addRepoDialog.dismiss()
+                if(::addRepoDialog.isInitialized && addRepoDialog.isShowing) addRepoDialog.dismiss()
         }
     }
 

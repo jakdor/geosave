@@ -586,7 +586,7 @@ class MainActivity : AppCompatActivity(),
         startActivityForResult(AuthUI.getInstance()
                 .createSignInIntentBuilder()
                 .setAvailableProviders(providers)
-                .setLogo(R.mipmap.ic_launcher_round)
+                .setLogo(R.mipmap.ic_splash)
                 .build(),
                 RC_SIGN_IN)
 

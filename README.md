@@ -1,4 +1,9 @@
 # GeoSave
+
+<h1 align=center>
+<img src="logo-image/horizontal.png" width=40%>
+</h1>
+
 Android app that will allow for easy sharing and collaborating on GPS related data & location pictures. Target group are primarily biologists, geologists, mushroom pickers, etc.
 
 status: in-dev

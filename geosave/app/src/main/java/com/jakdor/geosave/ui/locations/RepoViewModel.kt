@@ -19,6 +19,7 @@ import com.jakdor.geosave.common.repository.UserRepository
 import com.jakdor.geosave.common.wrapper.FirebaseAuthWrapper
 import com.jakdor.geosave.utils.RxSchedulersFacade
 import timber.log.Timber
+import java.io.File
 import javax.inject.Inject
 
 class RepoViewModel @Inject
@@ -29,13 +30,14 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
             private val cameraRepository: CameraRepository):
         BaseViewModel(application, rxSchedulersFacade) {
 
-    private val CLASS_TAG: String = "RepoViewModel"
-
     val repoIsOwnerPair = MutableLiveData<Pair<Repo?, Boolean>>()
     val repoContributorPicUrl = MutableLiveData<String>()
     val dialogLunchRequest = MutableLiveData<RepoFragment.DialogRequest>()
     val dialogDismissRequest = MutableLiveData<RepoFragment.DialogRequest>()
     val dialogLoadingStatus = MutableLiveData<Boolean>()
+    val dialogAddImagePicFile = MutableLiveData<File>()
+
+    private lateinit var addImagePictureHandle: File
 
     /**
      * Observe [ReposRepository] chosen repository index stream
@@ -158,15 +160,32 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
                 .subscribeOn(rxSchedulersFacade.io())
                 .observeOn(rxSchedulersFacade.io())
                 .subscribe(
-                        { result -> Timber.i("viewModel got photo handle")},
+                        { result -> handlCameraResult(result)},
                         { e -> Timber.e("error observing cameraResult: %s", e.toString()) }
                 ))
+    }
+
+    /**
+     * Handle new cameraRequestResult
+     */
+    fun handlCameraResult(cameraRequestResult: CameraRepository.CameraRequestResult){
+        if(cameraRequestResult.tag == CLASS_TAG) {
+            Timber.i("viewModel got photo handle")
+            addImagePictureHandle = cameraRequestResult.file
+            dialogAddImagePicFile.postValue(addImagePictureHandle)
+        }
     }
 
     /**
      * Initiate picture upload to firestore
      */
     fun uploadPic(){
-        dialogLoadingStatus.postValue(true)
+        if(::addImagePictureHandle.isInitialized) {
+            dialogLoadingStatus.postValue(true)
+        }
+    }
+
+    companion object {
+        private const val CLASS_TAG: String = "RepoViewModel"
     }
 }

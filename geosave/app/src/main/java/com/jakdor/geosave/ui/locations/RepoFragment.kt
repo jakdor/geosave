@@ -37,6 +37,7 @@ import com.jakdor.geosave.ui.elements.AddImageDialog
 import com.jakdor.geosave.utils.GlideApp
 import kotlinx.android.synthetic.main.fragment_repo.*
 import timber.log.Timber
+import java.io.File
 import java.util.*
 import javax.inject.Inject
 
@@ -82,6 +83,7 @@ class RepoFragment: Fragment(), InjectableFragment {
         observeDialogLunchRequest()
         observeDialogDismissRequest()
         observeDialogLoadingStatus()
+        observeDialogAddImagePicFile()
         viewModel?.observeContributorsPicUrls()
         viewModel?.observeChosenRepository()
         viewModel?.observeCameraResult()
@@ -241,10 +243,30 @@ class RepoFragment: Fragment(), InjectableFragment {
         })
     }
 
+    /**
+     * Forward loading status to dialog/s
+     */
     fun handleNewDailogLoadinStatus(status: Boolean?) {
         if(status != null){
             if(::addImageDialog.isInitialized){
-                addImageDialog.handleNewDialogLoadingStatus(status)
+                addImageDialog.dialogLoadingStatus(status)
+            }
+        }
+    }
+
+    fun observeDialogAddImagePicFile(){
+        viewModel?.dialogAddImagePicFile?.observe(this, Observer {
+            handleDialogAddImagePicFile(it)
+        })
+    }
+
+    /**
+     * Forward picture file to [AddImageDialog]
+     */
+    fun handleDialogAddImagePicFile(picFile: File?){
+        if(picFile != null) {
+            if(::addImageDialog.isInitialized){
+                addImageDialog.loadPrevievImageView(picFile)
             }
         }
     }

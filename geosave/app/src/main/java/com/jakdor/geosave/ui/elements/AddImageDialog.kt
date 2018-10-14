@@ -18,6 +18,7 @@ import com.jakdor.geosave.R
 import com.jakdor.geosave.utils.GlideApp
 import kotlinx.android.synthetic.main.dialog_add_image.*
 import pl.aprilapps.easyphotopicker.EasyImage
+import java.io.File
 
 class AddImageDialog(context: Context): Dialog(context, R.style.FullscreenDialog) {
 
@@ -61,9 +62,21 @@ class AddImageDialog(context: Context): Dialog(context, R.style.FullscreenDialog
     }
 
     /**
+     * Load preview picture into dialog_add_image_preview from file handle
+     */
+    fun loadPrevievImageView(picFile: File){
+        GlideApp.with(context)
+                .load(picFile)
+                .placeholder(R.drawable.repo_icon_placeholder)
+                .centerCrop()
+                .circleCrop()
+                .into(dialog_add_image_preview)
+    }
+
+    /**
      * Handle new dialogLoadingStatus value
      */
-    fun handleNewDialogLoadingStatus(status: Boolean?){
+    fun dialogLoadingStatus(status: Boolean?){
         if(status != null){
             when(status){
                 true -> {

@@ -332,7 +332,7 @@ class RepoFragment: Fragment(), InjectableFragment {
                 viewModel?.dismissDialog(DialogRequest.ADD_IMAGE)
             }
             addImageDialog.uploadButtonOnClickListener = View.OnClickListener {
-                viewModel?.uploadPic()
+                viewModel?.uploadPicCompress()
             }
             addImageDialog.cameraButtonOnClickListener = View.OnClickListener {
                 viewModel?.onGetPhotoClicked(CameraRepository.CameraFeature.TAKE_PHOTO)

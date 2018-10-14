@@ -32,6 +32,7 @@ project.ext {
     okHttpVersion = "3.9.1"
     fabMenuVersion = "1.10.1"
     easyImageVersion = "2.1.0"
+    compressorVersion = "2.1.0"
     leakCanaryVersion = "1.6.1"
 
     junitVersion = "4.12"
@@ -159,6 +160,9 @@ dependencies {
 
     //EasyImage
     implementation "com.github.jkwiecien:EasyImage:$project.easyImageVersion"
+
+    //Compressor
+    implementation "id.zelory:compressor:$project.compressorVersion"
 
     //LeakCanary
     debugImplementation "com.squareup.leakcanary:leakcanary-android:$project.leakCanaryVersion"

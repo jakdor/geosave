@@ -75,11 +75,13 @@ class ReposRepository(private val schedulers: RxSchedulersFacade,
                 if(userObj?.reposList != null && userObj.reposList.isEmpty()){
                     handleEmptyRepoList()
                 }
+                val repoRefListUnsorted = mutableListOf<DocumentReference>()
                 userObj?.reposList?.forEach { documentReference: DocumentReference ->
                     documentReference.get().addOnSuccessListener { repo ->
+                        repoRefListUnsorted.add(documentReference)
                         reposResponse.add(repo.toObject(Repo::class.java))
                         if(reposResponse.size == userObj.reposList.size){
-                            handleNewRepoList(reposResponse, userObj.reposList)
+                            handleNewRepoList(reposResponse, repoRefListUnsorted)
                         }
                     }.addOnFailureListener{
                         reposRequest = false
@@ -103,11 +105,13 @@ class ReposRepository(private val schedulers: RxSchedulersFacade,
                                 if(reposRefList.isEmpty()){
                                     handleEmptyRepoList()
                                 }
+                                val repoRefListUnsorted = mutableListOf<DocumentReference>()
                                 reposRefList.forEach { documentReference: DocumentReference ->
                                     documentReference.get().addOnSuccessListener { repo ->
+                                        repoRefListUnsorted.add(documentReference)
                                         reposResponse.add(repo.toObject(Repo::class.java))
                                         if (reposResponse.size == reposRefList.size){
-                                            handleNewRepoList(reposResponse, reposRefList)
+                                            handleNewRepoList(reposResponse, repoRefListUnsorted)
                                         }
                                     }
                                 }

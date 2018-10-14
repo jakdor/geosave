@@ -105,7 +105,8 @@ class AppModule {
     @Provides
     fun providePictureStorageRepository(storage: FirebaseStorage,
                                         reposRepository: ReposRepository,
-                                        schedulers: RxSchedulersFacade): PictureStorageRepository {
-        return PictureStorageRepository(storage, reposRepository, schedulers)
+                                        schedulers: RxSchedulersFacade,
+                                        app: Application): PictureStorageRepository {
+        return PictureStorageRepository(storage, reposRepository, schedulers, app)
     }
 }

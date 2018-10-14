@@ -9,6 +9,7 @@
 package com.jakdor.geosave.ui.locations
 
 import android.app.Application
+import android.graphics.Bitmap
 import androidx.lifecycle.MutableLiveData
 import com.jakdor.geosave.arch.BaseViewModel
 import com.jakdor.geosave.common.model.firebase.Repo
@@ -183,47 +184,66 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
     }
 
     /**
+     * Compress picture before upload
+     */
+    fun uploadPicCompress(){
+        if(::addImagePictureHandle.isInitialized) {
+            disposable.add(pictureStorageRepository.compressPicture(addImagePictureHandle)
+                    .subscribe(
+                            { result -> Timber.i("Successfully compressed pic")
+                                uploadPic(result) },
+                            { e -> Timber.e("Unable to compress pic: %s", e.toString())
+                                uploadPic(null)
+                            }))
+        }
+    }
+
+    /**
      * Initiate picture upload to firestore
      */
-    fun uploadPic(){
-        if(::addImagePictureHandle.isInitialized) {
-            if(!subscribedToPictureUploadStatus){
-                disposable.add(pictureStorageRepository.pictureUploadStatus
-                        .subscribeOn(rxSchedulersFacade.io())
-                        .observeOn(rxSchedulersFacade.io())
-                        .subscribe(
-                                { result -> when(result){
-                                    PictureStorageRepository.RequestStatus.IDLE -> {}
-                                    PictureStorageRepository.RequestStatus.READY -> {
-                                        dialogLoadingStatus.postValue(false)
-                                        dialogDismissRequest.postValue(
-                                                RepoFragment.DialogRequest.ADD_IMAGE)
-                                        //todo update repo image
-                                    }
-                                    PictureStorageRepository.RequestStatus.ONGOING -> {
-                                        dialogLoadingStatus.postValue(true)
-                                    }
-                                    PictureStorageRepository.RequestStatus.ERROR -> {
-                                        dialogLoadingStatus.postValue(false)
-                                        Timber.e("Picture upload error")
-                                    }
-                                    PictureStorageRepository.RequestStatus.NO_NETWORK -> {
-                                        dialogLoadingStatus.postValue(false)
-                                        Timber.e("No network error")
-                                    }
-                                    else -> {
-                                        dialogLoadingStatus.postValue(false)
-                                        Timber.e("Error observing pictureUploadStatus")
-                                    }
-                                }},
-                                { e -> Timber.e("Error observing pictureUploadStatus, %s",
-                                        e.toString()) }
-                        ))
-            }
+    fun uploadPic(pic: Bitmap?){
+        if(!subscribedToPictureUploadStatus){
+            disposable.add(pictureStorageRepository.pictureUploadStatus
+                    .subscribeOn(rxSchedulersFacade.io())
+                    .observeOn(rxSchedulersFacade.io())
+                    .subscribe(
+                            { result -> when(result){
+                                PictureStorageRepository.RequestStatus.IDLE -> {}
+                                PictureStorageRepository.RequestStatus.READY -> {
+                                    dialogLoadingStatus.postValue(false)
+                                    dialogDismissRequest.postValue(
+                                            RepoFragment.DialogRequest.ADD_IMAGE)
+                                    //todo update repo image
+                                }
+                                PictureStorageRepository.RequestStatus.ONGOING -> {
+                                    dialogLoadingStatus.postValue(true)
+                                }
+                                PictureStorageRepository.RequestStatus.ERROR -> {
+                                    dialogLoadingStatus.postValue(false)
+                                    Timber.e("Picture upload error")
+                                }
+                                PictureStorageRepository.RequestStatus.NO_NETWORK -> {
+                                    dialogLoadingStatus.postValue(false)
+                                    Timber.e("No network error")
+                                }
+                                else -> {
+                                    dialogLoadingStatus.postValue(false)
+                                    Timber.e("Error observing pictureUploadStatus")
+                                }
+                            }},
+                            { e -> Timber.e("Error observing pictureUploadStatus, %s",
+                                    e.toString()) }
+                    ))
+        }
 
-            if(repoIsOwnerPair.value?.first != null && repoIndex != -1)
+        if(repoIsOwnerPair.value?.first != null && repoIndex != -1) {
+            if(pic != null) {
+                pictureStorageRepository.uploadRepositoryPicture(
+                        repoIsOwnerPair.value!!.first!!, repoIndex, pic)
+            } else {
                 pictureStorageRepository.uploadRepositoryPicture(
                         repoIsOwnerPair.value!!.first!!, repoIndex, addImagePictureHandle)
+            }
         }
     }
 

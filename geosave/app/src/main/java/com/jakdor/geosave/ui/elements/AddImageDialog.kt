@@ -10,6 +10,7 @@ package com.jakdor.geosave.ui.elements
 
 import android.app.Dialog
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
@@ -37,6 +38,8 @@ class AddImageDialog(context: Context): Dialog(context, R.style.FullscreenDialog
 
         window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
 
+        checkCameraFeaturesAvailability()
+
         if(::cancelButtonOnClickListener.isInitialized)
             dialog_add_image_cancel_button.setOnClickListener(cancelButtonOnClickListener)
         if(::uploadButtonOnClickListener.isInitialized)
@@ -47,11 +50,6 @@ class AddImageDialog(context: Context): Dialog(context, R.style.FullscreenDialog
             dialog_add_image_browse_button.setOnClickListener(browseButtonOnClickListener)
         if(::browseFilesButtonClickListener.isInitialized)
             dialog_add_image_browse_files_button.setOnClickListener(browseFilesButtonClickListener)
-
-        //Device has no app that handles gallery intent
-        if (!EasyImage.canDeviceHandleGallery(context)) {
-            dialog_add_image_browse_button.visibility = View.GONE
-        }
 
         GlideApp.with(context)
                 .load(previewPicUrl)
@@ -64,7 +62,7 @@ class AddImageDialog(context: Context): Dialog(context, R.style.FullscreenDialog
     /**
      * Load preview picture into dialog_add_image_preview from file handle
      */
-    fun loadPrevievImageView(picFile: File){
+    fun loadPreviewImageView(picFile: File){
         GlideApp.with(context)
                 .load(picFile)
                 .placeholder(R.drawable.repo_icon_placeholder)
@@ -102,5 +100,20 @@ class AddImageDialog(context: Context): Dialog(context, R.style.FullscreenDialog
                 .asGif()
                 .load(R.drawable.load)
                 .into(dialog_add_image_loading_anim)
+    }
+
+    /**
+     * Hide buttons if feature is not available on device
+     */
+    fun checkCameraFeaturesAvailability() {
+        //device has no camera
+        if(!context.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)){
+            dialog_add_image_camera_button.visibility = View.GONE
+        }
+
+        //device has no app that handles gallery intent
+        if (!EasyImage.canDeviceHandleGallery(context)) {
+            dialog_add_image_browse_button.visibility = View.GONE
+        }
     }
 }

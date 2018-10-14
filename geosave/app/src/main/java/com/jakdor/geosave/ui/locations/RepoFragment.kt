@@ -266,7 +266,7 @@ class RepoFragment: Fragment(), InjectableFragment {
     fun handleDialogAddImagePicFile(picFile: File?){
         if(picFile != null) {
             if(::addImageDialog.isInitialized){
-                addImageDialog.loadPrevievImageView(picFile)
+                addImageDialog.loadPreviewImageView(picFile)
             }
         }
     }

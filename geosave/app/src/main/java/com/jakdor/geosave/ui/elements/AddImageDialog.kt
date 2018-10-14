@@ -17,11 +17,15 @@ import android.view.Window
 import com.jakdor.geosave.R
 import com.jakdor.geosave.utils.GlideApp
 import kotlinx.android.synthetic.main.dialog_add_image.*
+import pl.aprilapps.easyphotopicker.EasyImage
 
 class AddImageDialog(context: Context): Dialog(context, R.style.FullscreenDialog) {
 
     lateinit var cancelButtonOnClickListener: View.OnClickListener
     lateinit var uploadButtonOnClickListener: View.OnClickListener
+    lateinit var cameraButtonOnClickListener: View.OnClickListener
+    lateinit var browseButtonOnClickListener: View.OnClickListener
+    lateinit var browseFilesButtonClickListener: View.OnClickListener
 
     var previewPicUrl = ""
 
@@ -36,6 +40,17 @@ class AddImageDialog(context: Context): Dialog(context, R.style.FullscreenDialog
             dialog_add_image_cancel_button.setOnClickListener(cancelButtonOnClickListener)
         if(::uploadButtonOnClickListener.isInitialized)
             dialog_add_image_upload_button.setOnClickListener(uploadButtonOnClickListener)
+        if(::cameraButtonOnClickListener.isInitialized)
+            dialog_add_image_camera_button.setOnClickListener(cameraButtonOnClickListener)
+        if(::browseButtonOnClickListener.isInitialized)
+            dialog_add_image_browse_button.setOnClickListener(browseButtonOnClickListener)
+        if(::browseFilesButtonClickListener.isInitialized)
+            dialog_add_image_browse_files_button.setOnClickListener(browseFilesButtonClickListener)
+
+        //Device has no app that handles gallery intent
+        if (!EasyImage.canDeviceHandleGallery(context)) {
+            dialog_add_image_browse_button.visibility = View.GONE
+        }
 
         GlideApp.with(context)
                 .load(previewPicUrl)

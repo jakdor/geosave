@@ -11,10 +11,12 @@ package com.jakdor.geosave.ui.main
 import android.app.Application
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationServices
+import com.jakdor.geosave.common.repository.CameraRepository
 import com.jakdor.geosave.common.repository.GpsInfoRepository
 import com.jakdor.geosave.common.repository.ShareMessageFormatter
 import com.jakdor.geosave.common.repository.SharedPreferencesRepository
 import com.jakdor.geosave.common.wrapper.FirebaseAuthWrapper
+import com.jakdor.geosave.utils.RxSchedulersFacade
 import dagger.Module
 import dagger.Provides
 
@@ -25,8 +27,11 @@ class MainModule {
     fun provideMainPresenter(mainView: MainContract.MainView,
                              gpsInfoRepository: GpsInfoRepository,
                              firebaseAuthWrapper: FirebaseAuthWrapper,
-                             shareMessageFormatter: ShareMessageFormatter): MainPresenter {
-        return MainPresenter(mainView, gpsInfoRepository, firebaseAuthWrapper, shareMessageFormatter)
+                             shareMessageFormatter: ShareMessageFormatter,
+                             cameraRepository: CameraRepository,
+                             schedulersFacade: RxSchedulersFacade): MainPresenter {
+        return MainPresenter(mainView, gpsInfoRepository, firebaseAuthWrapper,
+                shareMessageFormatter, cameraRepository, schedulersFacade)
     }
 
     @Provides

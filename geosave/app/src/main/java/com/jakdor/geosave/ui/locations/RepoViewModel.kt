@@ -13,6 +13,7 @@ import androidx.lifecycle.MutableLiveData
 import com.jakdor.geosave.arch.BaseViewModel
 import com.jakdor.geosave.common.model.firebase.Repo
 import com.jakdor.geosave.common.model.firebase.User
+import com.jakdor.geosave.common.repository.CameraRepository
 import com.jakdor.geosave.common.repository.ReposRepository
 import com.jakdor.geosave.common.repository.UserRepository
 import com.jakdor.geosave.common.wrapper.FirebaseAuthWrapper
@@ -24,15 +25,17 @@ class RepoViewModel @Inject
 constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
             private val reposRepository: ReposRepository,
             private val userRepository: UserRepository,
-            private val firebaseAuthWrapper: FirebaseAuthWrapper):
+            private val firebaseAuthWrapper: FirebaseAuthWrapper,
+            private val cameraRepository: CameraRepository):
         BaseViewModel(application, rxSchedulersFacade) {
+
+    private val CLASS_TAG: String = "RepoViewModel"
 
     val repoIsOwnerPair = MutableLiveData<Pair<Repo?, Boolean>>()
     val repoContributorPicUrl = MutableLiveData<String>()
     val dialogLunchRequest = MutableLiveData<RepoFragment.DialogRequest>()
     val dialogDismissRequest = MutableLiveData<RepoFragment.DialogRequest>()
     val dialogLoadingStatus = MutableLiveData<Boolean>()
-    val getPhotoRequest = MutableLiveData<RepoFragment.PhotoRequest>()
 
     /**
      * Observe [ReposRepository] chosen repository index stream
@@ -140,10 +143,24 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
     }
 
     /**
-     * Handle AddImageDialog get photo option
+     * Handle AddImageDialog get photo option,
+     * request camera photos from [CameraRepository]
      */
-    fun onTakePhotoClicked(photoRequest: RepoFragment.PhotoRequest){
-        getPhotoRequest.postValue(photoRequest)
+    fun onGetPhotoClicked(cameraFeature: CameraRepository.CameraFeature){
+        cameraRepository.requestCameraPhotos(CLASS_TAG, cameraFeature)
+    }
+
+    /**
+     * Observe [CameraRepository] for cameraResult
+     */
+    fun observeCameraResult(){
+        disposable.add(cameraRepository.cameraResult
+                .subscribeOn(rxSchedulersFacade.io())
+                .observeOn(rxSchedulersFacade.io())
+                .subscribe(
+                        { result -> Timber.i("viewModel got photo handle")},
+                        { e -> Timber.e("error observing cameraResult: %s", e.toString()) }
+                ))
     }
 
     /**

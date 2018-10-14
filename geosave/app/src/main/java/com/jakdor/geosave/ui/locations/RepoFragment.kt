@@ -28,6 +28,7 @@ import com.bumptech.glide.request.target.Target
 import com.jakdor.geosave.R
 import com.jakdor.geosave.common.model.firebase.Location
 import com.jakdor.geosave.common.model.firebase.Repo
+import com.jakdor.geosave.common.repository.CameraRepository
 import com.jakdor.geosave.common.repository.SharedPreferencesRepository
 import com.jakdor.geosave.databinding.FragmentRepoBinding
 import com.jakdor.geosave.di.InjectableFragment
@@ -83,6 +84,7 @@ class RepoFragment: Fragment(), InjectableFragment {
         observeDialogLoadingStatus()
         viewModel?.observeContributorsPicUrls()
         viewModel?.observeChosenRepository()
+        viewModel?.observeCameraResult()
     }
 
     /**
@@ -300,6 +302,15 @@ class RepoFragment: Fragment(), InjectableFragment {
             addImageDialog.uploadButtonOnClickListener = View.OnClickListener {
                 viewModel?.uploadPic()
             }
+            addImageDialog.cameraButtonOnClickListener = View.OnClickListener {
+                viewModel?.onGetPhotoClicked(CameraRepository.CameraFeature.TAKE_PHOTO)
+            }
+            addImageDialog.browseButtonOnClickListener = View.OnClickListener {
+                viewModel?.onGetPhotoClicked(CameraRepository.CameraFeature.GET_GALLERY)
+            }
+            addImageDialog.browseFilesButtonClickListener = View.OnClickListener {
+                viewModel?.onGetPhotoClicked(CameraRepository.CameraFeature.GET_DOCUMENTS)
+            }
             addImageDialog.previewPicUrl = repoMainPicUrl
             addImageDialog.show()
             Timber.i("lunched addImageDialog")
@@ -343,10 +354,6 @@ class RepoFragment: Fragment(), InjectableFragment {
 
     enum class DialogRequest{
         NONE, ADD_IMAGE, ALL
-    }
-
-    enum class PhotoRequest{
-        NONE, CAMERA, ROLL
     }
 
     companion object {

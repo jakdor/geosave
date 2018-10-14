@@ -9,6 +9,8 @@
 package com.jakdor.geosave.ui.main
 
 import com.jakdor.geosave.common.model.UserLocation
+import com.jakdor.geosave.common.repository.CameraRepository
+import java.io.File
 
 /**
  * Defines MainActivity behaviour
@@ -38,6 +40,9 @@ interface MainContract {
         fun fallbackStopLocationUpdates()
 
         fun firebaseSignInIntent()
+
+        fun cameraRequest(cameraFeature: CameraRepository.CameraFeature)
+        fun checkCameraPermissions()
     }
 
     interface MainPresenter {
@@ -70,5 +75,8 @@ interface MainContract {
         fun onFirstStartupDialogResult(response: Boolean)
 
         fun notifyPossiblePreferencesChange()
+
+        fun cameraPermissionsGranted(status: Boolean)
+        fun onCameraResult(file: File)
     }
 }

@@ -89,4 +89,10 @@ class AppModule {
     fun provideUserRepository(firebaseFirestore: FirebaseFirestore): UserRepository{
         return UserRepository(firebaseFirestore)
     }
+
+    @Singleton
+    @Provides
+    fun provideCameraRepository(): CameraRepository {
+        return CameraRepository()
+    }
 }

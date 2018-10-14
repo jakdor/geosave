@@ -30,6 +30,7 @@ project.ext {
     retrofitVersion = "2.3.0"
     okHttpVersion = "3.9.1"
     fabMenuVersion = "1.10.1"
+    easyImageVersion = "2.1.0"
     leakCanaryVersion = "1.6.1"
 
     junitVersion = "4.12"
@@ -153,6 +154,9 @@ dependencies {
 
     //fab menu
     implementation "com.getbase:floatingactionbutton:$project.fabMenuVersion"
+
+    //EasyImage
+    implementation "com.github.jkwiecien:EasyImage:$project.easyImageVersion"
 
     //LeakCanary
     debugImplementation "com.squareup.leakcanary:leakcanary-android:$project.leakCanaryVersion"

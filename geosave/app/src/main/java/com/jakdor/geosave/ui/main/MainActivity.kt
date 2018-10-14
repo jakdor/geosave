@@ -45,6 +45,7 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationCallback
 import com.google.firebase.auth.FirebaseAuth
 import com.jakdor.geosave.common.model.UserLocation
+import com.jakdor.geosave.common.repository.CameraRepository
 import com.jakdor.geosave.ui.elements.StartupDialog
 import com.jakdor.geosave.ui.locations.LocationsFragment
 import com.jakdor.geosave.ui.map.MapFragment
@@ -53,6 +54,9 @@ import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.dialog_first_startup.*
+import pl.aprilapps.easyphotopicker.DefaultCallback
+import pl.aprilapps.easyphotopicker.EasyImage
+import java.io.File
 import java.lang.ref.WeakReference
 
 class MainActivity : AppCompatActivity(),
@@ -363,7 +367,7 @@ class MainActivity : AppCompatActivity(),
             if (!listPermissionsNeeded.isEmpty()) {
                 Timber.e("Permissions required, sending request")
                 ActivityCompat.requestPermissions(this,
-                        listPermissionsNeeded.toTypedArray(), REQUEST_ID_MULTIPLE_PERMISSIONS)
+                        listPermissionsNeeded.toTypedArray(), REQUEST_ID_LOCATION)
             }
         } else {
             Timber.i("Permissions already granted")
@@ -376,16 +380,34 @@ class MainActivity : AppCompatActivity(),
      */
     override fun onRequestPermissionsResult(
             requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        val permissionLocation = ContextCompat.checkSelfPermission(this@MainActivity,
-                Manifest.permission.ACCESS_FINE_LOCATION)
-        if (permissionLocation == PackageManager.PERMISSION_GRANTED) {
-            Timber.i("Permissions granted by user")
-            presenter.bindView(this) //fix for onRequestPermissionsResult called before onResume
-            presenter.permissionsGranted(true)
-        } else {
-            Timber.e("Permissions declined by user")
-            presenter.bindView(this) //fix for onRequestPermissionsResult called before onResume
-            presenter.permissionsGranted(false)
+        when(requestCode){
+            REQUEST_ID_LOCATION -> { //check ACCESS_FINE_LOCATION
+                val permissionLocation = ContextCompat.checkSelfPermission(this@MainActivity,
+                        Manifest.permission.ACCESS_FINE_LOCATION)
+                if (permissionLocation == PackageManager.PERMISSION_GRANTED) {
+                    Timber.i("Permissions granted by user")
+                    //fix for onRequestPermissionsResult called before onResume
+                    presenter.bindView(this)
+                    presenter.permissionsGranted(true)
+                } else {
+                    Timber.e("Permissions declined by user")
+                    presenter.bindView(this)
+                    presenter.permissionsGranted(false)
+                }
+            }
+            REQUEST_ID_STORAGE -> { //check WRITE_EXTERNAL_STORAGE
+                val permissionStorage = ContextCompat.checkSelfPermission(this@MainActivity,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                if (permissionStorage == PackageManager.PERMISSION_GRANTED) {
+                    Timber.i("Permissions granted by user")
+                    presenter.bindView(this)
+                    presenter.cameraPermissionsGranted(true)
+                } else {
+                    Timber.e("Permissions declined by user")
+                    presenter.bindView(this)
+                    presenter.cameraPermissionsGranted(false)
+                }
+            }
         }
     }
 
@@ -484,6 +506,24 @@ class MainActivity : AppCompatActivity(),
                 }
             }
         }
+
+        EasyImage.handleActivityResult(
+                requestCode, resultCode, data, this, object: DefaultCallback() {
+            override fun onImagesPicked(p0: MutableList<File>, p1: EasyImage.ImageSource?, p2: Int){
+                presenter.onCameraResult(p0.last())
+                Timber.i("Got camera request intent result")
+            }
+
+            override fun onCanceled(source: EasyImage.ImageSource?, type: Int) {
+                super.onCanceled(source, type)
+                Timber.i("User canceled photo request")
+            }
+
+            override fun onImagePickerError(
+                    e: Exception?, source: EasyImage.ImageSource?, type: Int) {
+                Timber.e("Photo request error: %s", e.toString())
+            }
+        })
     }
 
     /**
@@ -611,9 +651,49 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
+    /**
+     * Check runtime camera permissions
+     */
+    override fun checkCameraPermissions() {
+        val permissionStorage = ContextCompat.checkSelfPermission(this@MainActivity,
+                android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        val listPermissionsNeeded = ArrayList<String>()
+        if (permissionStorage != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            if (!listPermissionsNeeded.isEmpty()) {
+                Timber.e("Permissions required, sending request")
+                ActivityCompat.requestPermissions(this,
+                        listPermissionsNeeded.toTypedArray(), REQUEST_ID_STORAGE)
+            }
+        } else {
+            Timber.i("Permissions already granted")
+            presenter.cameraPermissionsGranted(true)
+        }
+    }
+
+    /**
+     * Handle camera request
+     */
+    override fun cameraRequest(cameraFeature: CameraRepository.CameraFeature) {
+        Timber.i("Handling camera request")
+
+        when(cameraFeature){
+            CameraRepository.CameraFeature.TAKE_PHOTO -> {
+                EasyImage.openCameraForImage(this, 0)
+            }
+            CameraRepository.CameraFeature.GET_GALLERY -> {
+                EasyImage.openGallery(this, 0)
+            }
+            CameraRepository.CameraFeature.GET_DOCUMENTS -> {
+                EasyImage.openDocuments(this, 0)
+            }
+        }
+    }
+
     companion object {
         private const val REQUEST_CHECK_SETTINGS_GPS=0x1
-        private const val REQUEST_ID_MULTIPLE_PERMISSIONS=0x2
+        private const val REQUEST_ID_LOCATION=0x2
+        private const val REQUEST_ID_STORAGE=0x3
         private const val RC_SIGN_IN = 123
     }
 }

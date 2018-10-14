@@ -18,6 +18,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.jakdor.geosave.common.repository.ReposRepository
 import com.jakdor.geosave.common.wrapper.FirebaseAuthWrapper
 import dagger.android.support.DaggerAppCompatActivity
+import pl.aprilapps.easyphotopicker.EasyImage
 import javax.inject.Inject
 
 class SplashActivity: DaggerAppCompatActivity(){
@@ -42,6 +43,11 @@ class SplashActivity: DaggerAppCompatActivity(){
 
         firebaseAuthWrapper.checkUserObj()
         reposRepository.fastInitialReposLoad()
+
+        EasyImage.configuration(this)
+                .setImagesFolderName("GeoSave")
+                .setCopyTakenPhotosToPublicGalleryAppFolder(false)
+                .setAllowMultiplePickInGallery(false)
 
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)

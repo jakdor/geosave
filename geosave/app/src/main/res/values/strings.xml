@@ -175,5 +175,6 @@
     <string name="dialog_add_image_camera_text">Take new photo</string>
     <string name="dialog_add_image_browse_text">Browse gallery</string>
     <string name="dialog_add_image_browse_files_text">Browse documents</string>
+    <string name="toast_camera_permission_not_granted">This permission is required to get photo!</string>
 
 </resources>

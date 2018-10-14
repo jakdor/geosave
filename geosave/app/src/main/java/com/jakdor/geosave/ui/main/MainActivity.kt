@@ -634,24 +634,6 @@ class MainActivity : AppCompatActivity(),
     }
 
     /**
-     * Wrapper for GMS [LocationCallback] mitigating memory leak,
-     * this is known since version 8.1.0, thx Google
-     */
-    private class LocationCallbackSafeWrapper
-    internal constructor(presenter: MainPresenter): LocationCallback() {
-        private val weakRef: WeakReference<MainPresenter> = WeakReference(presenter)
-
-        override fun onLocationResult(locationResult: LocationResult?) {
-            for (location in locationResult!!.locations) {
-                Timber.i(location.toString())
-                if (weakRef.get() != null) {
-                    weakRef.get()?.onLocationChanged(UserLocation(location))
-                }
-            }
-        }
-    }
-
-    /**
      * Check runtime camera permissions
      */
     override fun checkCameraPermissions() {
@@ -686,6 +668,24 @@ class MainActivity : AppCompatActivity(),
             }
             CameraRepository.CameraFeature.GET_DOCUMENTS -> {
                 EasyImage.openDocuments(this, 0)
+            }
+        }
+    }
+
+    /**
+     * Wrapper for GMS [LocationCallback] mitigating memory leak,
+     * this is known since version 8.1.0, thx Google
+     */
+    private class LocationCallbackSafeWrapper
+    internal constructor(presenter: MainPresenter): LocationCallback() {
+        private val weakRef: WeakReference<MainPresenter> = WeakReference(presenter)
+
+        override fun onLocationResult(locationResult: LocationResult?) {
+            for (location in locationResult!!.locations) {
+                Timber.i(location.toString())
+                if (weakRef.get() != null) {
+                    weakRef.get()?.onLocationChanged(UserLocation(location))
+                }
             }
         }
     }

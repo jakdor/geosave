@@ -117,19 +117,29 @@ class RepoFragment: Fragment(), InjectableFragment {
 
             repoMainPicUrl = repo?.picUrl ?: ""
 
-            GlideApp.with(binding.root)
-                    .load(repo?.picUrl)
-                    .apply(RequestOptions()
-                            .placeholder(R.drawable.repo_icon_placeholder_empty)
-                            .centerCrop()
-                            .circleCrop())
-                    .into(binding.repoIcon)
-
             //lock owner options for non-owner user
             if(!repoIsOwnerPair.second){
                 binding.repoToolbarEdit.visibility = View.GONE
+                binding.repoIconAddPopup.visibility = View.GONE
+
+                GlideApp.with(binding.root)
+                        .load(repo?.picUrl)
+                        .apply(RequestOptions()
+                                .placeholder(R.drawable.repo_icon_placeholder)
+                                .centerCrop()
+                                .circleCrop())
+                        .into(binding.repoIcon)
             } else {
                 binding.repoToolbarEdit.visibility = View.VISIBLE
+                binding.repoIconAddPopup.visibility = View.VISIBLE
+
+                GlideApp.with(binding.root)
+                        .load(repo?.picUrl)
+                        .apply(RequestOptions()
+                                .placeholder(R.drawable.repo_icon_placeholder_empty)
+                                .centerCrop()
+                                .circleCrop())
+                        .into(binding.repoIcon)
             }
 
             loadRecyclerView(repo?.locationsList)

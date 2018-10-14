@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import android.content.Context
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import com.jakdor.geosave.App
 import com.jakdor.geosave.arch.ViewModelFactory
 import com.jakdor.geosave.common.network.RetrofitFactory
@@ -94,5 +95,17 @@ class AppModule {
     @Provides
     fun provideCameraRepository(): CameraRepository {
         return CameraRepository()
+    }
+
+    @Provides
+    fun provideFirebaseStorage(): FirebaseStorage {
+        return FirebaseStorage.getInstance()
+    }
+
+    @Provides
+    fun providePictureStorageRepository(storage: FirebaseStorage,
+                                        reposRepository: ReposRepository,
+                                        schedulers: RxSchedulersFacade): PictureStorageRepository {
+        return PictureStorageRepository(storage, reposRepository, schedulers)
     }
 }

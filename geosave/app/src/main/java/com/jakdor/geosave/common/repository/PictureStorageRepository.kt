@@ -24,7 +24,6 @@ import java.io.File
 import javax.inject.Inject
 import java.io.ByteArrayOutputStream
 
-
 class PictureStorageRepository @Inject constructor(private val firebaseStorage: FirebaseStorage,
                                                    private val reposRepository: ReposRepository,
                                                    private val schedulers: RxSchedulersFacade,
@@ -91,7 +90,10 @@ class PictureStorageRepository @Inject constructor(private val firebaseStorage: 
         val uploadTask = picRef.putBytes(byteArray)
         uploadTask.addOnSuccessListener {
             picRef.downloadUrl.addOnSuccessListener { url ->
-                if(url.encodedPath != null) reposRepository.updateRepoPicUrl(repoIndex, url.toString())
+                if(url.encodedPath != null)
+                    reposRepository.updateRepoPicUrl(repoIndex, url.toString())
+                if(repo.picUrl.isNotEmpty() || repo.picUrl.isNotBlank())
+                    removeImageFromStorage(repo.picUrl)
             }
             observePicUpdateStatus()
         }
@@ -131,5 +133,18 @@ class PictureStorageRepository @Inject constructor(private val firebaseStorage: 
                             disposable.clear()
                         }
                 ))
+    }
+
+    /**
+     * Remove image from firestore by its download url
+     */
+    fun removeImageFromStorage(downloadUrl: String){
+        firebaseStorage.getReferenceFromUrl(downloadUrl).delete()
+                .addOnSuccessListener {
+                    Timber.i("Deleted image from firebase storage")
+                }
+                .addOnFailureListener {
+                    Timber.e("Error deleting image from firebase storage: %s", it.toString())
+                }
     }
 }

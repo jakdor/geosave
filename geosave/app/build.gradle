@@ -18,6 +18,7 @@ project.ext {
     constraintLayoutVersion = "2.0.0-alpha2"
     firebaseCoreVersion = "16.0.4"
     firebaseFirestoreVersion = "17.1.0"
+    firebaseStorageVersion = "16.0.3"
     crashlyticsVersion = "2.9.5"
     firebaseUIVersion = "4.1.0"
     daggerVersion = "2.13"
@@ -30,6 +31,8 @@ project.ext {
     retrofitVersion = "2.3.0"
     okHttpVersion = "3.9.1"
     fabMenuVersion = "1.10.1"
+    easyImageVersion = "2.1.0"
+    compressorVersion = "2.1.0"
     leakCanaryVersion = "1.6.1"
 
     junitVersion = "4.12"
@@ -111,6 +114,7 @@ dependencies {
     //Firebase
     implementation "com.google.firebase:firebase-core:$project.firebaseCoreVersion"
     implementation "com.google.firebase:firebase-firestore:$project.firebaseFirestoreVersion"
+    implementation "com.google.firebase:firebase-storage:$project.firebaseStorageVersion"
     implementation "com.crashlytics.sdk.android:crashlytics:$project.crashlyticsVersion"
     implementation "com.firebaseui:firebase-ui-auth:$project.firebaseUIVersion"
 
@@ -153,6 +157,12 @@ dependencies {
 
     //fab menu
     implementation "com.getbase:floatingactionbutton:$project.fabMenuVersion"
+
+    //EasyImage
+    implementation "com.github.jkwiecien:EasyImage:$project.easyImageVersion"
+
+    //Compressor
+    implementation "id.zelory:compressor:$project.compressorVersion"
 
     //LeakCanary
     debugImplementation "com.squareup.leakcanary:leakcanary-android:$project.leakCanaryVersion"

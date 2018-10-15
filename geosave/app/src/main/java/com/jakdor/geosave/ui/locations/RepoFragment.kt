@@ -28,6 +28,7 @@ import com.bumptech.glide.request.target.Target
 import com.jakdor.geosave.R
 import com.jakdor.geosave.common.model.firebase.Location
 import com.jakdor.geosave.common.model.firebase.Repo
+import com.jakdor.geosave.common.repository.CameraRepository
 import com.jakdor.geosave.common.repository.SharedPreferencesRepository
 import com.jakdor.geosave.databinding.FragmentRepoBinding
 import com.jakdor.geosave.di.InjectableFragment
@@ -36,6 +37,7 @@ import com.jakdor.geosave.ui.elements.AddImageDialog
 import com.jakdor.geosave.utils.GlideApp
 import kotlinx.android.synthetic.main.fragment_repo.*
 import timber.log.Timber
+import java.io.File
 import java.util.*
 import javax.inject.Inject
 
@@ -81,8 +83,10 @@ class RepoFragment: Fragment(), InjectableFragment {
         observeDialogLunchRequest()
         observeDialogDismissRequest()
         observeDialogLoadingStatus()
+        observeDialogAddImagePicFile()
         viewModel?.observeContributorsPicUrls()
         viewModel?.observeChosenRepository()
+        viewModel?.observeCameraResult()
     }
 
     /**
@@ -113,19 +117,29 @@ class RepoFragment: Fragment(), InjectableFragment {
 
             repoMainPicUrl = repo?.picUrl ?: ""
 
-            GlideApp.with(binding.root)
-                    .load(repo?.picUrl)
-                    .apply(RequestOptions()
-                            .placeholder(R.drawable.repo_icon_placeholder_empty)
-                            .centerCrop()
-                            .circleCrop())
-                    .into(binding.repoIcon)
-
             //lock owner options for non-owner user
             if(!repoIsOwnerPair.second){
                 binding.repoToolbarEdit.visibility = View.GONE
+                binding.repoIconAddPopup.visibility = View.GONE
+
+                GlideApp.with(binding.root)
+                        .load(repo?.picUrl)
+                        .apply(RequestOptions()
+                                .placeholder(R.drawable.repo_icon_placeholder)
+                                .centerCrop()
+                                .circleCrop())
+                        .into(binding.repoIcon)
             } else {
                 binding.repoToolbarEdit.visibility = View.VISIBLE
+                binding.repoIconAddPopup.visibility = View.VISIBLE
+
+                GlideApp.with(binding.root)
+                        .load(repo?.picUrl)
+                        .apply(RequestOptions()
+                                .placeholder(R.drawable.repo_icon_placeholder_empty)
+                                .centerCrop()
+                                .circleCrop())
+                        .into(binding.repoIcon)
             }
 
             loadRecyclerView(repo?.locationsList)
@@ -239,10 +253,30 @@ class RepoFragment: Fragment(), InjectableFragment {
         })
     }
 
+    /**
+     * Forward loading status to dialog/s
+     */
     fun handleNewDailogLoadinStatus(status: Boolean?) {
         if(status != null){
             if(::addImageDialog.isInitialized){
-                addImageDialog.handleNewDialogLoadingStatus(status)
+                addImageDialog.dialogLoadingStatus(status)
+            }
+        }
+    }
+
+    fun observeDialogAddImagePicFile(){
+        viewModel?.dialogAddImagePicFile?.observe(this, Observer {
+            handleDialogAddImagePicFile(it)
+        })
+    }
+
+    /**
+     * Forward picture file to [AddImageDialog]
+     */
+    fun handleDialogAddImagePicFile(picFile: File?){
+        if(picFile != null) {
+            if(::addImageDialog.isInitialized){
+                addImageDialog.loadPreviewImageView(picFile)
             }
         }
     }
@@ -298,7 +332,16 @@ class RepoFragment: Fragment(), InjectableFragment {
                 viewModel?.dismissDialog(DialogRequest.ADD_IMAGE)
             }
             addImageDialog.uploadButtonOnClickListener = View.OnClickListener {
-                viewModel?.uploadPic()
+                viewModel?.uploadPicCompress()
+            }
+            addImageDialog.cameraButtonOnClickListener = View.OnClickListener {
+                viewModel?.onGetPhotoClicked(CameraRepository.CameraFeature.TAKE_PHOTO)
+            }
+            addImageDialog.browseButtonOnClickListener = View.OnClickListener {
+                viewModel?.onGetPhotoClicked(CameraRepository.CameraFeature.GET_GALLERY)
+            }
+            addImageDialog.browseFilesButtonClickListener = View.OnClickListener {
+                viewModel?.onGetPhotoClicked(CameraRepository.CameraFeature.GET_DOCUMENTS)
             }
             addImageDialog.previewPicUrl = repoMainPicUrl
             addImageDialog.show()
@@ -343,10 +386,6 @@ class RepoFragment: Fragment(), InjectableFragment {
 
     enum class DialogRequest{
         NONE, ADD_IMAGE, ALL
-    }
-
-    enum class PhotoRequest{
-        NONE, CAMERA, ROLL
     }
 
     companion object {

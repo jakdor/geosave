@@ -17,7 +17,6 @@ import android.view.Window
 import android.view.inputmethod.InputMethodManager
 import com.jakdor.geosave.R
 import com.jakdor.geosave.common.model.firebase.Repo
-import com.jakdor.geosave.ui.locations.ReposBrowserViewModel
 import com.jakdor.geosave.utils.GlideApp
 import kotlinx.android.synthetic.main.dialog_add_repo.*
 
@@ -70,7 +69,7 @@ class AddRepoDialog(context: Context): Dialog(context, R.style.FullscreenDialog)
     }
 
     /**
-     * Create new [Repo] object based on entered data, pass onto [ReposBrowserViewModel]
+     * Create new [Repo] object based on entered data
      */
     fun createNewRepoObj(): Repo? {
         if(validateInputs()){

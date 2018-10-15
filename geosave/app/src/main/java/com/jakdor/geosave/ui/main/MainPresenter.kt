@@ -12,14 +12,19 @@ import com.jakdor.geosave.R
 import com.jakdor.geosave.common.model.UserLocation
 import com.jakdor.geosave.common.repository.GpsInfoRepository
 import com.jakdor.geosave.arch.BasePresenter
-import com.jakdor.geosave.common.repository.ReposRepository
+import com.jakdor.geosave.common.repository.CameraRepository
 import com.jakdor.geosave.common.repository.ShareMessageFormatter
 import com.jakdor.geosave.common.wrapper.FirebaseAuthWrapper
+import com.jakdor.geosave.utils.RxSchedulersFacade
+import io.reactivex.disposables.CompositeDisposable
+import java.io.File
 
 class MainPresenter(view: MainContract.MainView,
                     private val gpsInfoRepository: GpsInfoRepository,
                     private val firebaseAuthWrapper: FirebaseAuthWrapper,
-                    private val shareMessageFormatter: ShareMessageFormatter):
+                    private val shareMessageFormatter: ShareMessageFormatter,
+                    private val cameraRepository: CameraRepository,
+                    private val schedulersFacade: RxSchedulersFacade):
         BasePresenter<MainContract.MainView>(view),
         MainContract.MainPresenter{
 
@@ -29,6 +34,9 @@ class MainPresenter(view: MainContract.MainView,
     private var locationUpdates = false
     private var fallBackMode = false
     private var fallbackLocationUpdates = false
+
+    private var compositeDisposable = CompositeDisposable()
+    private lateinit var currentCameraRequestInfo: CameraRepository.CameraRequestInfo
 
     /**
      * Check firebase login
@@ -42,7 +50,7 @@ class MainPresenter(view: MainContract.MainView,
      * Load fragment on create view state
      */
     override fun create() {
-        super.start()
+        super.create()
         if(currentTab == -1) { //first load
             view?.switchToGpsInfoFragment()
             currentTab = 0
@@ -54,6 +62,8 @@ class MainPresenter(view: MainContract.MainView,
                 3 -> view?.switchToPreferencesFragment()
             }
         }
+
+        observeCameraRequests()
     }
 
     /**
@@ -295,5 +305,41 @@ class MainPresenter(view: MainContract.MainView,
      */
     override fun notifyPossiblePreferencesChange() {
         gpsInfoRepository.checkForPreferencesChange()
+    }
+
+    /**
+     * Observe camera requests from [CameraRepository]
+     */
+    private fun observeCameraRequests() {
+        compositeDisposable.add(cameraRepository.cameraRequest
+                .subscribeOn(schedulersFacade.io())
+                .observeOn(schedulersFacade.ui())
+                .subscribe(
+                        { result -> handleCameraRequest(result) },
+                        { e -> e.printStackTrace() }
+                ))
+    }
+
+    /**
+     * Handle new [CameraRepository.CameraRequestInfo], start by checking runtime permissions
+     */
+    fun handleCameraRequest(cameraRequestInfo: CameraRepository.CameraRequestInfo){
+        currentCameraRequestInfo = cameraRequestInfo
+        view?.checkCameraPermissions()
+    }
+
+    /**
+     * Camera permissions granted, continue handling [CameraRepository.CameraRequestInfo]
+     */
+    override fun cameraPermissionsGranted(status: Boolean) {
+        if(status) view?.cameraRequest(currentCameraRequestInfo.feature)
+        else view?.displayToast(R.string.toast_camera_permission_not_granted)
+    }
+
+    /**
+     * Forward photo [File] back to [CameraRepository]
+     */
+    override fun onCameraResult(file: File) {
+        cameraRepository.onCameraResult(currentCameraRequestInfo.tag, file)
     }
 }

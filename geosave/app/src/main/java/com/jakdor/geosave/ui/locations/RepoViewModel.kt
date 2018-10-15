@@ -9,22 +9,28 @@
 package com.jakdor.geosave.ui.locations
 
 import android.app.Application
+import android.graphics.Bitmap
 import androidx.lifecycle.MutableLiveData
 import com.jakdor.geosave.arch.BaseViewModel
 import com.jakdor.geosave.common.model.firebase.Repo
 import com.jakdor.geosave.common.model.firebase.User
+import com.jakdor.geosave.common.repository.CameraRepository
+import com.jakdor.geosave.common.repository.PictureStorageRepository
 import com.jakdor.geosave.common.repository.ReposRepository
 import com.jakdor.geosave.common.repository.UserRepository
 import com.jakdor.geosave.common.wrapper.FirebaseAuthWrapper
 import com.jakdor.geosave.utils.RxSchedulersFacade
 import timber.log.Timber
+import java.io.File
 import javax.inject.Inject
 
 class RepoViewModel @Inject
 constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
             private val reposRepository: ReposRepository,
             private val userRepository: UserRepository,
-            private val firebaseAuthWrapper: FirebaseAuthWrapper):
+            private val firebaseAuthWrapper: FirebaseAuthWrapper,
+            private val cameraRepository: CameraRepository,
+            private val pictureStorageRepository: PictureStorageRepository):
         BaseViewModel(application, rxSchedulersFacade) {
 
     val repoIsOwnerPair = MutableLiveData<Pair<Repo?, Boolean>>()
@@ -32,7 +38,11 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
     val dialogLunchRequest = MutableLiveData<RepoFragment.DialogRequest>()
     val dialogDismissRequest = MutableLiveData<RepoFragment.DialogRequest>()
     val dialogLoadingStatus = MutableLiveData<Boolean>()
-    val getPhotoRequest = MutableLiveData<RepoFragment.PhotoRequest>()
+    val dialogAddImagePicFile = MutableLiveData<File>()
+
+    private lateinit var addImagePictureHandle: File
+    private var subscribedToPictureUploadStatus = false
+    private var repoIndex = -1
 
     /**
      * Observe [ReposRepository] chosen repository index stream
@@ -43,6 +53,7 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
                 .observeOn(rxSchedulersFacade.ui())
                 .subscribe(
                         {result -> if(result != -1){
+                            repoIndex = result
                             val isOwner = checkIsOwner(reposRepository.reposListStream.value[result])
                             val resultPair = Pair(reposRepository.reposListStream.value[result], isOwner)
                             repoIsOwnerPair.postValue(resultPair)
@@ -120,7 +131,8 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
      * Handle on add repo image clicked
      */
     fun onAddImageClick(){
-        dialogLunchRequest.postValue(RepoFragment.DialogRequest.ADD_IMAGE)
+        if(repoIsOwnerPair.value != null && repoIsOwnerPair.value!!.second)
+            dialogLunchRequest.postValue(RepoFragment.DialogRequest.ADD_IMAGE)
         Timber.i("add image clicked")
     }
 
@@ -140,16 +152,102 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
     }
 
     /**
-     * Handle AddImageDialog get photo option
+     * Handle AddImageDialog get photo option,
+     * request camera photos from [CameraRepository]
      */
-    fun onTakePhotoClicked(photoRequest: RepoFragment.PhotoRequest){
-        getPhotoRequest.postValue(photoRequest)
+    fun onGetPhotoClicked(cameraFeature: CameraRepository.CameraFeature){
+        cameraRepository.requestCameraPhotos(CLASS_TAG, cameraFeature)
+    }
+
+    /**
+     * Observe [CameraRepository] for cameraResult
+     */
+    fun observeCameraResult(){
+        disposable.add(cameraRepository.cameraResult
+                .subscribeOn(rxSchedulersFacade.io())
+                .observeOn(rxSchedulersFacade.io())
+                .subscribe(
+                        { result -> handleCameraResult(result)},
+                        { e -> Timber.e("error observing cameraResult: %s", e.toString()) }
+                ))
+    }
+
+    /**
+     * Handle new cameraRequestResult
+     */
+    fun handleCameraResult(cameraRequestResult: CameraRepository.CameraRequestResult){
+        if(cameraRequestResult.tag == CLASS_TAG) {
+            Timber.i("viewModel got photo handle")
+            addImagePictureHandle = cameraRequestResult.file
+            dialogAddImagePicFile.postValue(addImagePictureHandle)
+        }
+    }
+
+    /**
+     * Compress picture before upload
+     */
+    fun uploadPicCompress(){
+        if(::addImagePictureHandle.isInitialized) {
+            disposable.add(pictureStorageRepository.compressPicture(addImagePictureHandle)
+                    .subscribe(
+                            { result -> Timber.i("Successfully compressed pic")
+                                uploadPic(result) },
+                            { e -> Timber.e("Unable to compress pic: %s", e.toString())
+                                uploadPic(null)
+                            }))
+        }
     }
 
     /**
      * Initiate picture upload to firestore
      */
-    fun uploadPic(){
-        dialogLoadingStatus.postValue(true)
+    fun uploadPic(pic: Bitmap?){
+        if(!subscribedToPictureUploadStatus){
+            disposable.add(pictureStorageRepository.pictureUploadStatus
+                    .subscribeOn(rxSchedulersFacade.io())
+                    .observeOn(rxSchedulersFacade.io())
+                    .subscribe(
+                            { result -> when(result){
+                                PictureStorageRepository.RequestStatus.IDLE -> {}
+                                PictureStorageRepository.RequestStatus.READY -> {
+                                    dialogLoadingStatus.postValue(false)
+                                    dialogDismissRequest.postValue(
+                                            RepoFragment.DialogRequest.ADD_IMAGE)
+                                    //todo update repo image
+                                }
+                                PictureStorageRepository.RequestStatus.ONGOING -> {
+                                    dialogLoadingStatus.postValue(true)
+                                }
+                                PictureStorageRepository.RequestStatus.ERROR -> {
+                                    dialogLoadingStatus.postValue(false)
+                                    Timber.e("Picture upload error")
+                                }
+                                PictureStorageRepository.RequestStatus.NO_NETWORK -> {
+                                    dialogLoadingStatus.postValue(false)
+                                    Timber.e("No network error")
+                                }
+                                else -> {
+                                    dialogLoadingStatus.postValue(false)
+                                    Timber.e("Error observing pictureUploadStatus")
+                                }
+                            }},
+                            { e -> Timber.e("Error observing pictureUploadStatus, %s",
+                                    e.toString()) }
+                    ))
+        }
+
+        if(repoIsOwnerPair.value?.first != null && repoIndex != -1) {
+            if(pic != null) {
+                pictureStorageRepository.uploadRepositoryPicture(
+                        repoIsOwnerPair.value!!.first!!, repoIndex, pic)
+            } else {
+                pictureStorageRepository.uploadRepositoryPicture(
+                        repoIsOwnerPair.value!!.first!!, repoIndex, addImagePictureHandle)
+            }
+        }
+    }
+
+    companion object {
+        private const val CLASS_TAG: String = "RepoViewModel"
     }
 }

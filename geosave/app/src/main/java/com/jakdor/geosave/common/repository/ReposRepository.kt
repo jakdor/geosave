@@ -17,6 +17,7 @@ import com.jakdor.geosave.common.wrapper.FirebaseAuthWrapper
 import com.jakdor.geosave.utils.RxSchedulersFacade
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.subjects.PublishSubject
 import timber.log.Timber
 
 /**
@@ -30,6 +31,7 @@ class ReposRepository(private val schedulers: RxSchedulersFacade,
     val reposLoadingStatusStream: BehaviorSubject<Boolean> = BehaviorSubject.create()
     val createNewRequestStatusStream: BehaviorSubject<RequestStatus> = BehaviorSubject.create()
     val chosenRepositoryIndexStream: BehaviorSubject<Int> = BehaviorSubject.create()
+    val picUpdateStatusStream: PublishSubject<Boolean> = PublishSubject.create()
     private var reposRefsList = mutableListOf<DocumentReference>()
 
     enum class RequestStatus {
@@ -73,11 +75,13 @@ class ReposRepository(private val schedulers: RxSchedulersFacade,
                 if(userObj?.reposList != null && userObj.reposList.isEmpty()){
                     handleEmptyRepoList()
                 }
+                val repoRefListUnsorted = mutableListOf<DocumentReference>()
                 userObj?.reposList?.forEach { documentReference: DocumentReference ->
                     documentReference.get().addOnSuccessListener { repo ->
+                        repoRefListUnsorted.add(documentReference)
                         reposResponse.add(repo.toObject(Repo::class.java))
                         if(reposResponse.size == userObj.reposList.size){
-                            handleNewRepoList(reposResponse, userObj.reposList)
+                            handleNewRepoList(reposResponse, repoRefListUnsorted)
                         }
                     }.addOnFailureListener{
                         reposRequest = false
@@ -101,11 +105,13 @@ class ReposRepository(private val schedulers: RxSchedulersFacade,
                                 if(reposRefList.isEmpty()){
                                     handleEmptyRepoList()
                                 }
+                                val repoRefListUnsorted = mutableListOf<DocumentReference>()
                                 reposRefList.forEach { documentReference: DocumentReference ->
                                     documentReference.get().addOnSuccessListener { repo ->
+                                        repoRefListUnsorted.add(documentReference)
                                         reposResponse.add(repo.toObject(Repo::class.java))
                                         if (reposResponse.size == reposRefList.size){
-                                            handleNewRepoList(reposResponse, reposRefList)
+                                            handleNewRepoList(reposResponse, repoRefListUnsorted)
                                         }
                                     }
                                 }
@@ -218,5 +224,20 @@ class ReposRepository(private val schedulers: RxSchedulersFacade,
         } else {
             reposListStream.onNext(mutableListOf(repo))
         }
+    }
+
+    /**
+     * Update repo picUrl
+     */
+    fun updateRepoPicUrl(repoIndex: Int, picUrl: String){
+        reposRefsList[repoIndex].update("picUrl", picUrl)
+                .addOnSuccessListener {
+                    picUpdateStatusStream.onNext(true)
+                    Timber.i("updated repository picture")
+                }
+                .addOnFailureListener {
+                    picUpdateStatusStream.onNext(false)
+                    Timber.e("unable to update repository picture: %s", it.toString())
+                }
     }
 }

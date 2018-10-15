@@ -11,14 +11,21 @@ package com.jakdor.geosave.ui.elements
 import android.app.Dialog
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.widget.Toast
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.jakdor.geosave.R
 import com.jakdor.geosave.utils.GlideApp
 import kotlinx.android.synthetic.main.dialog_add_image.*
 import pl.aprilapps.easyphotopicker.EasyImage
+import timber.log.Timber
 import java.io.File
 
 class AddImageDialog(context: Context): Dialog(context, R.style.FullscreenDialog) {
@@ -40,6 +47,8 @@ class AddImageDialog(context: Context): Dialog(context, R.style.FullscreenDialog
 
         checkCameraFeaturesAvailability()
 
+        dialog_add_image_upload_button.isEnabled = false
+
         if(::cancelButtonOnClickListener.isInitialized)
             dialog_add_image_cancel_button.setOnClickListener(cancelButtonOnClickListener)
         if(::uploadButtonOnClickListener.isInitialized)
@@ -60,7 +69,8 @@ class AddImageDialog(context: Context): Dialog(context, R.style.FullscreenDialog
     }
 
     /**
-     * Load preview picture into dialog_add_image_preview from file handle
+     * Load preview picture into dialog_add_image_preview from file handle,
+     * validate that file can be loaded by Glide before enabling upload
      */
     fun loadPreviewImageView(picFile: File){
         GlideApp.with(context)
@@ -68,6 +78,25 @@ class AddImageDialog(context: Context): Dialog(context, R.style.FullscreenDialog
                 .placeholder(R.drawable.repo_icon_placeholder)
                 .centerCrop()
                 .circleCrop()
+                .listener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(e: GlideException?, model: Any?,
+                                              target: Target<Drawable>?,
+                                              isFirstResource: Boolean): Boolean {
+                        dialog_add_image_upload_button.isEnabled = false
+                        Timber.e("Selected file is not a valid picture file")
+                        Toast.makeText(context, context.getString(R.string.toast_invalid_file),
+                                Toast.LENGTH_LONG).show()
+                        return false
+                    }
+
+                    override fun onResourceReady(resource: Drawable?, model: Any?,
+                                                 target: Target<Drawable>?,
+                                                 dataSource: DataSource?,
+                                                 isFirstResource: Boolean): Boolean {
+                        dialog_add_image_upload_button.isEnabled = true
+                        return false
+                    }
+                })
                 .into(dialog_add_image_preview)
     }
 

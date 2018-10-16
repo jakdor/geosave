@@ -287,20 +287,7 @@ class RepoFragment: Fragment(), InjectableFragment {
      * @param locationList loaded by [ReposBrowserViewModel]
      */
     fun loadRecyclerView(locationList: MutableList<Location>?){
-        if(locationList == null){
-            repo_no_locations_message_frame.visibility = View.VISIBLE
-            repo_locations_recycler_view.visibility = View.GONE
-            return
-        }
-
-        if(locationList.isEmpty()){
-            repo_no_locations_message_frame.visibility = View.VISIBLE
-            repo_locations_recycler_view.visibility = View.GONE
-            return
-        } else {
-            repo_no_locations_message_frame.visibility = View.GONE
-            repo_locations_recycler_view.visibility = View.VISIBLE
-        }
+        if(!recyclerViewChecks(locationList)) return
 
         val linearLayoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
         linearLayoutManager.orientation = RecyclerView.VERTICAL
@@ -317,15 +304,33 @@ class RepoFragment: Fragment(), InjectableFragment {
      * @param locationList loaded by [ReposBrowserViewModel]
      */
     fun updateRecyclerView(locationList: MutableList<Location>?){
-        if(locationList == null){
-            repo_no_locations_message_frame.visibility = View.VISIBLE
-            repo_locations_recycler_view.visibility = View.GONE
-            return
-        }
+        if(!recyclerViewChecks(locationList)) return
 
         repo_no_locations_message_frame.visibility = View.GONE
         repo_locations_recycler_view.visibility = View.VISIBLE
         locationAdapter.updateReposList(Vector(locationList))
+    }
+
+    /**
+     * Check data validity before loading/updating RecyclerView
+     */
+    fun recyclerViewChecks(locationList: MutableList<Location>?): Boolean{
+        if(locationList == null){
+            repo_no_locations_message_frame.visibility = View.VISIBLE
+            repo_locations_recycler_view.visibility = View.GONE
+            return false
+        }
+
+        if(locationList.isEmpty()){
+            repo_no_locations_message_frame.visibility = View.VISIBLE
+            repo_locations_recycler_view.visibility = View.GONE
+            return false
+        } else {
+            repo_no_locations_message_frame.visibility = View.GONE
+            repo_locations_recycler_view.visibility = View.VISIBLE
+        }
+
+        return true
     }
 
     /**

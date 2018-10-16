@@ -142,7 +142,8 @@ class RepoFragment: Fragment(), InjectableFragment {
                         .into(binding.repoIcon)
             }
 
-            loadRecyclerView(repo?.locationsList)
+            if(!::locationAdapter.isInitialized) loadRecyclerView(repo?.locationsList)
+            else updateRecyclerView(repo?.locationsList)
         }
     }
 
@@ -312,14 +313,19 @@ class RepoFragment: Fragment(), InjectableFragment {
     }
 
     /**
-     * //todo repository location add observable
      * update RecyclerView with new user repositories
      * @param locationList loaded by [ReposBrowserViewModel]
      */
-    fun updateRecyclerView(locationList: MutableList<Location?>){
+    fun updateRecyclerView(locationList: MutableList<Location>?){
+        if(locationList == null){
+            repo_no_locations_message_frame.visibility = View.VISIBLE
+            repo_locations_recycler_view.visibility = View.GONE
+            return
+        }
+
         repo_no_locations_message_frame.visibility = View.GONE
         repo_locations_recycler_view.visibility = View.VISIBLE
-        locationAdapter.updateReposList(locationList)
+        locationAdapter.updateReposList(Vector(locationList))
     }
 
     /**

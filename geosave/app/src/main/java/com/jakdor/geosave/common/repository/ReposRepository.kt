@@ -11,6 +11,7 @@ package com.jakdor.geosave.common.repository
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
+import com.google.firebase.firestore.ListenerRegistration
 import com.jakdor.geosave.common.model.firebase.Repo
 import com.jakdor.geosave.common.model.firebase.User
 import com.jakdor.geosave.common.wrapper.FirebaseAuthWrapper
@@ -31,8 +32,10 @@ class ReposRepository(private val schedulers: RxSchedulersFacade,
     val reposLoadingStatusStream: BehaviorSubject<Boolean> = BehaviorSubject.create()
     val createNewRequestStatusStream: BehaviorSubject<RequestStatus> = BehaviorSubject.create()
     val chosenRepositoryIndexStream: BehaviorSubject<Int> = BehaviorSubject.create()
+    val notifyChosenRepoUpdate: BehaviorSubject<Boolean> = BehaviorSubject.create()
     val picUpdateStatusStream: PublishSubject<Boolean> = PublishSubject.create()
     private var reposRefsList = mutableListOf<DocumentReference>()
+    private lateinit var repoListenerRegistration: ListenerRegistration
 
     enum class RequestStatus {
         IDLE, READY, ONGOING, ERROR, NO_NETWORK
@@ -41,6 +44,13 @@ class ReposRepository(private val schedulers: RxSchedulersFacade,
     init {
         reposLoadingStatusStream.onNext(false)
         createNewRequestStatusStream.onNext(RequestStatus.IDLE)
+        notifyChosenRepoUpdate.onNext(false)
+
+        chosenRepositoryIndexStream
+                .observeOn(schedulers.io())
+                .subscribeOn(schedulers.io())
+                .doAfterNext { listenForUpdatesOnChosenRepository(it) }
+                .subscribe()
     }
 
     private var reposRequest = false
@@ -239,5 +249,37 @@ class ReposRepository(private val schedulers: RxSchedulersFacade,
                     picUpdateStatusStream.onNext(false)
                     Timber.e("unable to update repository picture: %s", it.toString())
                 }
+    }
+
+    /**
+     * Listen for updates on currently chosen [Repo]
+     */
+    fun listenForUpdatesOnChosenRepository(repoIndex: Int){
+        //remove listener
+        if(repoIndex == -1){
+            if(::repoListenerRegistration.isInitialized) repoListenerRegistration.remove()
+            return
+        }
+
+        //add documentSnapshot listener
+        repoListenerRegistration = reposRefsList[repoIndex].addSnapshotListener{
+            documentSnapshot, firebaseFirestoreException ->
+            if(firebaseFirestoreException != null){
+                Timber.e("Error listening to chosen repo: %s",
+                        firebaseFirestoreException.toString())
+                return@addSnapshotListener
+            }
+
+            val repos = reposListStream.value
+            if(repos != null && documentSnapshot != null){
+                val newRepo = documentSnapshot.toObject(Repo::class.java)
+                if(newRepo != repos[repoIndex]) { //prevents false positive on listener add
+                    repos[repoIndex] = newRepo
+                    reposListStream.onNext(repos)
+                    notifyChosenRepoUpdate.onNext(true)
+                    notifyChosenRepoUpdate.onNext(false)
+                }
+            }
+        }
     }
 }

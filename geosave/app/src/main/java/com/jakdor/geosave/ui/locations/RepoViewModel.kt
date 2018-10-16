@@ -52,13 +52,21 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
                 .subscribeOn(rxSchedulersFacade.io())
                 .observeOn(rxSchedulersFacade.ui())
                 .subscribe(
-                        {result -> if(result != -1){
+                        { result -> if(result != -1){
                             repoIndex = result
                             val isOwner = checkIsOwner(reposRepository.reposListStream.value[result])
                             val resultPair = Pair(reposRepository.reposListStream.value[result], isOwner)
                             repoIsOwnerPair.postValue(resultPair)
                         }},
                         {e -> Timber.e("Chosen repository index returned: %s", e.toString())}
+                ))
+
+        disposable.add(reposRepository.notifyChosenRepoUpdate
+                .subscribeOn(rxSchedulersFacade.io())
+                .observeOn(rxSchedulersFacade.ui())
+                .subscribe(
+                        { result -> if(result) updateCurrentRepoView()},
+                        { e -> Timber.e("Error chosen repo update: %s", e.toString())}
                 ))
     }
 
@@ -67,6 +75,15 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
      */
     fun checkIsOwner(repo: Repo?): Boolean{
         return firebaseAuthWrapper.getUid() == repo?.ownerUid
+    }
+
+    /**
+     * Force update current repo view in fragment
+     */
+    private fun updateCurrentRepoView(){
+        val repo = reposRepository.reposListStream.value[repoIndex]
+        val isOwner = checkIsOwner(repo)
+        repoIsOwnerPair.postValue(Pair(repo, isOwner))
     }
 
     /**
@@ -213,7 +230,6 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
                                     dialogLoadingStatus.postValue(false)
                                     dialogDismissRequest.postValue(
                                             RepoFragment.DialogRequest.ADD_IMAGE)
-                                    //todo update repo image
                                 }
                                 PictureStorageRepository.RequestStatus.ONGOING -> {
                                     dialogLoadingStatus.postValue(true)

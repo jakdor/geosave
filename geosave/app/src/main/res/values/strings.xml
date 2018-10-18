@@ -180,5 +180,6 @@
     <string name="dialog_add_location_title_text">Add new location</string>
     <string name="add_location_dialog_cancel">Cancel</string>
     <string name="add_location_dialog_upload">upload</string>
+    <string name="add_to_repository_spinner_label">Add to repository:</string>
 
 </resources>

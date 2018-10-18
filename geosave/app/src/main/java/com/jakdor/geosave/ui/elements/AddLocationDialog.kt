@@ -17,6 +17,9 @@ import android.view.Window
 import com.jakdor.geosave.R
 import com.jakdor.geosave.utils.GlideApp
 import kotlinx.android.synthetic.main.dialog_add_location.*
+import android.widget.ArrayAdapter
+
+
 
 class AddLocationDialog(context: Context) : Dialog(context, R.style.FullscreenDialog) {
 
@@ -34,6 +37,11 @@ class AddLocationDialog(context: Context) : Dialog(context, R.style.FullscreenDi
             dialog_add_location_cancel_button.setOnClickListener(cancelButtonOnClickListener)
         if (::uploadButtonOnClickListener.isInitialized)
             dialog_add_location_upload_button.setOnClickListener(uploadButtonOnClickListener)
+
+        val arraySpinner = arrayOf("-")
+        val adapter = ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, arraySpinner)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        dialog_add_location_repo_spinner.adapter = adapter
     }
 
     /**

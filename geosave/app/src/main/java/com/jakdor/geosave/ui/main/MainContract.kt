@@ -25,7 +25,8 @@ interface MainContract {
 
         fun displayToast(strId: Int)
 
-        fun displayFirstStartupDialog()
+        fun lunchFirstStartupDialog()
+        fun lunchAddLocationDialog()
         fun shareIntent(text: String)
 
         fun checkPermissions()

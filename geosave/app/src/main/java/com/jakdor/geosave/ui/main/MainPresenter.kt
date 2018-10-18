@@ -130,7 +130,7 @@ class MainPresenter(view: MainContract.MainView,
      * Add location menu option clicked
      */
     override fun onAddOptionClicked() {
-
+        view?.lunchAddLocationDialog()
     }
 
     /**
@@ -288,7 +288,7 @@ class MainPresenter(view: MainContract.MainView,
      */
     override fun firebaseLogin(loggedIn: Boolean) {
         if(!loggedIn){
-            view?.displayFirstStartupDialog()
+            view?.lunchFirstStartupDialog()
         }
     }
 

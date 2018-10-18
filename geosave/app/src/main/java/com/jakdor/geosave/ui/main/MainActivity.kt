@@ -36,6 +36,7 @@ import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
 import com.google.android.gms.common.api.ApiException
@@ -46,6 +47,7 @@ import com.google.android.gms.location.LocationCallback
 import com.google.firebase.auth.FirebaseAuth
 import com.jakdor.geosave.common.model.UserLocation
 import com.jakdor.geosave.common.repository.CameraRepository
+import com.jakdor.geosave.ui.elements.AddLocationDialog
 import com.jakdor.geosave.ui.elements.StartupDialog
 import com.jakdor.geosave.ui.locations.LocationsFragment
 import com.jakdor.geosave.ui.map.MapFragment
@@ -80,6 +82,7 @@ class MainActivity : AppCompatActivity(),
     private var fallbackLocationProvider: String? = null
 
     private lateinit var startupDialog: StartupDialog
+    private lateinit var addLocationDialog: AddLocationDialog
 
     private val fragmentMap: MutableMap<String, Fragment> = mutableMapOf()
 
@@ -314,9 +317,9 @@ class MainActivity : AppCompatActivity(),
     }
 
     /**
-     * Display [StartupDialog]
+     * Lunch [StartupDialog]
      */
-    override fun displayFirstStartupDialog() {
+    override fun lunchFirstStartupDialog() {
         startupDialog = StartupDialog(this)
         startupDialog.show()
 
@@ -329,6 +332,21 @@ class MainActivity : AppCompatActivity(),
             presenter.onFirstStartupDialogResult(false)
             startupDialog.dismiss()
         }
+
+        Timber.i("Lunched StartupDialog")
+    }
+
+    /**
+     * Lunch [AddLocationDialog]
+     */
+    override fun lunchAddLocationDialog() {
+        addLocationDialog = AddLocationDialog(this)
+        addLocationDialog.cancelButtonOnClickListener = View.OnClickListener {
+            addLocationDialog.dismiss()
+        }
+        addLocationDialog.show()
+
+        Timber.i("lunched addImageDialog")
     }
 
     /**

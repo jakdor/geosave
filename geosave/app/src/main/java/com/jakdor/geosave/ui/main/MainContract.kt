@@ -9,6 +9,7 @@
 package com.jakdor.geosave.ui.main
 
 import com.jakdor.geosave.common.model.UserLocation
+import com.jakdor.geosave.common.model.firebase.Repo
 import com.jakdor.geosave.common.repository.CameraRepository
 import java.io.File
 
@@ -26,7 +27,7 @@ interface MainContract {
         fun displayToast(strId: Int)
 
         fun lunchFirstStartupDialog()
-        fun lunchAddLocationDialog()
+        fun lunchAddLocationDialog(indexRepoNamePair: ArrayList<Pair<Int, String>>)
         fun shareIntent(text: String)
 
         fun checkPermissions()

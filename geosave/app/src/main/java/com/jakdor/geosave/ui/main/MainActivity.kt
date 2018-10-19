@@ -339,12 +339,14 @@ class MainActivity : AppCompatActivity(),
     /**
      * Lunch [AddLocationDialog]
      */
-    override fun lunchAddLocationDialog() {
+    override fun lunchAddLocationDialog(indexRepoNamePair: ArrayList<Pair<Int, String>>) {
         addLocationDialog = AddLocationDialog(this)
         addLocationDialog.cancelButtonOnClickListener = View.OnClickListener {
             addLocationDialog.dismiss()
         }
         addLocationDialog.show()
+
+        addLocationDialog.loadReposSpinner(indexRepoNamePair)
 
         Timber.i("lunched addImageDialog")
     }

@@ -12,7 +12,9 @@ import com.jakdor.geosave.R
 import com.jakdor.geosave.common.model.UserLocation
 import com.jakdor.geosave.common.repository.GpsInfoRepository
 import com.jakdor.geosave.arch.BasePresenter
+import com.jakdor.geosave.common.model.firebase.Repo
 import com.jakdor.geosave.common.repository.CameraRepository
+import com.jakdor.geosave.common.repository.ReposRepository
 import com.jakdor.geosave.common.repository.ShareMessageFormatter
 import com.jakdor.geosave.common.wrapper.FirebaseAuthWrapper
 import com.jakdor.geosave.utils.RxSchedulersFacade
@@ -24,6 +26,7 @@ class MainPresenter(view: MainContract.MainView,
                     private val firebaseAuthWrapper: FirebaseAuthWrapper,
                     private val shareMessageFormatter: ShareMessageFormatter,
                     private val cameraRepository: CameraRepository,
+                    private val reposRepository: ReposRepository,
                     private val schedulersFacade: RxSchedulersFacade):
         BasePresenter<MainContract.MainView>(view),
         MainContract.MainPresenter{
@@ -130,7 +133,28 @@ class MainPresenter(view: MainContract.MainView,
      * Add location menu option clicked
      */
     override fun onAddOptionClicked() {
-        view?.lunchAddLocationDialog()
+        view?.lunchAddLocationDialog(getReposWithPushPermissionIndexPair())
+    }
+
+    /**
+     * Return [ArrayList] of Index and [Repo] pairs to which user has push permission
+     */
+    fun getReposWithPushPermissionIndexPair(): ArrayList<Pair<Int, String>> {
+        val repoIndexPair = arrayListOf<Pair<Int, String>>()
+
+        if(reposRepository.reposListStream.hasValue()){
+            for(i in 0 until reposRepository.reposListStream.value.size){
+                val currentRepo = reposRepository.reposListStream.value[i]
+                if(currentRepo != null) {
+                    if(reposRepository.checkHasRepoPushPermission(
+                                    currentRepo, firebaseAuthWrapper.getUid())){
+                        repoIndexPair.add(Pair(i, currentRepo.name))
+                    }
+                }
+            }
+        }
+
+        return repoIndexPair
     }
 
     /**

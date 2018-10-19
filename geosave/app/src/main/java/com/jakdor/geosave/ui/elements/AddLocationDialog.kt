@@ -20,7 +20,6 @@ import kotlinx.android.synthetic.main.dialog_add_location.*
 import android.widget.ArrayAdapter
 
 
-
 class AddLocationDialog(context: Context) : Dialog(context, R.style.FullscreenDialog) {
 
     lateinit var cancelButtonOnClickListener: View.OnClickListener
@@ -37,9 +36,15 @@ class AddLocationDialog(context: Context) : Dialog(context, R.style.FullscreenDi
             dialog_add_location_cancel_button.setOnClickListener(cancelButtonOnClickListener)
         if (::uploadButtonOnClickListener.isInitialized)
             dialog_add_location_upload_button.setOnClickListener(uploadButtonOnClickListener)
+    }
 
-        val arraySpinner = arrayOf("-")
-        val adapter = ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, arraySpinner)
+    fun loadReposSpinner(indexRepoNamePair: ArrayList<Pair<Int, String>>){
+        val repoNames = mutableListOf<String>()
+        indexRepoNamePair.forEach {
+            repoNames.add(it.second)
+        }
+
+        val adapter = ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, repoNames)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         dialog_add_location_repo_spinner.adapter = adapter
     }

@@ -282,4 +282,25 @@ class ReposRepository(private val schedulers: RxSchedulersFacade,
             }
         }
     }
+
+    /**
+     * Check if user with given uid has push permission
+     */
+    fun checkHasRepoPushPermission(repo: Repo, uid: String?): Boolean {
+        when {
+            repo.ownerUid == uid -> return true
+            repo.security == 1 -> return true
+            else -> repo.editorsUidList.forEach { t: DocumentReference? ->
+                if(t != null){
+                    var userObjPath = t.path
+                    userObjPath = userObjPath.removePrefix("/users/")
+                    if(userObjPath == uid){
+                        return true
+                    }
+                }
+            }
+        }
+
+        return false
+    }
 }

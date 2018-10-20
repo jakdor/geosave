@@ -9,6 +9,7 @@
 package com.jakdor.geosave.common.repository
 
 import android.content.Context
+import android.net.ConnectivityManager
 import com.google.firebase.firestore.*
 import com.jakdor.geosave.R
 import com.jakdor.geosave.common.model.UserLocation
@@ -351,6 +352,10 @@ class ReposRepository(private val schedulers: RxSchedulersFacade,
                             Timber.i("error updating repo locationsList")
                         }
 
+                if(!checkNetworkStatus(context)) {
+                    addLocationStatusStream.onNext(RequestStatus.NO_NETWORK)
+                    addLocationStatusStream.onNext(RequestStatus.IDLE)
+                }
             } else {
                 Timber.e("repo with given index is null")
             }
@@ -374,5 +379,24 @@ class ReposRepository(private val schedulers: RxSchedulersFacade,
         locationMap["accuracy"] = location.accuracy
         locationMap["accuracyRange"] = location.accuracyRange
         return locationMap
+    }
+
+    /**
+     * Check network status
+     * @param context required to retrieve ConnectivityService
+     * @return boolean - network status
+     */
+    private fun checkNetworkStatus(context: Context): Boolean {
+        val connectivityManager =
+                context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+        val networkInfo = connectivityManager.activeNetworkInfo
+        return if (networkInfo == null) {
+            Timber.e("Internet status: no service")
+            false
+        } else {
+            Timber.i("Internet status: OK")
+            true
+        }
     }
 }

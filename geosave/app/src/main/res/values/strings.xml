@@ -182,8 +182,9 @@
     <string name="add_location_dialog_upload">upload</string>
     <string name="add_to_repository_spinner_label">Repository:</string>
     <string name="add_location_no_repos_toast">Create or join repository first in locations tab</string>
-    <string name="add_image_dialog_no_network_toast">Image will be updated in the background, when network becomes available</string>
+    <string name="add_image_dialog_no_network_toast">Image will be updated when network becomes available</string>
     <string name="location_default_name">location</string>
     <string name="no_location_available">Location not yet determined</string>
+    <string name="add_location_no_network_toast">Location will be uploaded when network becomes available</string>
 
 </resources>

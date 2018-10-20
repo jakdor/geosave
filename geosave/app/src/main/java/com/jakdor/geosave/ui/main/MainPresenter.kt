@@ -215,9 +215,9 @@ class MainPresenter(view: MainContract.MainView,
                                         view?.displayToast(R.string.add_repo_error_toast)
                                     }
                                     ReposRepository.RequestStatus.NO_NETWORK -> {
-                                        //this should never occur in theory
                                         view?.setAddLocationDialogLoadingStatus(false)
-                                        view?.displayToast(R.string.add_repo_no_network_toast)
+                                        view?.dismissAddLocationDialog()
+                                        view?.displayToast(R.string.add_location_no_network_toast)
                                     }
                                     else -> {
                                         view?.setAddLocationDialogLoadingStatus(false)

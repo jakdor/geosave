@@ -18,6 +18,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.util.DisplayMetrics
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.DataSource
@@ -219,6 +220,7 @@ class RepoFragment: Fragment(), InjectableFragment {
                DialogRequest.ADD_IMAGE -> lunchAddImageDialog()
                DialogRequest.ALL -> {}
                DialogRequest.NONE -> {}
+               DialogRequest.ADD_IMAGE_NO_NET -> {}
            }
         }
     }
@@ -238,6 +240,12 @@ class RepoFragment: Fragment(), InjectableFragment {
                 DialogRequest.ADD_IMAGE -> {
                     if(::addImageDialog.isInitialized && addImageDialog.isShowing)
                         addImageDialog.dismiss()
+                }
+                DialogRequest.ADD_IMAGE_NO_NET -> {
+                    if(::addImageDialog.isInitialized && addImageDialog.isShowing)
+                        addImageDialog.dismiss()
+                    Toast.makeText(context, getString(R.string.add_image_dialog_no_network_toast),
+                            Toast.LENGTH_LONG).show()
                 }
                 DialogRequest.ALL -> {
                     if(::addImageDialog.isInitialized && addImageDialog.isShowing)
@@ -396,7 +404,7 @@ class RepoFragment: Fragment(), InjectableFragment {
     }
 
     enum class DialogRequest{
-        NONE, ADD_IMAGE, ALL
+        NONE, ADD_IMAGE, ADD_IMAGE_NO_NET, ALL
     }
 
     companion object {

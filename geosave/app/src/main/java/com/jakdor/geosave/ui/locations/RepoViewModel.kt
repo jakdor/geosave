@@ -240,6 +240,8 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
                                 }
                                 PictureStorageRepository.RequestStatus.NO_NETWORK -> {
                                     dialogLoadingStatus.postValue(false)
+                                    dialogDismissRequest.postValue(
+                                            RepoFragment.DialogRequest.ADD_IMAGE_NO_NET)
                                     Timber.e("No network error")
                                 }
                                 else -> {

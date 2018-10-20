@@ -9,7 +9,9 @@
 package com.jakdor.geosave.common.repository
 
 import android.app.Application
+import android.content.Context
 import android.graphics.Bitmap
+import android.net.ConnectivityManager
 import android.net.Uri
 import com.google.firebase.storage.FirebaseStorage
 import com.jakdor.geosave.common.model.firebase.Repo
@@ -71,6 +73,11 @@ class PictureStorageRepository @Inject constructor(private val firebaseStorage: 
             pictureUploadStatus.onNext(RequestStatus.ERROR)
             pictureUploadStatus.onNext(RequestStatus.IDLE)
         }
+
+        if(!checkNetworkStatus(context)){
+            pictureUploadStatus.onNext(RequestStatus.NO_NETWORK)
+            pictureUploadStatus.onNext(RequestStatus.IDLE)
+        }
     }
 
     /**
@@ -99,6 +106,11 @@ class PictureStorageRepository @Inject constructor(private val firebaseStorage: 
         }
         uploadTask.addOnFailureListener {
             pictureUploadStatus.onNext(RequestStatus.ERROR)
+            pictureUploadStatus.onNext(RequestStatus.IDLE)
+        }
+
+        if(!checkNetworkStatus(context)){
+            pictureUploadStatus.onNext(RequestStatus.NO_NETWORK)
             pictureUploadStatus.onNext(RequestStatus.IDLE)
         }
     }
@@ -146,5 +158,24 @@ class PictureStorageRepository @Inject constructor(private val firebaseStorage: 
                 .addOnFailureListener {
                     Timber.e("Error deleting image from firebase storage: %s", it.toString())
                 }
+    }
+
+    /**
+     * Check network status
+     * @param context required to retrieve ConnectivityService
+     * @return boolean - network status
+     */
+    private fun checkNetworkStatus(context: Context): Boolean {
+        val connectivityManager =
+                context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+        val networkInfo = connectivityManager.activeNetworkInfo
+        return if (networkInfo == null) {
+            Timber.e("Internet status: no service")
+            false
+        } else {
+            Timber.i("Internet status: OK")
+            true
+        }
     }
 }

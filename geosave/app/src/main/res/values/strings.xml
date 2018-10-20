@@ -155,7 +155,7 @@
     <string name="repo_info_title">Info:</string>
     <string name="repos_no_repo_message_text">You don\'t have any repositories yet, create one now!</string>
     <string name="add_repo_error_toast">Unknown error occurred, try again</string>
-    <string name="add_repo_no_network_toast">Can\'t create off-line - check internet connection</string>
+    <string name="add_repo_no_network_toast">Repository will be uploaded when network becomes available</string>
     <string name="repo_card_location_number_label">Locations: %1$d</string>
     <string name="repo_card_contributors_number_label">Contributors: %1$d</string>
     <string name="visibility_icon_desc">visibility icon</string>

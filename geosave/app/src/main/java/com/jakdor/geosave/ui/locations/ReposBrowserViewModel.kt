@@ -139,6 +139,7 @@ constructor(application: Application, rxSchedulersFacade: RxSchedulersFacade,
                             }
                             ReposRepository.RequestStatus.NO_NETWORK -> {
                                 dialogLoadingStatus.postValue(false)
+                                dialogDismissRequest.postValue(DialogRequest.CREATE_NEW)
                                 toast.postValue(getApplication<App>()
                                         .getString(R.string.add_repo_no_network_toast))
                                 Timber.e("No network while creating new repoIsOwnerPair")

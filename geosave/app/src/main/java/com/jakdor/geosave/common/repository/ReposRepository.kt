@@ -193,52 +193,44 @@ class ReposRepository(private val schedulers: RxSchedulersFacade,
 
         createNewRequestStatusStream.onNext(RequestStatus.ONGOING)
 
-        db.runTransaction { transaction ->
-            val userObjRef = db.collection("users").document(firebaseAuthWrapper.getUid()!!)
-            val repoRef = db.collection("repos").document()
-            val userObjSnap = transaction.get(userObjRef)
-            firebaseAuthWrapper.userObjectSnapshot = userObjSnap
-
-            val userObj = userObjSnap.toObject(User::class.java)
-            userObj?.reposList?.add(userObj.reposList.size, repoRef)
-
-            transaction.set(repoRef, repo)
-            if(userObj != null){
-                transaction.set(userObjRef, userObj)
-            } else {
-                throw FirebaseFirestoreException("User obj null",
-                        FirebaseFirestoreException.Code.ABORTED)
-            }
-        }.addOnSuccessListener {
-            addNewRepoToReposList(repo)
-            createNewRequestStatusStream.onNext(RequestStatus.READY)
-            createNewRequestStatusStream.onNext(RequestStatus.IDLE)
+        val repoRef = db.collection("repos").document()
+        repoRef.set(repo).addOnSuccessListener { _ ->
             Timber.i("Created new repository")
         }.addOnFailureListener {
-            if(it.toString() == "com.google.firebase.firestore.FirebaseFirestoreException:" +
-                    " UNAVAILABLE: Unable to resolve host firestore.googleapis.com"){
-                createNewRequestStatusStream.onNext(RequestStatus.NO_NETWORK)
-            } else {
-                createNewRequestStatusStream.onNext(RequestStatus.ERROR)
-            }
+            createNewRequestStatusStream.onNext(RequestStatus.ERROR)
             createNewRequestStatusStream.onNext(RequestStatus.IDLE)
             Timber.e("Unable to create new repository: %s", it.toString())
         }
+
+        db.collection("users").document(firebaseAuthWrapper.getUid()!!)
+                .update("reposList", FieldValue.arrayUnion(repoRef))
+                .addOnSuccessListener {
+                    createNewRequestStatusStream.onNext(RequestStatus.READY)
+                    createNewRequestStatusStream.onNext(RequestStatus.IDLE)
+                    Timber.i("Updated user repos list")
+                }
+                .addOnFailureListener{
+                    createNewRequestStatusStream.onNext(RequestStatus.ERROR)
+                    createNewRequestStatusStream.onNext(RequestStatus.IDLE)
+                    Timber.e("Unable to update user repos list: %s", it.toString())
+                }
+
+        if(!checkNetworkStatus(context)) {
+            createNewRequestStatusStream.onNext(RequestStatus.NO_NETWORK)
+            createNewRequestStatusStream.onNext(RequestStatus.IDLE)
+        }
+
+        addNewRepoToReposList(repo, repoRef)
     }
 
     /**
      * Update recyclerView locally without waiting for update from firestore
      */
-    private fun addNewRepoToReposList(repo: Repo){
-        if(reposListStream.value != null){
-            val newRepos = mutableListOf<Repo?>()
-            newRepos.addAll(reposListStream.value)
-            newRepos.add(repo)
-            val sortedRepos = newRepos.sortedBy { it -> it?.name } as MutableList<Repo?>
-            reposListStream.onNext(sortedRepos)
-        } else {
-            reposListStream.onNext(mutableListOf(repo))
-        }
+    private fun addNewRepoToReposList(repo: Repo, repoRef: DocumentReference){
+        val newRepoList = reposListStream.value
+        newRepoList.add(repo)
+        reposRefsList.add(repoRef)
+        handleNewRepoList(newRepoList, reposRefsList)
     }
 
     /**

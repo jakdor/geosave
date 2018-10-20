@@ -36,6 +36,7 @@ import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
 import com.google.android.gms.common.api.ApiException
@@ -46,6 +47,7 @@ import com.google.android.gms.location.LocationCallback
 import com.google.firebase.auth.FirebaseAuth
 import com.jakdor.geosave.common.model.UserLocation
 import com.jakdor.geosave.common.repository.CameraRepository
+import com.jakdor.geosave.ui.elements.AddLocationDialog
 import com.jakdor.geosave.ui.elements.StartupDialog
 import com.jakdor.geosave.ui.locations.LocationsFragment
 import com.jakdor.geosave.ui.map.MapFragment
@@ -53,6 +55,7 @@ import com.jakdor.geosave.ui.preferences.PreferencesFragment
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.dialog_add_location.*
 import kotlinx.android.synthetic.main.dialog_first_startup.*
 import pl.aprilapps.easyphotopicker.DefaultCallback
 import pl.aprilapps.easyphotopicker.EasyImage
@@ -80,6 +83,7 @@ class MainActivity : AppCompatActivity(),
     private var fallbackLocationProvider: String? = null
 
     private lateinit var startupDialog: StartupDialog
+    private lateinit var addLocationDialog: AddLocationDialog
 
     private val fragmentMap: MutableMap<String, Fragment> = mutableMapOf()
 
@@ -314,9 +318,9 @@ class MainActivity : AppCompatActivity(),
     }
 
     /**
-     * Display [StartupDialog]
+     * Lunch [StartupDialog]
      */
-    override fun displayFirstStartupDialog() {
+    override fun lunchFirstStartupDialog() {
         startupDialog = StartupDialog(this)
         startupDialog.show()
 
@@ -329,6 +333,54 @@ class MainActivity : AppCompatActivity(),
             presenter.onFirstStartupDialogResult(false)
             startupDialog.dismiss()
         }
+
+        Timber.i("Lunched StartupDialog")
+    }
+
+    /**
+     * Lunch [AddLocationDialog]
+     */
+    override fun lunchAddLocationDialog() {
+        addLocationDialog = AddLocationDialog(this)
+        addLocationDialog.cancelButtonOnClickListener = View.OnClickListener {
+            addLocationDialog.dismiss()
+        }
+        addLocationDialog.uploadButtonOnClickListener = View.OnClickListener {
+            presenter.onAddLocationDialogUploadClicked(
+                    addLocationDialog.getSelectedRepoIndex(),
+                    addLocationDialog.dialog_add_location_name.text.toString(),
+                    addLocationDialog.dialog_add_location_info.text.toString())
+        }
+        addLocationDialog.show()
+
+
+
+        Timber.i("lunched AddImageDialog")
+    }
+
+    /**
+     * Forward indexRepoNamePair to [AddLocationDialog] spinner
+     */
+    override fun loadAddLocationDialogRepoSpinner(
+            indexRepoNamePair: ArrayList<Pair<Int, String>>, selectedIndex: Int) {
+        if(::addLocationDialog.isInitialized && addLocationDialog.isShowing)
+            addLocationDialog.loadReposSpinner(indexRepoNamePair, selectedIndex)
+    }
+
+    /**
+     * Set [AddLocationDialog] loading status
+     */
+    override fun setAddLocationDialogLoadingStatus(status: Boolean) {
+        if(::addLocationDialog.isInitialized && addLocationDialog.isShowing)
+            addLocationDialog.dialogLoadingStatus(status)
+    }
+
+    /**
+     * Force dismiss [AddLocationDialog]
+     */
+    override fun dismissAddLocationDialog() {
+        if(::addLocationDialog.isInitialized && addLocationDialog.isShowing)
+            addLocationDialog.dismiss()
     }
 
     /**

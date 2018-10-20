@@ -12,7 +12,9 @@ import com.jakdor.geosave.R
 import com.jakdor.geosave.common.model.UserLocation
 import com.jakdor.geosave.common.repository.GpsInfoRepository
 import com.jakdor.geosave.arch.BasePresenter
+import com.jakdor.geosave.common.model.firebase.Repo
 import com.jakdor.geosave.common.repository.CameraRepository
+import com.jakdor.geosave.common.repository.ReposRepository
 import com.jakdor.geosave.common.repository.ShareMessageFormatter
 import com.jakdor.geosave.common.wrapper.FirebaseAuthWrapper
 import com.jakdor.geosave.utils.RxSchedulersFacade
@@ -24,6 +26,7 @@ class MainPresenter(view: MainContract.MainView,
                     private val firebaseAuthWrapper: FirebaseAuthWrapper,
                     private val shareMessageFormatter: ShareMessageFormatter,
                     private val cameraRepository: CameraRepository,
+                    private val reposRepository: ReposRepository,
                     private val schedulersFacade: RxSchedulersFacade):
         BasePresenter<MainContract.MainView>(view),
         MainContract.MainPresenter{
@@ -37,6 +40,8 @@ class MainPresenter(view: MainContract.MainView,
 
     private var compositeDisposable = CompositeDisposable()
     private lateinit var currentCameraRequestInfo: CameraRepository.CameraRequestInfo
+    private var isSubscribedToCameraRequest = false
+    private var isSubscribedToAddLocationRequest = false
 
     /**
      * Check firebase login
@@ -63,7 +68,7 @@ class MainPresenter(view: MainContract.MainView,
             }
         }
 
-        observeCameraRequests()
+        if(!isSubscribedToCameraRequest) observeCameraRequests()
     }
 
     /**
@@ -130,7 +135,110 @@ class MainPresenter(view: MainContract.MainView,
      * Add location menu option clicked
      */
     override fun onAddOptionClicked() {
+        view?.lunchAddLocationDialog()
 
+        if(reposRepository.reposListStream.hasValue()){
+            loadAddLocationDialogRepoSpinner()
+        } else {
+            val disposable = CompositeDisposable()
+            disposable.add(reposRepository.reposListStream
+                    .subscribeOn(schedulersFacade.io())
+                    .observeOn(schedulersFacade.ui())
+                    .subscribe(
+                            { _ -> loadAddLocationDialogRepoSpinner()
+                                disposable.clear()
+                            },
+                            { e -> e.printStackTrace() }
+                    ))
+        }
+    }
+
+    /**
+     * Load AddLocationDialog Repos spinner
+     */
+    private fun loadAddLocationDialogRepoSpinner(){
+        if(reposRepository.chosenRepositoryIndexStream.hasValue()) {
+            view?.loadAddLocationDialogRepoSpinner(getReposWithPushPermissionIndexPair(),
+                    reposRepository.chosenRepositoryIndexStream.value)
+        } else {
+            view?.loadAddLocationDialogRepoSpinner(
+                    getReposWithPushPermissionIndexPair(), 0)
+        }
+    }
+
+    /**
+     * Return [ArrayList] of Index and [Repo] pairs to which user has push permission
+     */
+    fun getReposWithPushPermissionIndexPair(): ArrayList<Pair<Int, String>> {
+        val repoIndexPair = arrayListOf<Pair<Int, String>>()
+
+        if(reposRepository.reposListStream.hasValue()){
+            for(i in 0 until reposRepository.reposListStream.value.size){
+                val currentRepo = reposRepository.reposListStream.value[i]
+                if(currentRepo != null) {
+                    if(reposRepository.checkHasRepoPushPermission(
+                                    currentRepo, firebaseAuthWrapper.getUid())){
+                        repoIndexPair.add(Pair(i, currentRepo.name))
+                    }
+                }
+            }
+        }
+
+        return repoIndexPair
+    }
+
+    /**
+     * Handle click on AddLocationDialog upload clicked
+     */
+    override fun onAddLocationDialogUploadClicked(repoIndex: Int, name: String, info: String) {
+        if(!gpsInfoRepository.isLastLocationInit()){
+            view?.displayToast(R.string.no_location_available)
+            return
+        }
+
+        if (!isSubscribedToAddLocationRequest){
+            compositeDisposable.add(reposRepository.addLocationStatusStream
+                    .subscribeOn(schedulersFacade.io())
+                    .observeOn(schedulersFacade.ui())
+                    .subscribe(
+                            { result -> when(result){
+                                    ReposRepository.RequestStatus.IDLE -> {}
+                                    ReposRepository.RequestStatus.READY -> {
+                                        view?.setAddLocationDialogLoadingStatus(false)
+                                        view?.dismissAddLocationDialog()
+                                    }
+                                    ReposRepository.RequestStatus.ONGOING -> {
+                                        view?.setAddLocationDialogLoadingStatus(true)
+                                    }
+                                    ReposRepository.RequestStatus.ERROR -> {
+                                        view?.setAddLocationDialogLoadingStatus(false)
+                                        view?.displayToast(R.string.add_repo_error_toast)
+                                    }
+                                    ReposRepository.RequestStatus.NO_NETWORK -> {
+                                        //this should never occur in theory
+                                        view?.setAddLocationDialogLoadingStatus(false)
+                                        view?.displayToast(R.string.add_repo_no_network_toast)
+                                    }
+                                    else -> {
+                                        view?.setAddLocationDialogLoadingStatus(false)
+                                        view?.displayToast(R.string.add_repo_error_toast)
+                                    }
+                                }
+                            },
+                            { e -> e.printStackTrace() }
+                    ))
+
+            isSubscribedToAddLocationRequest = true
+        }
+
+        val accRange = if(gpsInfoRepository.lastLocation.elevationApi){
+            15.0f
+        } else {
+            gpsInfoRepository.lastLocation.accuracy * 2.5f
+        }
+
+        reposRepository.addRepoLocation(repoIndex, gpsInfoRepository.lastLocation,
+                name, info, accRange, firebaseAuthWrapper.getUid() ?: "")
     }
 
     /**
@@ -141,17 +249,6 @@ class MainPresenter(view: MainContract.MainView,
             backTab = currentTab
             currentTab = 3
             view?.switchToPreferencesFragment()
-        }
-    }
-
-    /**
-     * Share menu option clicked, format text to share and lunch intent
-     */
-    override fun onShareOptionClicked() {
-        if(currentTab == 1) {
-            view?.shareIntent(shareMessageFormatter.buildMapShare(gpsInfoRepository.lastLocation))
-        } else {
-            view?.shareIntent(shareMessageFormatter.buildGpsInfoShare(gpsInfoRepository.lastLocation))
         }
     }
 
@@ -167,6 +264,17 @@ class MainPresenter(view: MainContract.MainView,
             }
             true
         } else false
+    }
+
+    /**
+     * Share menu option clicked, format text to share and lunch intent
+     */
+    override fun onShareOptionClicked() {
+        if(currentTab == 1) {
+            view?.shareIntent(shareMessageFormatter.buildMapShare(gpsInfoRepository.lastLocation))
+        } else {
+            view?.shareIntent(shareMessageFormatter.buildGpsInfoShare(gpsInfoRepository.lastLocation))
+        }
     }
 
     /**
@@ -288,7 +396,7 @@ class MainPresenter(view: MainContract.MainView,
      */
     override fun firebaseLogin(loggedIn: Boolean) {
         if(!loggedIn){
-            view?.displayFirstStartupDialog()
+            view?.lunchFirstStartupDialog()
         }
     }
 
@@ -318,6 +426,8 @@ class MainPresenter(view: MainContract.MainView,
                         { result -> handleCameraRequest(result) },
                         { e -> e.printStackTrace() }
                 ))
+
+        isSubscribedToCameraRequest = true
     }
 
     /**

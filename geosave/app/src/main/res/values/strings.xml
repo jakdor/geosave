@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Geosave</string>
 
-    <string name="title_gps_info">Gps info</string>
+    <string name="title_gps_info" translatable="false">Gps info</string>
     <string name="title_map">Map</string>
     <string name="title_locations">Saved locations</string>
     <string name="title_locations_short">Locations</string>
@@ -177,5 +177,13 @@
     <string name="dialog_add_image_browse_files_text">Browse documents</string>
     <string name="toast_camera_permission_not_granted">This permission is required to get photo!</string>
     <string name="toast_invalid_file">Selected file is not a valid picture file!</string>
+    <string name="dialog_add_location_title_text">Add new location</string>
+    <string name="add_location_dialog_cancel">Cancel</string>
+    <string name="add_location_dialog_upload">upload</string>
+    <string name="add_to_repository_spinner_label">Repository:</string>
+    <string name="add_location_no_repos_toast">Create or join repository first in locations tab</string>
+    <string name="add_image_dialog_no_network_toast">Image will be updated in the background, when network becomes available</string>
+    <string name="location_default_name">location</string>
+    <string name="no_location_available">Location not yet determined</string>
 
 </resources>

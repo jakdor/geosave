@@ -8,6 +8,8 @@
 
 package com.jakdor.geosave.common.model.firebase
 
+import com.jakdor.geosave.common.model.UserLocation
+
 /**
  * Firebase location object
  */
@@ -20,4 +22,9 @@ constructor(var name: String = "",
             var longitude: Double = 0.0,
             var altitude: Double = 0.0,
             var accuracy: Float = 0.0f,
-            var accuracyRange: Float = 0.0f)
+            var accuracyRange: Float = 0.0f){
+
+    constructor(userLocation: UserLocation): this("", "", "", "",
+            userLocation.latitude, userLocation.longitude, userLocation.altitude,
+            userLocation.accuracy, 0.0f)
+}

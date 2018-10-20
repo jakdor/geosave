@@ -9,6 +9,7 @@
 package com.jakdor.geosave.ui.main
 
 import com.jakdor.geosave.common.model.UserLocation
+import com.jakdor.geosave.common.model.firebase.Repo
 import com.jakdor.geosave.common.repository.CameraRepository
 import java.io.File
 
@@ -25,7 +26,12 @@ interface MainContract {
 
         fun displayToast(strId: Int)
 
-        fun displayFirstStartupDialog()
+        fun lunchFirstStartupDialog()
+        fun lunchAddLocationDialog()
+        fun loadAddLocationDialogRepoSpinner(
+                indexRepoNamePair: ArrayList<Pair<Int, String>>, selectedIndex: Int)
+        fun setAddLocationDialogLoadingStatus(status: Boolean)
+        fun dismissAddLocationDialog()
         fun shareIntent(text: String)
 
         fun checkPermissions()
@@ -51,9 +57,12 @@ interface MainContract {
         fun onLocationsTabClicked()
 
         fun onAddOptionClicked()
+        fun onAddLocationDialogUploadClicked(repoIndex: Int, name: String, info: String)
+
         fun onPreferencesOptionClicked()
-        fun onShareOptionClicked()
         fun switchBackFromPreferenceFragment(): Boolean
+
+        fun onShareOptionClicked()
 
         fun onLocationChanged(userLocation: UserLocation)
         fun gmsConnected()

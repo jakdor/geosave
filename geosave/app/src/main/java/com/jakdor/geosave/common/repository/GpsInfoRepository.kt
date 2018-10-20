@@ -184,4 +184,11 @@ class GpsInfoRepository(private val context: Context,
     fun clearDisposable(){
         disposable.clear()
     }
+
+    /**
+     * Check if last known [UserLocation] is available
+     */
+    fun isLastLocationInit(): Boolean {
+        return ::lastLocation.isInitialized
+    }
 }

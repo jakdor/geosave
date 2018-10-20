@@ -46,7 +46,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:background="@drawable/spinner_background"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/dialog_add_location_spinner_loading_anim"
             app:layout_constraintStart_toStartOf="@+id/dialog_add_location_name"
             app:layout_constraintTop_toBottomOf="@+id/dialog_add_location_title">
 
@@ -59,6 +59,18 @@
                 android:spinnerMode="dialog" />
 
         </FrameLayout>
+
+        <ImageView
+            android:id="@+id/dialog_add_location_spinner_loading_anim"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="8dp"
+            android:contentDescription="@string/dialog_add_repo_loading_anim_desc"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/dialog_add_location_name"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/dialog_add_location_repo_spinner_frame" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/dialog_add_location_guideline"

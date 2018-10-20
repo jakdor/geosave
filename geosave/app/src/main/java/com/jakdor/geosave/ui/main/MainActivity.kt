@@ -340,7 +340,7 @@ class MainActivity : AppCompatActivity(),
     /**
      * Lunch [AddLocationDialog]
      */
-    override fun lunchAddLocationDialog(indexRepoNamePair: ArrayList<Pair<Int, String>>) {
+    override fun lunchAddLocationDialog() {
         addLocationDialog = AddLocationDialog(this)
         addLocationDialog.cancelButtonOnClickListener = View.OnClickListener {
             addLocationDialog.dismiss()
@@ -353,9 +353,17 @@ class MainActivity : AppCompatActivity(),
         }
         addLocationDialog.show()
 
-        addLocationDialog.loadReposSpinner(indexRepoNamePair)
+
 
         Timber.i("lunched AddImageDialog")
+    }
+
+    /**
+     * Forward indexRepoNamePair to [AddLocationDialog] spinner
+     */
+    override fun loadAddLocationDialogRepoSpinner(indexRepoNamePair: ArrayList<Pair<Int, String>>) {
+        if(::addLocationDialog.isInitialized && addLocationDialog.isShowing)
+            addLocationDialog.loadReposSpinner(indexRepoNamePair)
     }
 
     /**

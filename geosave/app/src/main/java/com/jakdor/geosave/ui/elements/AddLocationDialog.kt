@@ -18,6 +18,8 @@ import com.jakdor.geosave.R
 import com.jakdor.geosave.utils.GlideApp
 import kotlinx.android.synthetic.main.dialog_add_location.*
 import android.widget.ArrayAdapter
+import android.widget.ImageView
+import android.widget.Toast
 
 class AddLocationDialog(context: Context) : Dialog(context, R.style.FullscreenDialog) {
 
@@ -33,6 +35,11 @@ class AddLocationDialog(context: Context) : Dialog(context, R.style.FullscreenDi
 
         window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
 
+        dialog_add_location_repo_spinner.isEnabled = false
+        dialog_add_location_upload_button.isEnabled = false
+        dialog_add_location_spinner_loading_anim.visibility = View.VISIBLE
+        animateLoading(dialog_add_location_spinner_loading_anim)
+
         if (::cancelButtonOnClickListener.isInitialized)
             dialog_add_location_cancel_button.setOnClickListener(cancelButtonOnClickListener)
         if (::uploadButtonOnClickListener.isInitialized)
@@ -45,14 +52,26 @@ class AddLocationDialog(context: Context) : Dialog(context, R.style.FullscreenDi
     fun loadReposSpinner(indexRepoNamePair: ArrayList<Pair<Int, String>>){
         this.indexRepoNamePair = indexRepoNamePair
 
-        val repoNames = mutableListOf<String>()
-        indexRepoNamePair.forEach {
-            repoNames.add(it.second)
+        if(!indexRepoNamePair.isEmpty()) {
+            val repoNames = mutableListOf<String>()
+            indexRepoNamePair.forEach {
+                repoNames.add(it.second)
+            }
+
+            val spinnerAdapter =
+                    ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, repoNames)
+            spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            dialog_add_location_repo_spinner.adapter = spinnerAdapter
+
+            dialog_add_location_upload_button.isEnabled = true
+        } else {
+            dialog_add_location_upload_button.isEnabled = false
+            Toast.makeText(context, context.getString(R.string.add_location_no_repos_toast),
+                    Toast.LENGTH_LONG).show()
         }
 
-        val adapter = ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, repoNames)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        dialog_add_location_repo_spinner.adapter = adapter
+        dialog_add_location_repo_spinner.isEnabled = true
+        dialog_add_location_spinner_loading_anim.visibility = View.GONE
     }
 
     /**
@@ -71,7 +90,7 @@ class AddLocationDialog(context: Context) : Dialog(context, R.style.FullscreenDi
                 setCancelable(false)
                 dialog_add_location_loading_anim.visibility = View.VISIBLE
                 dialog_add_location_cancel_button.visibility = View.GONE
-                animateLoading()
+                animateLoading(dialog_add_location_loading_anim)
             }
             false -> {
                 setCancelable(true)
@@ -84,10 +103,10 @@ class AddLocationDialog(context: Context) : Dialog(context, R.style.FullscreenDi
     /**
      * Load loading gif
      */
-    private fun animateLoading() {
+    private fun animateLoading(view: ImageView) {
         GlideApp.with(context)
                 .asGif()
                 .load(R.drawable.load)
-                .into(dialog_add_location_loading_anim)
+                .into(view)
     }
 }

@@ -135,7 +135,24 @@ class MainPresenter(view: MainContract.MainView,
      * Add location menu option clicked
      */
     override fun onAddOptionClicked() {
-        view?.lunchAddLocationDialog(getReposWithPushPermissionIndexPair())
+        view?.lunchAddLocationDialog()
+
+        if(reposRepository.reposListStream.hasValue()){
+            view?.loadAddLocationDialogRepoSpinner(getReposWithPushPermissionIndexPair())
+        } else {
+            val disposable = CompositeDisposable()
+            disposable.add(reposRepository.reposListStream
+                    .subscribeOn(schedulersFacade.io())
+                    .observeOn(schedulersFacade.ui())
+                    .subscribe(
+                            { _ ->
+                                view?.loadAddLocationDialogRepoSpinner(
+                                    getReposWithPushPermissionIndexPair())
+                                disposable.clear()
+                            },
+                            { e -> e.printStackTrace() }
+                    ))
+        }
     }
 
     /**

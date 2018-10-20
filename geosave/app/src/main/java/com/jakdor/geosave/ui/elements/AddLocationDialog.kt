@@ -50,7 +50,7 @@ class AddLocationDialog(context: Context) : Dialog(context, R.style.FullscreenDi
     /**
      * Load repos spinner with repos names
      */
-    fun loadReposSpinner(indexRepoNamePair: ArrayList<Pair<Int, String>>){
+    fun loadReposSpinner(indexRepoNamePair: ArrayList<Pair<Int, String>>, selectedIndex: Int){
         this.indexRepoNamePair = indexRepoNamePair
 
         if(!indexRepoNamePair.isEmpty()) {
@@ -63,6 +63,11 @@ class AddLocationDialog(context: Context) : Dialog(context, R.style.FullscreenDi
                     ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, repoNames)
             spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             dialog_add_location_repo_spinner.adapter = spinnerAdapter
+
+            for(i in 0 until indexRepoNamePair.size){
+                if(indexRepoNamePair[i].first == selectedIndex)
+                    dialog_add_location_repo_spinner.setSelection(i)
+            }
 
             dialog_add_location_upload_button.isEnabled = true
         } else {

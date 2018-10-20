@@ -361,9 +361,10 @@ class MainActivity : AppCompatActivity(),
     /**
      * Forward indexRepoNamePair to [AddLocationDialog] spinner
      */
-    override fun loadAddLocationDialogRepoSpinner(indexRepoNamePair: ArrayList<Pair<Int, String>>) {
+    override fun loadAddLocationDialogRepoSpinner(
+            indexRepoNamePair: ArrayList<Pair<Int, String>>, selectedIndex: Int) {
         if(::addLocationDialog.isInitialized && addLocationDialog.isShowing)
-            addLocationDialog.loadReposSpinner(indexRepoNamePair)
+            addLocationDialog.loadReposSpinner(indexRepoNamePair, selectedIndex)
     }
 
     /**

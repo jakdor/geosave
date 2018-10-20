@@ -297,7 +297,7 @@ class ReposRepository(private val schedulers: RxSchedulersFacade,
             else -> repo.editorsUidList.forEach { t: DocumentReference? ->
                 if(t != null){
                     var userObjPath = t.path
-                    userObjPath = userObjPath.removePrefix("/users/")
+                    userObjPath = userObjPath.removePrefix("users/")
                     if(userObjPath == uid){
                         return true
                     }

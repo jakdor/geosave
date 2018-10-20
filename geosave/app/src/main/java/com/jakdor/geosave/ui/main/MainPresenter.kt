@@ -138,20 +138,31 @@ class MainPresenter(view: MainContract.MainView,
         view?.lunchAddLocationDialog()
 
         if(reposRepository.reposListStream.hasValue()){
-            view?.loadAddLocationDialogRepoSpinner(getReposWithPushPermissionIndexPair())
+            loadAddLocationDialogRepoSpinner()
         } else {
             val disposable = CompositeDisposable()
             disposable.add(reposRepository.reposListStream
                     .subscribeOn(schedulersFacade.io())
                     .observeOn(schedulersFacade.ui())
                     .subscribe(
-                            { _ ->
-                                view?.loadAddLocationDialogRepoSpinner(
-                                    getReposWithPushPermissionIndexPair())
+                            { _ -> loadAddLocationDialogRepoSpinner()
                                 disposable.clear()
                             },
                             { e -> e.printStackTrace() }
                     ))
+        }
+    }
+
+    /**
+     * Load AddLocationDialog Repos spinner
+     */
+    private fun loadAddLocationDialogRepoSpinner(){
+        if(reposRepository.chosenRepositoryIndexStream.hasValue()) {
+            view?.loadAddLocationDialogRepoSpinner(getReposWithPushPermissionIndexPair(),
+                    reposRepository.chosenRepositoryIndexStream.value)
+        } else {
+            view?.loadAddLocationDialogRepoSpinner(
+                    getReposWithPushPermissionIndexPair(), 0)
         }
     }
 

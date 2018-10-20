@@ -28,7 +28,8 @@ interface MainContract {
 
         fun lunchFirstStartupDialog()
         fun lunchAddLocationDialog()
-        fun loadAddLocationDialogRepoSpinner(indexRepoNamePair: ArrayList<Pair<Int, String>>)
+        fun loadAddLocationDialogRepoSpinner(
+                indexRepoNamePair: ArrayList<Pair<Int, String>>, selectedIndex: Int)
         fun setAddLocationDialogLoadingStatus(status: Boolean)
         fun dismissAddLocationDialog()
         fun shareIntent(text: String)

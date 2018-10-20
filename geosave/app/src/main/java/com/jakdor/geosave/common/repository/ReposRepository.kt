@@ -8,10 +8,11 @@
 
 package com.jakdor.geosave.common.repository
 
-import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.FirebaseFirestoreException
-import com.google.firebase.firestore.ListenerRegistration
+import android.content.Context
+import com.google.firebase.firestore.*
+import com.jakdor.geosave.R
+import com.jakdor.geosave.common.model.UserLocation
+import com.jakdor.geosave.common.model.firebase.Location
 import com.jakdor.geosave.common.model.firebase.Repo
 import com.jakdor.geosave.common.model.firebase.User
 import com.jakdor.geosave.common.wrapper.FirebaseAuthWrapper
@@ -26,7 +27,8 @@ import timber.log.Timber
  */
 class ReposRepository(private val schedulers: RxSchedulersFacade,
                       private val firebaseAuthWrapper: FirebaseAuthWrapper,
-                      private val db: FirebaseFirestore) {
+                      private val db: FirebaseFirestore,
+                      private val context: Context) {
 
     val reposListStream: BehaviorSubject<MutableList<Repo?>> = BehaviorSubject.create()
     val reposLoadingStatusStream: BehaviorSubject<Boolean> = BehaviorSubject.create()
@@ -34,6 +36,7 @@ class ReposRepository(private val schedulers: RxSchedulersFacade,
     val chosenRepositoryIndexStream: BehaviorSubject<Int> = BehaviorSubject.create()
     val notifyChosenRepoUpdate: BehaviorSubject<Boolean> = BehaviorSubject.create()
     val picUpdateStatusStream: PublishSubject<Boolean> = PublishSubject.create()
+    val addLocationStatusStream: BehaviorSubject<RequestStatus> = BehaviorSubject.create()
     private var reposRefsList = mutableListOf<DocumentReference>()
     private lateinit var repoListenerRegistration: ListenerRegistration
 
@@ -45,6 +48,7 @@ class ReposRepository(private val schedulers: RxSchedulersFacade,
         reposLoadingStatusStream.onNext(false)
         createNewRequestStatusStream.onNext(RequestStatus.IDLE)
         notifyChosenRepoUpdate.onNext(false)
+        addLocationStatusStream.onNext(RequestStatus.IDLE)
 
         chosenRepositoryIndexStream
                 .observeOn(schedulers.io())
@@ -302,5 +306,73 @@ class ReposRepository(private val schedulers: RxSchedulersFacade,
         }
 
         return false
+    }
+
+    /**
+     * Add new location to repo
+     */
+    fun addRepoLocation(repoIndex: Int, userLocation: UserLocation,
+                        name: String, info: String, accRange: Float, uid: String){
+        if(reposListStream.hasValue()) {
+            val location = Location(userLocation)
+            location.name = name
+            location.info = info
+            location.accuracyRange = accRange
+            location.authorUid = uid
+
+            if(reposListStream.value[repoIndex] != null) {
+                addLocationStatusStream.onNext(RequestStatus.ONGOING)
+
+                val locationList = reposListStream.value[repoIndex]!!.locationsList
+
+                if (location.name.isEmpty()){
+                    location.name = context.getString(R.string.location_default_name) +
+                            "#" + (locationList.size + 1).toString()
+                }
+
+                val locationMap = locationToMap(location)
+
+                reposRefsList[repoIndex].update(
+                        "locationsList", FieldValue.arrayUnion(locationMap))
+                        .addOnSuccessListener {
+                            addLocationStatusStream.onNext(RequestStatus.READY)
+                            addLocationStatusStream.onNext(RequestStatus.IDLE)
+                            Timber.i("updated repo locationsList")
+                        }.addOnFailureListener {
+                            //no network should never occur in theory
+                            if(it.toString() ==
+                                    "com.google.firebase.firestore.FirebaseFirestoreException:" +
+                                    " UNAVAILABLE: Unable to resolve host firestore.googleapis.com"){
+                                addLocationStatusStream.onNext(RequestStatus.NO_NETWORK)
+                            } else {
+                                addLocationStatusStream.onNext(RequestStatus.ERROR)
+                            }
+                            addLocationStatusStream.onNext(RequestStatus.IDLE)
+                            Timber.i("error updating repo locationsList")
+                        }
+
+            } else {
+                Timber.e("repo with given index is null")
+            }
+        } else {
+            Timber.wtf("repoListStream has no value")
+        }
+    }
+
+    /**
+     * Convert [Location] into map
+     */
+    private fun locationToMap(location: Location): Map<String, Any>{
+        val locationMap = mutableMapOf<String, Any>()
+        locationMap["name"] = location.name
+        locationMap["authorUid"] = location.authorUid
+        locationMap["info"] = location.info
+        locationMap["picUrl"] = location.picUrl
+        locationMap["latitude"] = location.latitude
+        locationMap["longitude"] = location.longitude
+        locationMap["altitude"] = location.altitude
+        locationMap["accuracy"] = location.accuracy
+        locationMap["accuracyRange"] = location.accuracyRange
+        return locationMap
     }
 }

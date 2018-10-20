@@ -180,11 +180,54 @@ class MainPresenter(view: MainContract.MainView,
      * Handle click on AddLocationDialog upload clicked
      */
     override fun onAddLocationDialogUploadClicked(repoIndex: Int, name: String, info: String) {
-        if (!isSubscribedToAddLocationRequest){
-
+        if(!gpsInfoRepository.isLastLocationInit()){
+            view?.displayToast(R.string.no_location_available)
+            return
         }
 
-        //todo impl
+        if (!isSubscribedToAddLocationRequest){
+            compositeDisposable.add(reposRepository.addLocationStatusStream
+                    .subscribeOn(schedulersFacade.io())
+                    .observeOn(schedulersFacade.ui())
+                    .subscribe(
+                            { result -> when(result){
+                                    ReposRepository.RequestStatus.IDLE -> {}
+                                    ReposRepository.RequestStatus.READY -> {
+                                        view?.setAddLocationDialogLoadingStatus(false)
+                                        view?.dismissAddLocationDialog()
+                                    }
+                                    ReposRepository.RequestStatus.ONGOING -> {
+                                        view?.setAddLocationDialogLoadingStatus(true)
+                                    }
+                                    ReposRepository.RequestStatus.ERROR -> {
+                                        view?.setAddLocationDialogLoadingStatus(false)
+                                        view?.displayToast(R.string.add_repo_error_toast)
+                                    }
+                                    ReposRepository.RequestStatus.NO_NETWORK -> {
+                                        //this should never occur in theory
+                                        view?.setAddLocationDialogLoadingStatus(false)
+                                        view?.displayToast(R.string.add_repo_no_network_toast)
+                                    }
+                                    else -> {
+                                        view?.setAddLocationDialogLoadingStatus(false)
+                                        view?.displayToast(R.string.add_repo_error_toast)
+                                    }
+                                }
+                            },
+                            { e -> e.printStackTrace() }
+                    ))
+
+            isSubscribedToAddLocationRequest = true
+        }
+
+        val accRange = if(gpsInfoRepository.lastLocation.elevationApi){
+            15.0f
+        } else {
+            gpsInfoRepository.lastLocation.accuracy * 2.5f
+        }
+
+        reposRepository.addRepoLocation(repoIndex, gpsInfoRepository.lastLocation,
+                name, info, accRange, firebaseAuthWrapper.getUid() ?: "")
     }
 
     /**

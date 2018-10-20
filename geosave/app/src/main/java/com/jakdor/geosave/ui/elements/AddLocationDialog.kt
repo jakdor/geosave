@@ -14,6 +14,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.view.inputmethod.InputMethodManager
 import com.jakdor.geosave.R
 import com.jakdor.geosave.utils.GlideApp
 import kotlinx.android.synthetic.main.dialog_add_location.*
@@ -88,6 +89,7 @@ class AddLocationDialog(context: Context) : Dialog(context, R.style.FullscreenDi
         when (status) {
             true -> {
                 setCancelable(false)
+                hideKeyboard()
                 dialog_add_location_loading_anim.visibility = View.VISIBLE
                 dialog_add_location_cancel_button.visibility = View.GONE
                 animateLoading(dialog_add_location_loading_anim)
@@ -108,5 +110,17 @@ class AddLocationDialog(context: Context) : Dialog(context, R.style.FullscreenDi
                 .asGif()
                 .load(R.drawable.load)
                 .into(view)
+    }
+
+    /**
+     * Hide soft keyboard
+     */
+    private fun hideKeyboard(){
+        val view = currentFocus
+        if(view != null){
+            val inputManager =
+                    context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            inputManager.hideSoftInputFromWindow(view.windowToken, 0)
+        }
     }
 }

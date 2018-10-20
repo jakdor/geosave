@@ -82,8 +82,9 @@ class AppModule {
     @Provides
     fun provideReposRepository(schedulers: RxSchedulersFacade,
                                firebaseAuthWrapper: FirebaseAuthWrapper,
-                               firebaseFirestore: FirebaseFirestore): ReposRepository{
-        return ReposRepository(schedulers, firebaseAuthWrapper, firebaseFirestore)
+                               firebaseFirestore: FirebaseFirestore,
+                               app: Application): ReposRepository{
+        return ReposRepository(schedulers, firebaseAuthWrapper, firebaseFirestore, app.applicationContext)
     }
 
     @Provides

@@ -19,11 +19,12 @@ import com.jakdor.geosave.utils.GlideApp
 import kotlinx.android.synthetic.main.dialog_add_location.*
 import android.widget.ArrayAdapter
 
-
 class AddLocationDialog(context: Context) : Dialog(context, R.style.FullscreenDialog) {
 
     lateinit var cancelButtonOnClickListener: View.OnClickListener
     lateinit var uploadButtonOnClickListener: View.OnClickListener
+
+    private lateinit var indexRepoNamePair: ArrayList<Pair<Int, String>>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +39,12 @@ class AddLocationDialog(context: Context) : Dialog(context, R.style.FullscreenDi
             dialog_add_location_upload_button.setOnClickListener(uploadButtonOnClickListener)
     }
 
+    /**
+     * Load repos spinner with repos names
+     */
     fun loadReposSpinner(indexRepoNamePair: ArrayList<Pair<Int, String>>){
+        this.indexRepoNamePair = indexRepoNamePair
+
         val repoNames = mutableListOf<String>()
         indexRepoNamePair.forEach {
             repoNames.add(it.second)
@@ -50,22 +56,27 @@ class AddLocationDialog(context: Context) : Dialog(context, R.style.FullscreenDi
     }
 
     /**
-     * Handle new dialogLoadingStatus value
+     * Return selected repo index
      */
-    fun dialogLoadingStatus(status: Boolean?) {
-        if (status != null) {
-            when (status) {
-                true -> {
-                    setCancelable(false)
-                    dialog_add_location_loading_anim.visibility = View.VISIBLE
-                    dialog_add_location_cancel_button.visibility = View.GONE
-                    animateLoading()
-                }
-                false -> {
-                    setCancelable(true)
-                    dialog_add_location_loading_anim.visibility = View.GONE
-                    dialog_add_location_cancel_button.visibility = View.VISIBLE
-                }
+    fun getSelectedRepoIndex(): Int {
+        return indexRepoNamePair[dialog_add_location_repo_spinner.selectedItemPosition].first
+    }
+
+    /**
+     * Change dialog loading status
+     */
+    fun dialogLoadingStatus(status: Boolean) {
+        when (status) {
+            true -> {
+                setCancelable(false)
+                dialog_add_location_loading_anim.visibility = View.VISIBLE
+                dialog_add_location_cancel_button.visibility = View.GONE
+                animateLoading()
+            }
+            false -> {
+                setCancelable(true)
+                dialog_add_location_loading_anim.visibility = View.GONE
+                dialog_add_location_cancel_button.visibility = View.VISIBLE
             }
         }
     }

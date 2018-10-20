@@ -55,6 +55,7 @@ import com.jakdor.geosave.ui.preferences.PreferencesFragment
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.dialog_add_location.*
 import kotlinx.android.synthetic.main.dialog_first_startup.*
 import pl.aprilapps.easyphotopicker.DefaultCallback
 import pl.aprilapps.easyphotopicker.EasyImage
@@ -344,11 +345,33 @@ class MainActivity : AppCompatActivity(),
         addLocationDialog.cancelButtonOnClickListener = View.OnClickListener {
             addLocationDialog.dismiss()
         }
+        addLocationDialog.uploadButtonOnClickListener = View.OnClickListener {
+            presenter.onAddLocationDialogUploadClicked(
+                    addLocationDialog.getSelectedRepoIndex(),
+                    addLocationDialog.dialog_add_location_name.text.toString(),
+                    addLocationDialog.dialog_add_location_info.text.toString())
+        }
         addLocationDialog.show()
 
         addLocationDialog.loadReposSpinner(indexRepoNamePair)
 
-        Timber.i("lunched addImageDialog")
+        Timber.i("lunched AddImageDialog")
+    }
+
+    /**
+     * Set [AddLocationDialog] loading status
+     */
+    override fun setAddLocationDialogLoadingStatus(status: Boolean) {
+        if(::addLocationDialog.isInitialized && addLocationDialog.isShowing)
+            addLocationDialog.dialogLoadingStatus(status)
+    }
+
+    /**
+     * Force dismiss [AddLocationDialog]
+     */
+    override fun dismissAddLocationDialog() {
+        if(::addLocationDialog.isInitialized && addLocationDialog.isShowing)
+            addLocationDialog.dismiss()
     }
 
     /**

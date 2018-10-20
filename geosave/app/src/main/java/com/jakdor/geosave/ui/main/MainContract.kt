@@ -28,6 +28,8 @@ interface MainContract {
 
         fun lunchFirstStartupDialog()
         fun lunchAddLocationDialog(indexRepoNamePair: ArrayList<Pair<Int, String>>)
+        fun setAddLocationDialogLoadingStatus(status: Boolean)
+        fun dismissAddLocationDialog()
         fun shareIntent(text: String)
 
         fun checkPermissions()
@@ -53,9 +55,12 @@ interface MainContract {
         fun onLocationsTabClicked()
 
         fun onAddOptionClicked()
+        fun onAddLocationDialogUploadClicked(repoIndex: Int, name: String, info: String)
+
         fun onPreferencesOptionClicked()
-        fun onShareOptionClicked()
         fun switchBackFromPreferenceFragment(): Boolean
+
+        fun onShareOptionClicked()
 
         fun onLocationChanged(userLocation: UserLocation)
         fun gmsConnected()

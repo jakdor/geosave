@@ -40,6 +40,8 @@ class MainPresenter(view: MainContract.MainView,
 
     private var compositeDisposable = CompositeDisposable()
     private lateinit var currentCameraRequestInfo: CameraRepository.CameraRequestInfo
+    private var isSubscribedToCameraRequest = false
+    private var isSubscribedToAddLocationRequest = false
 
     /**
      * Check firebase login
@@ -66,7 +68,7 @@ class MainPresenter(view: MainContract.MainView,
             }
         }
 
-        observeCameraRequests()
+        if(!isSubscribedToCameraRequest) observeCameraRequests()
     }
 
     /**
@@ -158,6 +160,17 @@ class MainPresenter(view: MainContract.MainView,
     }
 
     /**
+     * Handle click on AddLocationDialog upload clicked
+     */
+    override fun onAddLocationDialogUploadClicked(repoIndex: Int, name: String, info: String) {
+        if (!isSubscribedToAddLocationRequest){
+
+        }
+
+        //todo impl
+    }
+
+    /**
      * Preferences menu option clicked
      */
     override fun onPreferencesOptionClicked() {
@@ -165,17 +178,6 @@ class MainPresenter(view: MainContract.MainView,
             backTab = currentTab
             currentTab = 3
             view?.switchToPreferencesFragment()
-        }
-    }
-
-    /**
-     * Share menu option clicked, format text to share and lunch intent
-     */
-    override fun onShareOptionClicked() {
-        if(currentTab == 1) {
-            view?.shareIntent(shareMessageFormatter.buildMapShare(gpsInfoRepository.lastLocation))
-        } else {
-            view?.shareIntent(shareMessageFormatter.buildGpsInfoShare(gpsInfoRepository.lastLocation))
         }
     }
 
@@ -191,6 +193,17 @@ class MainPresenter(view: MainContract.MainView,
             }
             true
         } else false
+    }
+
+    /**
+     * Share menu option clicked, format text to share and lunch intent
+     */
+    override fun onShareOptionClicked() {
+        if(currentTab == 1) {
+            view?.shareIntent(shareMessageFormatter.buildMapShare(gpsInfoRepository.lastLocation))
+        } else {
+            view?.shareIntent(shareMessageFormatter.buildGpsInfoShare(gpsInfoRepository.lastLocation))
+        }
     }
 
     /**
@@ -342,6 +355,8 @@ class MainPresenter(view: MainContract.MainView,
                         { result -> handleCameraRequest(result) },
                         { e -> e.printStackTrace() }
                 ))
+
+        isSubscribedToCameraRequest = true
     }
 
     /**

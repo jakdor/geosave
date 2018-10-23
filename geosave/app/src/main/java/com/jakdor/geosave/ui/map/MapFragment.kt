@@ -26,8 +26,10 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import com.jakdor.geosave.R
 import com.jakdor.geosave.common.model.UserLocation
+import com.jakdor.geosave.common.model.firebase.Location
 import com.jakdor.geosave.common.repository.LocationConverter
 import com.jakdor.geosave.databinding.FragmentMapOverlayBinding
 import com.jakdor.geosave.di.InjectableFragment
@@ -101,9 +103,11 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
         binding.viewModel = viewModel
         viewModel?.requestUserLocationUpdates()
         viewModel?.loadPreferences()
+        viewModel?.requestCurrentRepoLocationsUpdates()
         observeUserLocation()
         observeMapType()
         observeLocationType()
+        observeCurrentRepoLocationsList()
     }
 
     /**
@@ -193,6 +197,36 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
      */
     fun handleLocationTypeChange(format: Int?){
         if(format != null) this.locationFormat = format
+    }
+
+    /**
+     * Observe [MapViewModel] for updates on current chosen repo [Location] lists
+     */
+    fun observeCurrentRepoLocationsList(){
+        viewModel?.currentRepoLocationsList?.observe(this, Observer {
+            handleCurrentRepoLocationsList(it)
+        })
+    }
+
+    /**
+     * Handle new [Location] list
+     */
+    fun handleCurrentRepoLocationsList(locations: MutableList<Location>){
+        map?.clear()
+        locations.forEach {
+            addMapMarker(it)
+        }
+    }
+
+    /**
+     * Add map marker from [Location] obj
+     */
+    fun addMapMarker(location: Location){
+        val latLng2 = LatLng(location.latitude, location.longitude)
+        val friendMarkerOptions = MarkerOptions()
+                .position(latLng2)
+                .title(location.name)
+        map?.addMarker(friendMarkerOptions)
     }
 
     /**

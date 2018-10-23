@@ -12,10 +12,13 @@ import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import com.jakdor.geosave.arch.BaseViewModel
 import com.jakdor.geosave.common.model.UserLocation
+import com.jakdor.geosave.common.model.firebase.Location
 import com.jakdor.geosave.common.repository.GpsInfoRepository
+import com.jakdor.geosave.common.repository.ReposRepository
 import com.jakdor.geosave.common.repository.SharedPreferencesRepository
 import com.jakdor.geosave.common.repository.UserLocationObserver
 import com.jakdor.geosave.utils.RxSchedulersFacade
+import io.reactivex.disposables.Disposable
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -23,12 +26,16 @@ class MapViewModel @Inject
 constructor(application: Application,
             rxSchedulersFacade: RxSchedulersFacade,
             private val gpsInfoRepository: GpsInfoRepository,
-            private val sharedPreferencesRepository: SharedPreferencesRepository):
+            private val sharedPreferencesRepository: SharedPreferencesRepository,
+            private val reposRepository: ReposRepository):
         BaseViewModel(application, rxSchedulersFacade){
 
     val location = MutableLiveData<UserLocation>()
     val mapType = MutableLiveData<Int>()
     val locationType = MutableLiveData<Int>()
+    val currentRepoLocationsList = MutableLiveData<MutableList<Location>>()
+
+    private lateinit var repoDisposable: Disposable
 
     /**
      * Handle user changed map type
@@ -67,6 +74,41 @@ constructor(application: Application,
     private fun userLocationUpdate(data: UserLocation){
         location.postValue(data)
         loadingStatus.postValue(false)
+    }
+
+    /**
+     * Observe [ReposRepository] chosenRepositoryIndexStream
+     */
+    fun requestCurrentRepoLocationsUpdates(){
+        disposable.add(reposRepository.chosenRepositoryIndexStream
+                .observeOn(rxSchedulersFacade.io())
+                .subscribeOn(rxSchedulersFacade.io())
+                .subscribe(
+                        { result -> if(result != -1) observeCurrentRepo(result) },
+                        { e -> Timber.e("Error observing chosenRepositoryIndexStream: %s",
+                                e.toString())}
+                ))
+    }
+
+    /**
+     * Observe [ReposRepository] reposListStream
+     * @index current repository index
+     */
+    private fun observeCurrentRepo(index: Int){
+        if(::repoDisposable.isInitialized){
+            disposable.remove(repoDisposable)
+            repoDisposable.dispose()
+        }
+
+        repoDisposable = reposRepository.reposListStream
+                .observeOn(rxSchedulersFacade.io())
+                .subscribeOn(rxSchedulersFacade.io())
+                .subscribe(
+                        { result -> if(result[index] != null){
+                            currentRepoLocationsList.postValue(result[index]!!.locationsList)
+                        }},
+                        { e -> Timber.e("Error observing reposListStream: %s", e.toString())}
+                )
     }
 
     /**

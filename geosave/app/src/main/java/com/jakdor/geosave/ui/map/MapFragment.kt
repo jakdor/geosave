@@ -26,6 +26,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.jakdor.geosave.R
 import com.jakdor.geosave.common.model.UserLocation
@@ -41,7 +42,8 @@ import javax.inject.Inject
 /**
  * Fragment displaying google map with user position and locations
  */
-class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment { //todo investigate screen rotation memory leak from maps api
+class MapFragment: SupportMapFragment(), OnMapReadyCallback,
+        GoogleMap.OnMarkerClickListener, InjectableFragment { //todo investigate screen rotation memory leak from maps api
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -53,6 +55,8 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
 
     private var initCamZoom = false
     private var locationFormat = 0
+
+    private lateinit var markerLocationMap: MutableMap<Marker, Location>
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
@@ -213,6 +217,8 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
      */
     fun handleCurrentRepoLocationsList(locations: MutableList<Location>){
         map?.clear()
+        if(::markerLocationMap.isInitialized) markerLocationMap.clear()
+        markerLocationMap = mutableMapOf()
         locations.forEach {
             addMapMarker(it)
         }
@@ -223,10 +229,12 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
      */
     fun addMapMarker(location: Location){
         val latLng2 = LatLng(location.latitude, location.longitude)
-        val friendMarkerOptions = MarkerOptions()
+        val markerBuilder = MarkerOptions()
                 .position(latLng2)
                 .title(location.name)
-        map?.addMarker(friendMarkerOptions)
+        if(map != null) {
+            markerLocationMap[map!!.addMarker(markerBuilder)] = location
+        }
     }
 
     /**
@@ -246,6 +254,7 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
         map?.setOnMapClickListener { onMapInteraction() }
         map?.setOnMapLongClickListener { onMapInteraction() }
         map?.setOnCameraMoveListener { onMapInteraction() }
+        map?.setOnMarkerClickListener(this)
 
         //restore map type
         handleMapTypeChange(viewModel?.mapType?.value)
@@ -255,6 +264,15 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
         } catch (e: SecurityException){
             Timber.wtf("SecurityException thrown, location permission: %s", e.toString())
         }
+    }
+
+    /**
+     * Handle click on marker
+     */
+    override fun onMarkerClick(p0: Marker?): Boolean {
+        val location = markerLocationMap[p0]
+        Timber.i("clicked on marker: %s", location.toString())
+        return false
     }
 
     override fun onDestroyView() {

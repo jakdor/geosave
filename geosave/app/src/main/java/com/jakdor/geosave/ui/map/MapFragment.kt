@@ -291,7 +291,7 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback,
         binding.mapTypePopup.mapTypeLayout.visibility = View.GONE
 
         binding.mapTypePopup.mapTypeCard.translationY = 50.0f
-        binding.mapTypePopup.mapTypeCard.translationX = 100.0f
+        binding.mapTypePopup.mapTypeCard.translationX = -100.0f
         binding.mapTypePopup.mapTypeCard.scaleX = 0.75f
         binding.mapTypePopup.mapTypeCard.scaleY = 0.75f
         binding.mapTypePopup.mapTypeCard.alpha = 0.0f

@@ -113,7 +113,10 @@ class FirebaseAuthWrapper constructor(private var mAuth: FirebaseAuth,
 
         db.collection("users").document(mAuth.currentUser!!.uid)
                 .set(newUser)
-                .addOnSuccessListener { Timber.i("Pushed new User object to Firestore") }
+                .addOnSuccessListener {
+                    checkUserObj()
+                    Timber.i("Pushed new User object to Firestore")
+                }
                 .addOnFailureListener { Timber.e("Error pushing new User to Firestore") }
     }
 

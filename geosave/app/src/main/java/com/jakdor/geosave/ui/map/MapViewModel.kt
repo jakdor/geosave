@@ -13,6 +13,7 @@ import androidx.lifecycle.MutableLiveData
 import com.jakdor.geosave.arch.BaseViewModel
 import com.jakdor.geosave.common.model.UserLocation
 import com.jakdor.geosave.common.model.firebase.Location
+import com.jakdor.geosave.common.model.firebase.Repo
 import com.jakdor.geosave.common.repository.GpsInfoRepository
 import com.jakdor.geosave.common.repository.ReposRepository
 import com.jakdor.geosave.common.repository.SharedPreferencesRepository
@@ -34,6 +35,7 @@ constructor(application: Application,
     val mapType = MutableLiveData<Int>()
     val locationType = MutableLiveData<Int>()
     val currentRepoLocationsList = MutableLiveData<MutableList<Location>>()
+    val repoIndexPairList = MutableLiveData<ArrayList<Pair<Int, String>>>()
 
     private lateinit var repoDisposable: Disposable
 
@@ -84,7 +86,7 @@ constructor(application: Application,
                 .observeOn(rxSchedulersFacade.io())
                 .subscribeOn(rxSchedulersFacade.io())
                 .subscribe(
-                        { result -> if(result != -1) observeCurrentRepo(result) },
+                        { result -> if(result != -1) observeRepo(result) },
                         { e -> Timber.e("Error observing chosenRepositoryIndexStream: %s",
                                 e.toString())}
                 ))
@@ -94,7 +96,7 @@ constructor(application: Application,
      * Observe [ReposRepository] reposListStream
      * @index current repository index
      */
-    private fun observeCurrentRepo(index: Int){
+    private fun observeRepo(index: Int){
         if(::repoDisposable.isInitialized){
             disposable.remove(repoDisposable)
             repoDisposable.dispose()
@@ -109,6 +111,37 @@ constructor(application: Application,
                         }},
                         { e -> Timber.e("Error observing reposListStream: %s", e.toString())}
                 )
+    }
+
+    /**
+     * Request updates for repo spinner
+     */
+    fun requestRepoSpinnerUpdates() {
+        disposable.add(reposRepository.reposListStream
+                .subscribeOn(rxSchedulersFacade.io())
+                .observeOn(rxSchedulersFacade.io())
+                .subscribe(
+                        { _ -> repoIndexPairList.postValue(getReposIndexPair()) },
+                        { e -> Timber.e("Error observing reposListStream: %s", e.toString())}
+                ))
+    }
+
+    /**
+     * Return [ArrayList] of Index and [Repo] pairs
+     */
+    fun getReposIndexPair(): ArrayList<Pair<Int, String>> {
+        val repoIndexPair = arrayListOf<Pair<Int, String>>()
+
+        if(reposRepository.reposListStream.hasValue()){
+            for(i in 0 until reposRepository.reposListStream.value.size){
+                val currentRepo = reposRepository.reposListStream.value[i]
+                if(currentRepo != null) {
+                    repoIndexPair.add(Pair(i, currentRepo.name))
+                }
+            }
+        }
+
+        return repoIndexPair
     }
 
     /**

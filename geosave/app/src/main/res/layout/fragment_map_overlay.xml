@@ -104,15 +104,18 @@
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.65" />
 
-        <FrameLayout
+        <androidx.cardview.widget.CardView
             android:id="@+id/map_repo_spinner_frame"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:background="@drawable/spinner_background_gray"
-            android:elevation="4dp"
+            android:background="@color/materialTransparent"
+            android:backgroundTint="@color/materialTransparent"
+            app:cardBackgroundColor="@color/materialTransparent"
+            android:elevation="2dp"
+            app:cardCornerRadius="8dp"
             app:layout_constraintEnd_toStartOf="@+id/map_text_guideline2"
             app:layout_constraintStart_toStartOf="@+id/map_text_guideline1"
             app:layout_constraintTop_toBottomOf="@+id/map_location_card">
@@ -125,7 +128,7 @@
                 android:layout_margin="1dp"
                 android:spinnerMode="dialog" />
 
-        </FrameLayout>
+        </androidx.cardview.widget.CardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

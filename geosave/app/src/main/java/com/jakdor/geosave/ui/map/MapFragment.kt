@@ -17,9 +17,11 @@ import androidx.databinding.DataBindingUtil
 import android.os.Bundle
 import androidx.interpolator.view.animation.FastOutLinearInInterpolator
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.Toast
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -71,6 +73,20 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback,
         binding.mapTypePopup.mapTypeCard.visibility = View.GONE
         binding.mapTypeFab.setOnClickListener { onMapTypeFabClicked() }
 
+        binding.mapRepoSpinner.setOnTouchListener { _, motionEvent ->
+            if(motionEvent.action == MotionEvent.ACTION_UP){
+                if(binding.mapRepoSpinner.adapter == null){
+                    Toast.makeText(
+                            context, R.string.loading_repos_toast, Toast.LENGTH_SHORT).show()
+                }
+                else if(binding.mapRepoSpinner.adapter.isEmpty){
+                    Toast.makeText(
+                            context, R.string.add_location_no_repos_toast, Toast.LENGTH_LONG).show()
+                }
+            }
+            return@setOnTouchListener true
+        }
+
         //resize map type icons to specific device dynamically
         GlideApp.with(this)
                 .load(R.drawable.map_default)
@@ -108,10 +124,12 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback,
         viewModel?.requestUserLocationUpdates()
         viewModel?.loadPreferences()
         viewModel?.requestCurrentRepoLocationsUpdates()
+        viewModel?.requestRepoSpinnerUpdates()
         observeUserLocation()
         observeMapType()
         observeLocationType()
         observeCurrentRepoLocationsList()
+        observeRepoIndexPairList()
     }
 
     /**
@@ -235,6 +253,21 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback,
         if(map != null) {
             markerLocationMap[map!!.addMarker(markerBuilder)] = location
         }
+    }
+
+    /**
+     * Observe [MapViewModel] for updates on repoIndexPairList
+     */
+    fun observeRepoIndexPairList(){
+        viewModel?.repoIndexPairList?.observe(this, Observer { handleRepoIndexPairList(it) })
+    }
+
+    /**
+     * Handle new repoIndexPairList
+     */
+    fun handleRepoIndexPairList(repoIndexList: ArrayList<Pair<Int, String>>){
+        //todo load repos spinner
+        Timber.i("Loaded mapFragment repo spinner")
     }
 
     /**

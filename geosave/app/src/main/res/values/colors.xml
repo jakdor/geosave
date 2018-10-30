@@ -11,6 +11,7 @@
     <color name="materialGrey">#fafafa</color>
     <color name="shadow">#40000000</color>
     <color name="materialTransparent">#d2ffffff</color>
+    <color name="materialTransparent2">#a0ffffff</color>
 
     <color name="selected_highlight">@color/colorAccent</color>
     <color name="iconBlack">#aa000000</color>

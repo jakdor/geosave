@@ -12,10 +12,14 @@ import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import com.jakdor.geosave.arch.BaseViewModel
 import com.jakdor.geosave.common.model.UserLocation
+import com.jakdor.geosave.common.model.firebase.Location
+import com.jakdor.geosave.common.model.firebase.Repo
 import com.jakdor.geosave.common.repository.GpsInfoRepository
+import com.jakdor.geosave.common.repository.ReposRepository
 import com.jakdor.geosave.common.repository.SharedPreferencesRepository
 import com.jakdor.geosave.common.repository.UserLocationObserver
 import com.jakdor.geosave.utils.RxSchedulersFacade
+import io.reactivex.disposables.Disposable
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -23,12 +27,18 @@ class MapViewModel @Inject
 constructor(application: Application,
             rxSchedulersFacade: RxSchedulersFacade,
             private val gpsInfoRepository: GpsInfoRepository,
-            private val sharedPreferencesRepository: SharedPreferencesRepository):
+            private val sharedPreferencesRepository: SharedPreferencesRepository,
+            private val reposRepository: ReposRepository):
         BaseViewModel(application, rxSchedulersFacade){
 
     val location = MutableLiveData<UserLocation>()
     val mapType = MutableLiveData<Int>()
     val locationType = MutableLiveData<Int>()
+    val currentRepoLocationsList = MutableLiveData<MutableList<Location>>()
+    val repoIndexPairList = MutableLiveData<ArrayList<Pair<Int, String>>>()
+    val chosenRepoIndex = MutableLiveData<Int>()
+
+    private lateinit var repoDisposable: Disposable
 
     /**
      * Handle user changed map type
@@ -67,6 +77,75 @@ constructor(application: Application,
     private fun userLocationUpdate(data: UserLocation){
         location.postValue(data)
         loadingStatus.postValue(false)
+    }
+
+    /**
+     * Observe [ReposRepository] chosenRepositoryIndexStream
+     */
+    fun requestCurrentRepoLocationsUpdates(){
+        disposable.add(reposRepository.chosenRepositoryIndexStream
+                .observeOn(rxSchedulersFacade.io())
+                .subscribeOn(rxSchedulersFacade.io())
+                .subscribe(
+                        { result -> if(result != -1){
+                            observeRepo(result)
+                            chosenRepoIndex.postValue(result)
+                        }},
+                        { e -> Timber.e("Error observing chosenRepositoryIndexStream: %s",
+                                e.toString())}
+                ))
+    }
+
+    /**
+     * Observe [ReposRepository] reposListStream
+     * @index current repository index
+     */
+    fun observeRepo(index: Int){
+        if(::repoDisposable.isInitialized){
+            disposable.remove(repoDisposable)
+            repoDisposable.dispose()
+        }
+
+        repoDisposable = reposRepository.reposListStream
+                .observeOn(rxSchedulersFacade.io())
+                .subscribeOn(rxSchedulersFacade.io())
+                .subscribe(
+                        { result -> if(result[index] != null){
+                            currentRepoLocationsList.postValue(result[index]!!.locationsList)
+                        }},
+                        { e -> Timber.e("Error observing reposListStream: %s", e.toString())}
+                )
+    }
+
+    /**
+     * Request updates for repo spinner
+     */
+    fun requestRepoSpinnerUpdates() {
+        disposable.add(reposRepository.reposListStream
+                .subscribeOn(rxSchedulersFacade.io())
+                .observeOn(rxSchedulersFacade.io())
+                .subscribe(
+                        { repoIndexPairList.postValue(getReposIndexPair()) },
+                        { e -> Timber.e("Error observing reposListStream: %s", e.toString())}
+                ))
+    }
+
+    /**
+     * Return [ArrayList] of Index and [Repo] pairs
+     */
+    fun getReposIndexPair(): ArrayList<Pair<Int, String>> {
+        val repoIndexPair = arrayListOf<Pair<Int, String>>()
+
+        if(reposRepository.reposListStream.hasValue()){
+            for(i in 0 until reposRepository.reposListStream.value.size){
+                val currentRepo = reposRepository.reposListStream.value[i]
+                if(currentRepo != null) {
+                    repoIndexPair.add(Pair(i, currentRepo.name))
+                }
+            }
+        }
+
+        return repoIndexPair
     }
 
     /**

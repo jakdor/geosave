@@ -175,7 +175,7 @@ class GpsInfoRepository(private val context: Context,
      * Subscribe to [BehaviorSubject] stream
      */
     fun subscribe(observer: UserLocationObserver): Disposable{
-        return stream.subscribeOn(schedulers.computation()).subscribeWith(observer)
+        return stream.subscribeOn(schedulers.io()).subscribeWith(observer)
     }
 
     /**

@@ -36,6 +36,7 @@ constructor(application: Application,
     val locationType = MutableLiveData<Int>()
     val currentRepoLocationsList = MutableLiveData<MutableList<Location>>()
     val repoIndexPairList = MutableLiveData<ArrayList<Pair<Int, String>>>()
+    val chosenRepoIndex = MutableLiveData<Int>()
 
     private lateinit var repoDisposable: Disposable
 
@@ -86,7 +87,10 @@ constructor(application: Application,
                 .observeOn(rxSchedulersFacade.io())
                 .subscribeOn(rxSchedulersFacade.io())
                 .subscribe(
-                        { result -> if(result != -1) observeRepo(result) },
+                        { result -> if(result != -1){
+                            observeRepo(result)
+                            chosenRepoIndex.postValue(result)
+                        }},
                         { e -> Timber.e("Error observing chosenRepositoryIndexStream: %s",
                                 e.toString())}
                 ))
@@ -96,7 +100,7 @@ constructor(application: Application,
      * Observe [ReposRepository] reposListStream
      * @index current repository index
      */
-    private fun observeRepo(index: Int){
+    fun observeRepo(index: Int){
         if(::repoDisposable.isInitialized){
             disposable.remove(repoDisposable)
             repoDisposable.dispose()
@@ -121,7 +125,7 @@ constructor(application: Application,
                 .subscribeOn(rxSchedulersFacade.io())
                 .observeOn(rxSchedulersFacade.io())
                 .subscribe(
-                        { _ -> repoIndexPairList.postValue(getReposIndexPair()) },
+                        { repoIndexPairList.postValue(getReposIndexPair()) },
                         { e -> Timber.e("Error observing reposListStream: %s", e.toString())}
                 ))
     }

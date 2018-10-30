@@ -20,6 +20,8 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.FrameLayout
 import android.widget.Toast
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -59,6 +61,8 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback,
     private var locationFormat = 0
 
     private lateinit var markerLocationMap: MutableMap<Marker, Location>
+    private lateinit var indexRepoNamePair: ArrayList<Pair<Int, String>>
+    private var selectedRepoSpinnerIndex: Int = 0
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
@@ -84,7 +88,7 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback,
                             context, R.string.add_location_no_repos_toast, Toast.LENGTH_LONG).show()
                 }
             }
-            return@setOnTouchListener true
+            return@setOnTouchListener false
         }
 
         //resize map type icons to specific device dynamically
@@ -130,6 +134,7 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback,
         observeLocationType()
         observeCurrentRepoLocationsList()
         observeRepoIndexPairList()
+        observeChosenRepoIndex()
     }
 
     /**
@@ -265,9 +270,64 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback,
     /**
      * Handle new repoIndexPairList
      */
-    fun handleRepoIndexPairList(repoIndexList: ArrayList<Pair<Int, String>>){
-        //todo load repos spinner
-        Timber.i("Loaded mapFragment repo spinner")
+    fun handleRepoIndexPairList(indexRepoNamePair: ArrayList<Pair<Int, String>>){
+        this.indexRepoNamePair = indexRepoNamePair
+
+        if(!this.indexRepoNamePair.isEmpty() && context != null) {
+            val repoNames = mutableListOf<String>()
+            this.indexRepoNamePair.forEach {
+                repoNames.add(it.second)
+            }
+
+            val spinnerAdapter =
+                    ArrayAdapter<String>(context!!, android.R.layout.simple_spinner_item, repoNames)
+            spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            binding.mapRepoSpinner.adapter = spinnerAdapter
+
+            setRepoSpinnerSelection()
+
+            binding.mapRepoSpinner.onItemSelectedListener =
+                    object: AdapterView.OnItemSelectedListener {
+                        var spinnerInitFlag = true
+
+                        override fun onItemSelected(
+                                adapterView: AdapterView<*>, view: View, i: Int, l: Long){
+                            if(spinnerInitFlag) {
+                                spinnerInitFlag = false
+                            } else {
+                                viewModel?.observeRepo(indexRepoNamePair[i].first)
+                            }
+                        }
+
+                        override fun onNothingSelected(adapterView: AdapterView<*>) {
+                            return
+                        }
+                    }
+
+            Timber.i("Loaded mapFragment repo spinner")
+        }
+    }
+
+    private fun setRepoSpinnerSelection(){
+        for(i in 0 until this.indexRepoNamePair.size){
+            if(this.indexRepoNamePair[i].first == selectedRepoSpinnerIndex)
+                binding.mapRepoSpinner.setSelection(i)
+        }
+    }
+
+    /**
+     * Observe [MapViewModel] for updates on user chosen repo index
+     */
+    fun observeChosenRepoIndex(){
+        viewModel?.chosenRepoIndex?.observe(this, Observer { handleChosenRepoIndex(it) })
+    }
+
+    /**
+     * Handle new chosen repo index
+     */
+    fun handleChosenRepoIndex(index: Int){
+        selectedRepoSpinnerIndex = index
+        setRepoSpinnerSelection()
     }
 
     /**

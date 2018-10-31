@@ -69,14 +69,6 @@ class PreferencesFragment: PreferenceFragmentCompat(), InjectableFragment {
     }
 
     /**
-     * Notify other parts off app of possible preferences update
-     */
-    override fun onPause() {
-        super.onPause()
-        (activity as MainActivity).presenter.notifyPossiblePreferencesChange()
-    }
-
-    /**
      * Observe [PreferencesViewModel] hide preferences [MutableLiveData]
      */
     fun observeHidePreferences(){

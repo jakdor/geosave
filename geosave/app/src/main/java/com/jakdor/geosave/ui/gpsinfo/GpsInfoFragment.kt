@@ -84,6 +84,13 @@ class GpsInfoFragment: Fragment(), InjectableFragment {
     }
 
     /**
+     * Request preferences update after returning from preferences tab
+     */
+    fun requestPreferencesUpdate(){
+        viewModel?.requestPreferencesUpdate()
+    }
+
+    /**
      * Observe [GpsInfoViewModel] for updates on location [MutableLiveData] stream
      */
     fun observeUserLocation(){

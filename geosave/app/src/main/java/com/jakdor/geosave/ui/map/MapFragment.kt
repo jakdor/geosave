@@ -146,6 +146,13 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback,
     }
 
     /**
+     * Request preferences update after returning from preferences tab
+     */
+    fun requestPreferencesUpdate(){
+        viewModel?.loadPreferences()
+    }
+
+    /**
      * Observe [MapViewModel] for updates on location [MutableLiveData] stream
      */
     fun observeUserLocation(){

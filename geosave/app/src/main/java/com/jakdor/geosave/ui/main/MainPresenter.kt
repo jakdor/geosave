@@ -31,8 +31,8 @@ class MainPresenter(view: MainContract.MainView,
         BasePresenter<MainContract.MainView>(view),
         MainContract.MainPresenter{
 
-    private var currentTab = -1
-    private var backTab = -1
+    private var currentTab = TabType.NONE
+    private var backTab = TabType.NONE
 
     private var locationUpdates = false
     private var fallBackMode = false
@@ -56,15 +56,16 @@ class MainPresenter(view: MainContract.MainView,
      */
     override fun create() {
         super.create()
-        if(currentTab == -1) { //first load
+        if(currentTab == TabType.NONE) { //first load
             view?.switchToGpsInfoFragment()
-            currentTab = 0
+            currentTab = TabType.GPS_INFO
         } else { //presenter reattached after screen rotation
             when (currentTab) {
-                0 -> view?.switchToGpsInfoFragment()
-                1 -> view?.switchToMapFragment()
-                2 -> view?.switchToLocationsFragment()
-                3 -> view?.switchToPreferencesFragment()
+                TabType.GPS_INFO -> view?.switchToGpsInfoFragment()
+                TabType.MAP -> view?.switchToMapFragment()
+                TabType.LOCATIONS -> view?.switchToLocationsFragment()
+                TabType.PREFERENCES -> view?.switchToPreferencesFragment()
+                else -> {}
             }
         }
 
@@ -102,33 +103,45 @@ class MainPresenter(view: MainContract.MainView,
      * Gps info navigation icon clicked
      */
     override fun onGpsInfoTabClicked() {
-        if(currentTab != 0){
-            view?.switchToGpsInfoFragment()
-            currentTab = 0
+        if(currentTab == TabType.PREFERENCES){ //return from preferences tab
+            notifyPossiblePreferencesChange()
         }
-        backTab = -1
+
+        if(currentTab != TabType.GPS_INFO){
+            view?.switchToGpsInfoFragment()
+            currentTab = TabType.GPS_INFO
+        }
+        backTab = TabType.NONE
     }
 
     /**
      * Map navigation icon clicked
      */
     override fun onMapTabClicked() {
-        if(currentTab != 1){
-            view?.switchToMapFragment()
-            currentTab = 1
+        if(currentTab == TabType.PREFERENCES){ //return from preferences tab
+            notifyPossiblePreferencesChange()
         }
-        backTab = -1
+
+        if(currentTab != TabType.MAP){
+            view?.switchToMapFragment()
+            currentTab = TabType.MAP
+        }
+        backTab = TabType.NONE
     }
 
     /**
      * Locations navigation icon clicked
      */
     override fun onLocationsTabClicked() {
-        if(currentTab != 2){
-            view?.switchToLocationsFragment()
-            currentTab = 2
+        if(currentTab == TabType.PREFERENCES){ //return from preferences tab
+            notifyPossiblePreferencesChange()
         }
-        backTab = -1
+
+        if(currentTab != TabType.LOCATIONS){
+            view?.switchToLocationsFragment()
+            currentTab = TabType.LOCATIONS
+        }
+        backTab = TabType.NONE
     }
 
     /**
@@ -145,7 +158,8 @@ class MainPresenter(view: MainContract.MainView,
                     .subscribeOn(schedulersFacade.io())
                     .observeOn(schedulersFacade.ui())
                     .subscribe(
-                            { _ -> loadAddLocationDialogRepoSpinner()
+                            {
+                                loadAddLocationDialogRepoSpinner()
                                 disposable.clear()
                             },
                             { e -> e.printStackTrace() }
@@ -245,9 +259,9 @@ class MainPresenter(view: MainContract.MainView,
      * Preferences menu option clicked
      */
     override fun onPreferencesOptionClicked() {
-        if(currentTab != 3) {
+        if(currentTab != TabType.PREFERENCES) {
             backTab = currentTab
-            currentTab = 3
+            currentTab = TabType.PREFERENCES
             view?.switchToPreferencesFragment()
         }
     }
@@ -256,11 +270,12 @@ class MainPresenter(view: MainContract.MainView,
      * Get back to fragment id in backTab variable
      */
     override fun switchBackFromPreferenceFragment(): Boolean {
-        return if(backTab != -1) {
+        return if(backTab != TabType.NONE) {
             when (backTab) {
-                0 -> onGpsInfoTabClicked()
-                1 -> onMapTabClicked()
-                2 -> onLocationsTabClicked()
+                TabType.GPS_INFO -> onGpsInfoTabClicked()
+                TabType.MAP -> onMapTabClicked()
+                TabType.LOCATIONS -> onLocationsTabClicked()
+                else -> {}
             }
             true
         } else false
@@ -270,7 +285,7 @@ class MainPresenter(view: MainContract.MainView,
      * Share menu option clicked, format text to share and lunch intent
      */
     override fun onShareOptionClicked() {
-        if(currentTab == 1) {
+        if(currentTab == TabType.MAP) {
             view?.shareIntent(shareMessageFormatter.buildMapShare(gpsInfoRepository.lastLocation))
         } else {
             view?.shareIntent(shareMessageFormatter.buildGpsInfoShare(gpsInfoRepository.lastLocation))
@@ -409,10 +424,11 @@ class MainPresenter(view: MainContract.MainView,
     }
 
     /**
-     * Forward preferences changed event to [GpsInfoRepository]
+     * Forward preferences changed event to [GpsInfoRepository] and [MainActivity]
      */
     override fun notifyPossiblePreferencesChange() {
         gpsInfoRepository.checkForPreferencesChange()
+        view?.notifyPossiblePreferencesChange()
     }
 
     /**
@@ -451,5 +467,9 @@ class MainPresenter(view: MainContract.MainView,
      */
     override fun onCameraResult(file: File) {
         cameraRepository.onCameraResult(currentCameraRequestInfo.tag, file)
+    }
+
+    enum class TabType{
+        NONE, GPS_INFO, MAP, LOCATIONS, PREFERENCES
     }
 }

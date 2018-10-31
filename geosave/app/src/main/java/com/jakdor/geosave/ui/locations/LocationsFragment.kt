@@ -68,12 +68,10 @@ class LocationsFragment: Fragment(), InjectableFragment {
     /**
      * Handle new current fragment id received from [LocationsViewModel] currentFragmentId
      */
-    fun handleNewCurrentFragmentId(id: String?){
-        if(id != null){
-            when(id){
-                ReposBrowserFragment.CLASS_TAG -> switchToReposBrowserFragement()
-                RepoFragment.CLASS_TAG -> switchToRepoFragment()
-            }
+    fun handleNewCurrentFragmentId(id: String){
+        when (id) {
+            ReposBrowserFragment.CLASS_TAG -> switchToReposBrowserFragement()
+            RepoFragment.CLASS_TAG -> switchToRepoFragment()
         }
     }
 

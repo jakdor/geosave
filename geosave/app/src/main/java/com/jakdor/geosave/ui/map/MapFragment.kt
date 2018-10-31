@@ -157,31 +157,29 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback,
     /**
      * Handle new [UserLocation] object
      */
-    fun handleUserLocation(location: UserLocation?) {
-        if(location != null) {
-            if(!initCamZoom) {
-                map?.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                        LatLng(location.latitude, location.longitude), DEFAULT_ZOOM))
-                initCamZoom = true
-            }
+    fun handleUserLocation(location: UserLocation) {
+        if(!initCamZoom) {
+            map?.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                    LatLng(location.latitude, location.longitude), DEFAULT_ZOOM))
+            initCamZoom = true
+        }
 
-            when(locationFormat){
-                0 -> { //decimal
-                    map_location_text_view.text =
-                            LocationConverter.decimalFormat(location.latitude, location.longitude)
-                }
-                1 -> { //sexigesimal
-                    map_location_text_view.text =
-                            LocationConverter.dmsFormat(location.latitude, location.longitude)
-                }
-                2 -> { //decimal degrees
-                    map_location_text_view.text =
-                            LocationConverter.decimalDegreesFormat(location.latitude, location.longitude)
-                }
-                3 -> { //degrees decimal minutes
-                    map_location_text_view.text =
-                            LocationConverter.dmFormat(location.latitude, location.longitude)
-                }
+        when(locationFormat){
+            0 -> { //decimal
+                map_location_text_view.text =
+                        LocationConverter.decimalFormat(location.latitude, location.longitude)
+            }
+            1 -> { //sexigesimal
+                map_location_text_view.text =
+                        LocationConverter.dmsFormat(location.latitude, location.longitude)
+            }
+            2 -> { //decimal degrees
+                map_location_text_view.text =
+                        LocationConverter.decimalDegreesFormat(location.latitude, location.longitude)
+            }
+            3 -> { //degrees decimal minutes
+                map_location_text_view.text =
+                        LocationConverter.dmFormat(location.latitude, location.longitude)
             }
         }
     }
@@ -222,8 +220,8 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback,
     /**
      * Save location format in local variable
      */
-    fun handleLocationTypeChange(format: Int?){
-        if(format != null) this.locationFormat = format
+    fun handleLocationTypeChange(format: Int){
+        this.locationFormat = format
     }
 
     /**

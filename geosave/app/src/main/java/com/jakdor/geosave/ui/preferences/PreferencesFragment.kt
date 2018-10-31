@@ -86,6 +86,19 @@ class PreferencesFragment: PreferenceFragmentCompat(), InjectableFragment {
     }
 
     /**
+     * Handle request to hide preferences
+     */
+    fun handleHidePreferences(hideList: List<String>){
+        signInLogin.isVisible = true
+        logout.isVisible = true
+        deleteAccount.isVisible = true
+
+        hideList.forEach {
+            s: String -> findPreference(s).isVisible = false
+        }
+    }
+
+    /**
      * Observe [PreferencesViewModel] account option [MutableLiveData]
      */
     fun observeAccountOption(){
@@ -95,47 +108,30 @@ class PreferencesFragment: PreferenceFragmentCompat(), InjectableFragment {
     }
 
     /**
-     * Handle request to hide preferences
-     */
-    fun handleHidePreferences(hideList: List<String>?){
-        if(hideList != null){
-            signInLogin.isVisible = true
-            logout.isVisible = true
-            deleteAccount.isVisible = true
-
-            hideList.forEach {
-                s: String -> findPreference(s).isVisible = false
-            }
-        }
-    }
-
-    /**
      * Handle user picked account option preference
      */
-    fun handleAccountOption(option: Int?){
-        if(option != null){
-            when(option){
-                0 -> { //discard preferences fragment and lunch sign-in/login intent
-                    (activity as MainActivity).presenter.onGpsInfoTabClicked()
-                    (activity as MainActivity).firebaseSignInIntent()
-                }
-                1 -> { //display logout toast
-                    Toast.makeText(activity,
-                            R.string.preferences_logged_out_toast,
-                            Toast.LENGTH_SHORT).show()
-                }
-                2 -> { //show account delete confirmation dialog
-                    AlertDialog.Builder(context)
-                            .setMessage(R.string.preferences_delete_account_dialog_message)
-                            .setPositiveButton(R.string.preferences_delete_account_dialog_yes,
-                                    deleteAccountDialogListener)
-                            .setNegativeButton(R.string.preferences_delete_account_dialog_no,
-                                    deleteAccountDialogListener)
-                            .show()
-                }
+    fun handleAccountOption(option: Int){
+        when(option){
+            0 -> { //discard preferences fragment and lunch sign-in/login intent
+                (activity as MainActivity).presenter.onGpsInfoTabClicked()
+                (activity as MainActivity).firebaseSignInIntent()
             }
-            viewModel?.accountOption?.value = null
+            1 -> { //display logout toast
+                Toast.makeText(activity,
+                        R.string.preferences_logged_out_toast,
+                        Toast.LENGTH_SHORT).show()
+            }
+            2 -> { //show account delete confirmation dialog
+                AlertDialog.Builder(context)
+                        .setMessage(R.string.preferences_delete_account_dialog_message)
+                        .setPositiveButton(R.string.preferences_delete_account_dialog_yes,
+                                deleteAccountDialogListener)
+                        .setNegativeButton(R.string.preferences_delete_account_dialog_no,
+                                deleteAccountDialogListener)
+                        .show()
+            }
         }
+        viewModel?.accountOption?.value = null
     }
 
     /**

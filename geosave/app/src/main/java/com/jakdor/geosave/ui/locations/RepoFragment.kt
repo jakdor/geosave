@@ -105,8 +105,8 @@ class RepoFragment: Fragment(), InjectableFragment {
     /**
      * Update view with new [Repo] object and info about ownership
      */
-    fun handleNewRepoIsOwnerPair(repoIsOwnerPair: Pair<Repo?, Boolean>?){
-        if(repoIsOwnerPair?.first != null){
+    fun handleNewRepoIsOwnerPair(repoIsOwnerPair: Pair<Repo?, Boolean>){
+        if(repoIsOwnerPair.first != null){
             val repo = repoIsOwnerPair.first
             binding.repo = repo
 
@@ -157,54 +157,52 @@ class RepoFragment: Fragment(), InjectableFragment {
     /**
      * Load received contributors pic urls onto ImageViews
      */
-    fun handleContributorPicUrl(url: String?){
-        if(url != null){
-            val imageView = when(loadedPics){
-                0 -> binding.repoContributorsIcon1
-                1 -> binding.repoContributorsIcon2
-                2 -> binding.repoContributorsIcon3
-                else -> binding.repoContributorsIcon1
-            }
-
-            if(url.isNotEmpty() && url != "null") {
-                GlideApp.with(binding.root)
-                        .load(url)
-                        .apply(RequestOptions()
-                                .placeholder(R.drawable.repo_icon_placeholder)
-                                .error(R.drawable.repo_icon_placeholder)
-                                .centerCrop()
-                                .circleCrop())
-                        .listener(object : RequestListener<Drawable> {
-                            override fun onLoadFailed(e: GlideException?, model: Any?,
-                                                      target: Target<Drawable>?,
-                                                      isFirstResource: Boolean): Boolean {
-                                imageView.visibility = View.VISIBLE
-                                return false
-                            }
-
-                            override fun onResourceReady(resource: Drawable?, model: Any?,
-                                                         target: Target<Drawable>?,
-                                                         dataSource: DataSource?,
-                                                         isFirstResource: Boolean): Boolean {
-                                imageView.visibility = View.VISIBLE
-                                return false
-                            }
-                        })
-                        .into(imageView)
-            } else {
-                GlideApp.with(binding.root)
-                        .load(R.drawable.repo_icon_placeholder)
-                        .apply(RequestOptions()
-                                .centerCrop()
-                                .circleCrop())
-                        .into(imageView)
-                imageView.visibility = View.VISIBLE
-            }
-
-            ++loadedPics
-
-            Timber.i("Loaded %d contributor pic", loadedPics)
+    fun handleContributorPicUrl(url: String){
+        val imageView = when (loadedPics) {
+            0 -> binding.repoContributorsIcon1
+            1 -> binding.repoContributorsIcon2
+            2 -> binding.repoContributorsIcon3
+            else -> binding.repoContributorsIcon1
         }
+
+        if (url.isNotEmpty() && url != "null") {
+            GlideApp.with(binding.root)
+                    .load(url)
+                    .apply(RequestOptions()
+                            .placeholder(R.drawable.repo_icon_placeholder)
+                            .error(R.drawable.repo_icon_placeholder)
+                            .centerCrop()
+                            .circleCrop())
+                    .listener(object : RequestListener<Drawable> {
+                        override fun onLoadFailed(e: GlideException?, model: Any?,
+                                                  target: Target<Drawable>?,
+                                                  isFirstResource: Boolean): Boolean {
+                            imageView.visibility = View.VISIBLE
+                            return false
+                        }
+
+                        override fun onResourceReady(resource: Drawable?, model: Any?,
+                                                     target: Target<Drawable>?,
+                                                     dataSource: DataSource?,
+                                                     isFirstResource: Boolean): Boolean {
+                            imageView.visibility = View.VISIBLE
+                            return false
+                        }
+                    })
+                    .into(imageView)
+        } else {
+            GlideApp.with(binding.root)
+                    .load(R.drawable.repo_icon_placeholder)
+                    .apply(RequestOptions()
+                            .centerCrop()
+                            .circleCrop())
+                    .into(imageView)
+            imageView.visibility = View.VISIBLE
+        }
+
+        ++loadedPics
+
+        Timber.i("Loaded %d contributor pic", loadedPics)
     }
 
     fun observeDialogLunchRequest(){
@@ -214,14 +212,12 @@ class RepoFragment: Fragment(), InjectableFragment {
     /**
      * Lunch dialog after receiving lunch request from viewModel
      */
-    fun handleDialogLunchRequest(request: DialogRequest?){
-        if(request != null){
-           when(request){
-               DialogRequest.ADD_IMAGE -> lunchAddImageDialog()
-               DialogRequest.ALL -> {}
-               DialogRequest.NONE -> {}
-               DialogRequest.ADD_IMAGE_NO_NET -> {}
-           }
+    fun handleDialogLunchRequest(request: DialogRequest){
+        when (request) {
+            DialogRequest.ADD_IMAGE -> lunchAddImageDialog()
+            DialogRequest.ALL -> {}
+            DialogRequest.NONE -> {}
+            DialogRequest.ADD_IMAGE_NO_NET -> {}
         }
     }
 
@@ -234,25 +230,23 @@ class RepoFragment: Fragment(), InjectableFragment {
     /**
      * Dismiss dialog/s
      */
-    fun handleDialogDismissRequest(dialogRequest: DialogRequest?){
-        if(dialogRequest != null){
-            when(dialogRequest){
-                DialogRequest.ADD_IMAGE -> {
-                    if(::addImageDialog.isInitialized && addImageDialog.isShowing)
-                        addImageDialog.dismiss()
-                }
-                DialogRequest.ADD_IMAGE_NO_NET -> {
-                    if(::addImageDialog.isInitialized && addImageDialog.isShowing)
-                        addImageDialog.dismiss()
-                    Toast.makeText(context, getString(R.string.add_image_dialog_no_network_toast),
-                            Toast.LENGTH_LONG).show()
-                }
-                DialogRequest.ALL -> {
-                    if(::addImageDialog.isInitialized && addImageDialog.isShowing)
-                        addImageDialog.dismiss()
-                }
-                DialogRequest.NONE -> {}
+    fun handleDialogDismissRequest(dialogRequest: DialogRequest){
+        when (dialogRequest) {
+            DialogRequest.ADD_IMAGE -> {
+                if (::addImageDialog.isInitialized && addImageDialog.isShowing)
+                    addImageDialog.dismiss()
             }
+            DialogRequest.ADD_IMAGE_NO_NET -> {
+                if (::addImageDialog.isInitialized && addImageDialog.isShowing)
+                    addImageDialog.dismiss()
+                Toast.makeText(context, getString(R.string.add_image_dialog_no_network_toast),
+                        Toast.LENGTH_LONG).show()
+            }
+            DialogRequest.ALL -> {
+                if (::addImageDialog.isInitialized && addImageDialog.isShowing)
+                    addImageDialog.dismiss()
+            }
+            DialogRequest.NONE -> {}
         }
     }
 
@@ -265,11 +259,9 @@ class RepoFragment: Fragment(), InjectableFragment {
     /**
      * Forward loading status to dialog/s
      */
-    fun handleNewDailogLoadinStatus(status: Boolean?) {
-        if(status != null){
-            if(::addImageDialog.isInitialized){
-                addImageDialog.dialogLoadingStatus(status)
-            }
+    fun handleNewDailogLoadinStatus(status: Boolean) {
+        if (::addImageDialog.isInitialized) {
+            addImageDialog.dialogLoadingStatus(status)
         }
     }
 
@@ -282,11 +274,9 @@ class RepoFragment: Fragment(), InjectableFragment {
     /**
      * Forward picture file to [AddImageDialog]
      */
-    fun handleDialogAddImagePicFile(picFile: File?){
-        if(picFile != null) {
-            if(::addImageDialog.isInitialized){
-                addImageDialog.loadPreviewImageView(picFile)
-            }
+    fun handleDialogAddImagePicFile(picFile: File){
+        if (::addImageDialog.isInitialized) {
+            addImageDialog.loadPreviewImageView(picFile)
         }
     }
 

@@ -218,16 +218,14 @@ class GpsInfoFragment: Fragment(), InjectableFragment {
      * Set null value to clipboardCopyQueue [MutableLiveData] to prevent re-handling after
      * screen rotation
      */
-    fun handleClipboardCopy(text: String?){
-        if(text != null) {
-            val clipboard = activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clip = ClipData.newPlainText(getString(R.string.clipboard_label), text)
-            clipboard.primaryClip = clip
+    fun handleClipboardCopy(text: String){
+        val clipboard = activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText(getString(R.string.clipboard_label), text)
+        clipboard.primaryClip = clip
 
-            Toast.makeText(activity, getString(R.string.clipboard_toast), Toast.LENGTH_SHORT).show()
+        Toast.makeText(activity, getString(R.string.clipboard_toast), Toast.LENGTH_SHORT).show()
 
-            viewModel?.clipboardCopyQueue?.value = null
-        }
+        viewModel?.clipboardCopyQueue?.value = null
     }
 
     /**
@@ -242,10 +240,8 @@ class GpsInfoFragment: Fragment(), InjectableFragment {
     /**
      * Store preferences update values locally
      */
-    fun handlePreferencesMap(map: MutableMap<String, Int>?){
-        if(map != null){
-            this.preferencesMap = map
-        }
+    fun handlePreferencesMap(map: MutableMap<String, Int>){
+        this.preferencesMap = map
     }
 
     companion object {

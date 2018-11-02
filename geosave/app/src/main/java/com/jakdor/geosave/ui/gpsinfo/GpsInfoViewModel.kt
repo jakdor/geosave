@@ -30,7 +30,7 @@ constructor(application: Application,
         BaseViewModel(application, rxSchedulersFacade){
 
     val location = MutableLiveData<UserLocation>()
-    val clipboardCopyQueue = MutableLiveData<String>()
+    val clipboardCopyQueue = MutableLiveData<String?>()
     val preferences = MutableLiveData<MutableMap<String, Int>>()
 
     /**

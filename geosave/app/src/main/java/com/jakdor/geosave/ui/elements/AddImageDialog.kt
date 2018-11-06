@@ -111,11 +111,19 @@ class AddImageDialog(context: Context): Dialog(context, R.style.FullscreenDialog
                     dialog_add_image_loading_anim.visibility = View.VISIBLE
                     dialog_add_image_cancel_button.visibility = View.GONE
                     animateLoading()
+
+                    dialog_add_image_camera_button.isEnabled = false
+                    dialog_add_image_browse_button.isEnabled = false
+                    dialog_add_image_browse_files_button.isEnabled = false
                 }
                 false -> {
                     setCancelable(true)
                     dialog_add_image_loading_anim.visibility = View.GONE
                     dialog_add_image_cancel_button.visibility = View.VISIBLE
+
+                    dialog_add_image_camera_button.isEnabled = true
+                    dialog_add_image_browse_button.isEnabled = true
+                    dialog_add_image_browse_files_button.isEnabled = true
                 }
             }
         }

@@ -98,11 +98,19 @@ class AddLocationDialog(context: Context) : Dialog(context, R.style.FullscreenDi
                 dialog_add_location_loading_anim.visibility = View.VISIBLE
                 dialog_add_location_cancel_button.visibility = View.GONE
                 animateLoading(dialog_add_location_loading_anim)
+
+                dialog_add_location_repo_spinner.isEnabled = false
+                dialog_add_location_name.isEnabled = false
+                dialog_add_location_info.isEnabled = false
             }
             false -> {
                 setCancelable(true)
                 dialog_add_location_loading_anim.visibility = View.GONE
                 dialog_add_location_cancel_button.visibility = View.VISIBLE
+
+                dialog_add_location_repo_spinner.isEnabled = true
+                dialog_add_location_name.isEnabled = true
+                dialog_add_location_info.isEnabled = true
             }
         }
     }

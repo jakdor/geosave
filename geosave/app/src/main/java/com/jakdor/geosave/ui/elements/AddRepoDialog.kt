@@ -58,11 +58,25 @@ class AddRepoDialog(context: Context): Dialog(context, R.style.FullscreenDialog)
                     dialog_add_repo_loading_anim.visibility = View.VISIBLE
                     dialog_add_repo_cancel_button.visibility = View.GONE
                     animateLoading()
+
+                    dialog_add_repo_name.isEnabled = false
+                    dialog_add_repo_info.isEnabled = false
+                    dialog_add_repo_radio_privacy_private.isEnabled = false
+                    dialog_add_repo_radio_privacy_public.isEnabled = false
+                    dialog_add_repo_radio_security_selected.isEnabled = false
+                    dialog_add_repo_radio_security_everyone.isEnabled = false
                 }
                 false -> {
                     setCancelable(true)
                     dialog_add_repo_loading_anim.visibility = View.GONE
                     dialog_add_repo_cancel_button.visibility = View.VISIBLE
+
+                    dialog_add_repo_name.isEnabled = true
+                    dialog_add_repo_info.isEnabled = true
+                    dialog_add_repo_radio_privacy_private.isEnabled = true
+                    dialog_add_repo_radio_privacy_public.isEnabled = true
+                    dialog_add_repo_radio_security_selected.isEnabled = true
+                    dialog_add_repo_radio_security_everyone.isEnabled = true
                 }
             }
         }

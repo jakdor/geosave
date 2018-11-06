@@ -311,6 +311,16 @@ class MainActivity : AppCompatActivity(),
     }
 
     /**
+     * Forward possible preference change event to fragments
+     */
+    override fun notifyPossiblePreferencesChange() {
+        if (fragmentMap.containsKey(GpsInfoFragment.CLASS_TAG))
+            (fragmentMap[GpsInfoFragment.CLASS_TAG] as GpsInfoFragment).requestPreferencesUpdate()
+        if (fragmentMap.containsKey(MapFragment.CLASS_TAG))
+            (fragmentMap[MapFragment.CLASS_TAG] as MapFragment).requestPreferencesUpdate()
+    }
+
+    /**
      * Display toast with provided resource string id
      */
     override fun displayToast(strId: Int) {

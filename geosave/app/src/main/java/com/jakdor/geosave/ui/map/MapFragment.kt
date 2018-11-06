@@ -17,17 +17,24 @@ import androidx.databinding.DataBindingUtil
 import android.os.Bundle
 import androidx.interpolator.view.animation.FastOutLinearInInterpolator
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.FrameLayout
+import android.widget.Toast
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
 import com.jakdor.geosave.R
 import com.jakdor.geosave.common.model.UserLocation
+import com.jakdor.geosave.common.model.firebase.Location
 import com.jakdor.geosave.common.repository.LocationConverter
 import com.jakdor.geosave.databinding.FragmentMapOverlayBinding
 import com.jakdor.geosave.di.InjectableFragment
@@ -39,7 +46,8 @@ import javax.inject.Inject
 /**
  * Fragment displaying google map with user position and locations
  */
-class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment { //todo investigate screen rotation memory leak from maps api
+class MapFragment: SupportMapFragment(), OnMapReadyCallback,
+        GoogleMap.OnMarkerClickListener, InjectableFragment { //todo investigate screen rotation memory leak from maps api
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -51,6 +59,10 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
 
     private var initCamZoom = false
     private var locationFormat = 0
+
+    private lateinit var markerLocationMap: MutableMap<Marker, Location>
+    private lateinit var indexRepoNamePair: ArrayList<Pair<Int, String>>
+    private var selectedRepoSpinnerIndex: Int = 0
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
@@ -64,6 +76,20 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
 
         binding.mapTypePopup.mapTypeCard.visibility = View.GONE
         binding.mapTypeFab.setOnClickListener { onMapTypeFabClicked() }
+
+        binding.mapRepoSpinner.setOnTouchListener { _, motionEvent ->
+            if(motionEvent.action == MotionEvent.ACTION_UP){
+                if(binding.mapRepoSpinner.adapter == null){
+                    Toast.makeText(
+                            context, R.string.loading_repos_toast, Toast.LENGTH_SHORT).show()
+                }
+                else if(binding.mapRepoSpinner.adapter.isEmpty){
+                    Toast.makeText(
+                            context, R.string.add_location_no_repos_toast, Toast.LENGTH_LONG).show()
+                }
+            }
+            return@setOnTouchListener false
+        }
 
         //resize map type icons to specific device dynamically
         GlideApp.with(this)
@@ -101,9 +127,14 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
         binding.viewModel = viewModel
         viewModel?.requestUserLocationUpdates()
         viewModel?.loadPreferences()
+        viewModel?.requestCurrentRepoLocationsUpdates()
+        viewModel?.requestRepoSpinnerUpdates()
         observeUserLocation()
         observeMapType()
         observeLocationType()
+        observeCurrentRepoLocationsList()
+        observeRepoIndexPairList()
+        observeChosenRepoIndex()
     }
 
     /**
@@ -111,6 +142,13 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
      */
     override fun onResume() {
         super.onResume()
+        viewModel?.loadPreferences()
+    }
+
+    /**
+     * Request preferences update after returning from preferences tab
+     */
+    fun requestPreferencesUpdate(){
         viewModel?.loadPreferences()
     }
 
@@ -126,31 +164,29 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
     /**
      * Handle new [UserLocation] object
      */
-    fun handleUserLocation(location: UserLocation?) {
-        if(location != null) {
-            if(!initCamZoom) {
-                map?.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                        LatLng(location.latitude, location.longitude), DEFAULT_ZOOM))
-                initCamZoom = true
-            }
+    fun handleUserLocation(location: UserLocation) {
+        if(!initCamZoom) {
+            map?.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                    LatLng(location.latitude, location.longitude), DEFAULT_ZOOM))
+            initCamZoom = true
+        }
 
-            when(locationFormat){
-                0 -> { //decimal
-                    map_location_text_view.text =
-                            LocationConverter.decimalFormat(location.latitude, location.longitude)
-                }
-                1 -> { //sexigesimal
-                    map_location_text_view.text =
-                            LocationConverter.dmsFormat(location.latitude, location.longitude)
-                }
-                2 -> { //decimal degrees
-                    map_location_text_view.text =
-                            LocationConverter.decimalDegreesFormat(location.latitude, location.longitude)
-                }
-                3 -> { //degrees decimal minutes
-                    map_location_text_view.text =
-                            LocationConverter.dmFormat(location.latitude, location.longitude)
-                }
+        when(locationFormat){
+            0 -> { //decimal
+                map_location_text_view.text =
+                        LocationConverter.decimalFormat(location.latitude, location.longitude)
+            }
+            1 -> { //sexigesimal
+                map_location_text_view.text =
+                        LocationConverter.dmsFormat(location.latitude, location.longitude)
+            }
+            2 -> { //decimal degrees
+                map_location_text_view.text =
+                        LocationConverter.decimalDegreesFormat(location.latitude, location.longitude)
+            }
+            3 -> { //degrees decimal minutes
+                map_location_text_view.text =
+                        LocationConverter.dmFormat(location.latitude, location.longitude)
             }
         }
     }
@@ -191,8 +227,112 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
     /**
      * Save location format in local variable
      */
-    fun handleLocationTypeChange(format: Int?){
-        if(format != null) this.locationFormat = format
+    fun handleLocationTypeChange(format: Int){
+        this.locationFormat = format
+    }
+
+    /**
+     * Observe [MapViewModel] for updates on current chosen repo [Location] lists
+     */
+    fun observeCurrentRepoLocationsList(){
+        viewModel?.currentRepoLocationsList?.observe(this, Observer {
+            handleCurrentRepoLocationsList(it)
+        })
+    }
+
+    /**
+     * Handle new [Location] list
+     */
+    fun handleCurrentRepoLocationsList(locations: MutableList<Location>){
+        map?.clear()
+        if(::markerLocationMap.isInitialized) markerLocationMap.clear()
+        markerLocationMap = mutableMapOf()
+        locations.forEach {
+            addMapMarker(it)
+        }
+    }
+
+    /**
+     * Add map marker from [Location] obj
+     */
+    fun addMapMarker(location: Location){
+        val latLng2 = LatLng(location.latitude, location.longitude)
+        val markerBuilder = MarkerOptions()
+                .position(latLng2)
+                .title(location.name)
+        if(map != null) {
+            markerLocationMap[map!!.addMarker(markerBuilder)] = location
+        }
+    }
+
+    /**
+     * Observe [MapViewModel] for updates on repoIndexPairList
+     */
+    fun observeRepoIndexPairList(){
+        viewModel?.repoIndexPairList?.observe(this, Observer { handleRepoIndexPairList(it) })
+    }
+
+    /**
+     * Handle new repoIndexPairList
+     */
+    fun handleRepoIndexPairList(indexRepoNamePair: ArrayList<Pair<Int, String>>){
+        this.indexRepoNamePair = indexRepoNamePair
+
+        if(!this.indexRepoNamePair.isEmpty() && context != null) {
+            val repoNames = mutableListOf<String>()
+            this.indexRepoNamePair.forEach {
+                repoNames.add(it.second)
+            }
+
+            val spinnerAdapter =
+                    ArrayAdapter<String>(context!!, android.R.layout.simple_spinner_item, repoNames)
+            spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            binding.mapRepoSpinner.adapter = spinnerAdapter
+
+            setRepoSpinnerSelection()
+
+            binding.mapRepoSpinner.onItemSelectedListener =
+                    object: AdapterView.OnItemSelectedListener {
+                        var spinnerInitFlag = true
+
+                        override fun onItemSelected(
+                                adapterView: AdapterView<*>, view: View, i: Int, l: Long){
+                            if(spinnerInitFlag) {
+                                spinnerInitFlag = false
+                            } else {
+                                viewModel?.observeRepo(indexRepoNamePair[i].first)
+                            }
+                        }
+
+                        override fun onNothingSelected(adapterView: AdapterView<*>) {
+                            return
+                        }
+                    }
+
+            Timber.i("Loaded mapFragment repo spinner")
+        }
+    }
+
+    private fun setRepoSpinnerSelection(){
+        for(i in 0 until this.indexRepoNamePair.size){
+            if(this.indexRepoNamePair[i].first == selectedRepoSpinnerIndex)
+                binding.mapRepoSpinner.setSelection(i)
+        }
+    }
+
+    /**
+     * Observe [MapViewModel] for updates on user chosen repo index
+     */
+    fun observeChosenRepoIndex(){
+        viewModel?.chosenRepoIndex?.observe(this, Observer { handleChosenRepoIndex(it) })
+    }
+
+    /**
+     * Handle new chosen repo index
+     */
+    fun handleChosenRepoIndex(index: Int){
+        selectedRepoSpinnerIndex = index
+        setRepoSpinnerSelection()
     }
 
     /**
@@ -212,6 +352,7 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
         map?.setOnMapClickListener { onMapInteraction() }
         map?.setOnMapLongClickListener { onMapInteraction() }
         map?.setOnCameraMoveListener { onMapInteraction() }
+        map?.setOnMarkerClickListener(this)
 
         //restore map type
         handleMapTypeChange(viewModel?.mapType?.value)
@@ -221,6 +362,15 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
         } catch (e: SecurityException){
             Timber.wtf("SecurityException thrown, location permission: %s", e.toString())
         }
+    }
+
+    /**
+     * Handle click on marker
+     */
+    override fun onMarkerClick(p0: Marker?): Boolean {
+        val location = markerLocationMap[p0]
+        Timber.i("clicked on marker: %s", location.toString())
+        return false
     }
 
     override fun onDestroyView() {
@@ -239,7 +389,7 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback, InjectableFragment 
         binding.mapTypePopup.mapTypeLayout.visibility = View.GONE
 
         binding.mapTypePopup.mapTypeCard.translationY = 50.0f
-        binding.mapTypePopup.mapTypeCard.translationX = 100.0f
+        binding.mapTypePopup.mapTypeCard.translationX = -100.0f
         binding.mapTypePopup.mapTypeCard.scaleX = 0.75f
         binding.mapTypePopup.mapTypeCard.scaleY = 0.75f
         binding.mapTypePopup.mapTypeCard.alpha = 0.0f

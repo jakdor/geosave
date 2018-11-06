@@ -84,6 +84,13 @@ class GpsInfoFragment: Fragment(), InjectableFragment {
     }
 
     /**
+     * Request preferences update after returning from preferences tab
+     */
+    fun requestPreferencesUpdate(){
+        viewModel?.requestPreferencesUpdate()
+    }
+
+    /**
      * Observe [GpsInfoViewModel] for updates on location [MutableLiveData] stream
      */
     fun observeUserLocation(){
@@ -226,7 +233,7 @@ class GpsInfoFragment: Fragment(), InjectableFragment {
 
             Toast.makeText(activity, getString(R.string.clipboard_toast), Toast.LENGTH_SHORT).show()
 
-            viewModel?.clipboardCopyQueue?.value = null
+            viewModel?.clipboardCopyQueue?.postValue(null)
         }
     }
 
@@ -242,10 +249,8 @@ class GpsInfoFragment: Fragment(), InjectableFragment {
     /**
      * Store preferences update values locally
      */
-    fun handlePreferencesMap(map: MutableMap<String, Int>?){
-        if(map != null){
-            this.preferencesMap = map
-        }
+    fun handlePreferencesMap(map: MutableMap<String, Int>){
+        this.preferencesMap = map
     }
 
     companion object {

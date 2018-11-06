@@ -100,15 +100,13 @@ class ReposBrowserFragment: Fragment(), InjectableFragment {
     /**
      * Handle dialog lunch code
      */
-    fun handleDialogLunchRequest(code: DialogRequest?){
-        if(code != null){
-            repos_fab_menu.collapse()
-            when(code){
-                ReposBrowserFragment.DialogRequest.CREATE_NEW -> lunchAddRepoDialog()
-                ReposBrowserFragment.DialogRequest.BROWSE_PUBLIC -> {}
-                ReposBrowserFragment.DialogRequest.JOIN_PRIVATE -> {}
-                else -> {}
-            }
+    fun handleDialogLunchRequest(code: DialogRequest){
+        repos_fab_menu.collapse()
+        when(code){
+            ReposBrowserFragment.DialogRequest.CREATE_NEW -> lunchAddRepoDialog()
+            ReposBrowserFragment.DialogRequest.BROWSE_PUBLIC -> {}
+            ReposBrowserFragment.DialogRequest.JOIN_PRIVATE -> {}
+            else -> {}
         }
     }
 
@@ -140,6 +138,20 @@ class ReposBrowserFragment: Fragment(), InjectableFragment {
     }
 
     /**
+     * Handle loadingStatus
+     */
+    fun handleLoadingStatus(status: Boolean){
+        when(status){
+            true -> {
+                repos_swipe_refresh.isRefreshing = true
+                repos_no_repo_message.visibility = View.GONE
+                repos_recycler_view.visibility = View.VISIBLE
+            }
+            false -> repos_swipe_refresh.isRefreshing = false
+        }
+    }
+
+    /**
      * Observe [ReposBrowserViewModel] dialogLoadingStatus
      */
     fun observeDialogLoadingStatus(){
@@ -148,11 +160,12 @@ class ReposBrowserFragment: Fragment(), InjectableFragment {
         })
     }
 
-    fun handleNewDailogLoadinStatus(status: Boolean?) {
-        if(status != null){
-            if(::addRepoDialog.isInitialized){
-                addRepoDialog.handleNewDialogLoadingStatus(status)
-            }
+    /**
+     * Handle new Dialog loading status
+     */
+    fun handleNewDailogLoadinStatus(status: Boolean) {
+        if(::addRepoDialog.isInitialized){
+            addRepoDialog.handleNewDialogLoadingStatus(status)
         }
     }
 
@@ -168,26 +181,10 @@ class ReposBrowserFragment: Fragment(), InjectableFragment {
     /**
      * Handle new dismissDialogRequest value
      */
-    fun handleNewDismissDialogRequestValue(dialogCode: DialogRequest?){
-        if(dialogCode != null){
-            if(dialogCode == DialogRequest.CREATE_NEW || dialogCode == DialogRequest.ALL)
-                if(::addRepoDialog.isInitialized && addRepoDialog.isShowing) addRepoDialog.dismiss()
+    fun handleNewDismissDialogRequestValue(dialogCode: DialogRequest){
+        if(dialogCode == DialogRequest.CREATE_NEW || dialogCode == DialogRequest.ALL) {
+            if (::addRepoDialog.isInitialized && addRepoDialog.isShowing) addRepoDialog.dismiss()
         }
-    }
-
-    /**
-     * Handle loadingStatus
-     */
-    fun handleLoadingStatus(status: Boolean?){
-        if(status != null)
-            when(status){
-                true -> {
-                    repos_swipe_refresh.isRefreshing = true
-                    repos_no_repo_message.visibility = View.GONE
-                    repos_recycler_view.visibility = View.VISIBLE
-                }
-                false -> repos_swipe_refresh.isRefreshing = false
-            }
     }
 
     /**
@@ -200,9 +197,9 @@ class ReposBrowserFragment: Fragment(), InjectableFragment {
     /**
      * Handle new reposList update
      */
-    fun handleReposList(repos: MutableList<Repo?>?){
-        if(repos != null && !recyclerViewInit) loadRecyclerView(repos)
-        else if(repos != null && recyclerViewInit) updateRecyclerView(repos)
+    fun handleReposList(repos: MutableList<Repo?>){
+        if(!recyclerViewInit) loadRecyclerView(repos)
+        else if(recyclerViewInit) updateRecyclerView(repos)
     }
 
     /**
@@ -215,8 +212,8 @@ class ReposBrowserFragment: Fragment(), InjectableFragment {
     /**
      * Display toast message
      */
-    fun displayToast(msg: String?){
-        if(msg != null) Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
+    fun displayToast(msg: String){
+        Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
     }
 
     /**

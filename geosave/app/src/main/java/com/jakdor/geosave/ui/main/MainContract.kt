@@ -24,6 +24,8 @@ interface MainContract {
         fun switchToLocationsFragment()
         fun switchToPreferencesFragment()
 
+        fun notifyPossiblePreferencesChange()
+
         fun displayToast(strId: Int)
 
         fun lunchFirstStartupDialog()

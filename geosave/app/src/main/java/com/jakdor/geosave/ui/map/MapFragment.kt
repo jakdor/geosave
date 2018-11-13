@@ -20,10 +20,7 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.FrameLayout
-import android.widget.Toast
+import android.widget.*
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -76,6 +73,9 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback,
 
         binding.mapTypePopup.mapTypeCard.visibility = View.GONE
         binding.mapTypeFab.setOnClickListener { onMapTypeFabClicked() }
+
+        //support/androidX lib temp bug fix
+        binding.mapTypeFab.scaleType = ImageView.ScaleType.CENTER
 
         binding.mapRepoSpinner.setOnTouchListener { _, motionEvent ->
             if(motionEvent.action == MotionEvent.ACTION_UP){

@@ -74,9 +74,9 @@
             android:layout_marginBottom="32dp"
             android:clickable="true"
             android:focusable="true"
-            android:foreground="@drawable/ic_map_type"
             android:foregroundGravity="center"
             android:scaleType="center"
+            app:srcCompat="@drawable/ic_map_type"
             app:backgroundTint="@color/materialGrey"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

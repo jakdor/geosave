@@ -14,18 +14,20 @@ apply plugin: 'io.fabric'
 
 project.ext {
     androidxVersion = "1.0.0"
+    androidxAppcompatVersion = "1.0.2"
     archVersion = "2.0.0"
     constraintLayoutVersion = "2.0.0-alpha2"
-    firebaseCoreVersion = "16.0.4"
+    firebaseCoreVersion = "16.0.5"
     firebaseFirestoreVersion = "17.1.0"
-    firebaseStorageVersion = "16.0.3"
-    crashlyticsVersion = "2.9.5"
+    firebaseStorageVersion = "16.0.5"
+    crashlyticsVersion = "2.9.6"
     firebaseUIVersion = "4.1.0"
     daggerVersion = "2.13"
     rxKotlinVersion = "2.2.0"
     rxAndroidVersion = "2.0.1"
     timberVersion = "4.7.0"
     gmsBaseVersion = "16.0.1"
+    gmsBasementVersion = "16.1.0"
     gmsVersion = "16.0.0"
     glideVersion = "4.8.0"
     retrofitVersion = "2.3.0"
@@ -97,7 +99,7 @@ dependencies {
     //APP
 
     //Support libs
-    implementation "androidx.appcompat:appcompat:$project.androidxVersion"
+    implementation "androidx.appcompat:appcompat:$project.androidxAppcompatVersion"
     implementation "androidx.browser:browser:$project.androidxVersion"
     implementation "androidx.legacy:legacy-support-v4:$project.androidxVersion"
     implementation "com.google.android.material:material:$project.androidxVersion"
@@ -135,7 +137,7 @@ dependencies {
 
     //Google Play Services
     implementation "com.google.android.gms:play-services-base:$project.gmsBaseVersion"
-    implementation "com.google.android.gms:play-services-basement:$project.gmsBaseVersion"
+    implementation "com.google.android.gms:play-services-basement:$project.gmsBasementVersion"
     implementation "com.google.android.gms:play-services-flags:$project.gmsBaseVersion"
     implementation "com.google.android.gms:play-services-tasks:$project.gmsBaseVersion"
     implementation "com.google.android.gms:play-services-auth:$project.gmsBaseVersion"

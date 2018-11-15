@@ -21,7 +21,6 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -55,6 +54,7 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback,
     private var map: GoogleMap? = null
 
     private var initCamZoom = false
+    private var camFollow = false
     private var locationFormat = 0
 
     private lateinit var markerLocationMap: MutableMap<Marker, Location>
@@ -74,8 +74,9 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback,
         binding.mapTypePopup.mapTypeCard.visibility = View.GONE
         binding.mapTypeFab.setOnClickListener { onMapTypeFabClicked() }
 
-        //support/androidX lib temp bug fix
+        //androidX lib temp bug fix
         binding.mapTypeFab.scaleType = ImageView.ScaleType.CENTER
+        binding.mapCamFallowFab.scaleType = ImageView.ScaleType.CENTER
 
         binding.mapRepoSpinner.setOnTouchListener { _, motionEvent ->
             if(motionEvent.action == MotionEvent.ACTION_UP){
@@ -110,7 +111,6 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback,
         GlideApp.with(this)
                 .load(R.drawable.map_terrain)
                 .fitCenter()
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into(binding.mapTypePopup.mapTypeTerrain.mapTypeButtonIcon)
 
         return mapView
@@ -132,9 +132,11 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback,
         observeUserLocation()
         observeMapType()
         observeLocationType()
+        observeCamType()
         observeCurrentRepoLocationsList()
         observeRepoIndexPairList()
         observeChosenRepoIndex()
+        observeToastStrId()
     }
 
     /**
@@ -169,6 +171,12 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback,
             map?.moveCamera(CameraUpdateFactory.newLatLngZoom(
                     LatLng(location.latitude, location.longitude), DEFAULT_ZOOM))
             initCamZoom = true
+        }
+
+        if(camFollow) {
+            val camUpdateFactory = CameraUpdateFactory.newLatLngZoom(
+                    LatLng(location.latitude, location.longitude), DEFAULT_ZOOM)
+            map?.animateCamera(camUpdateFactory)
         }
 
         when(locationFormat){
@@ -229,6 +237,28 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback,
      */
     fun handleLocationTypeChange(format: Int){
         this.locationFormat = format
+    }
+
+    /**
+     * Observe [MapViewModel] for updates on camera type [MutableLiveData] stream
+     */
+    fun observeCamType(){
+        viewModel?.camFollowType?.observe(this, Observer {
+            handleCamType(it)
+        })
+    }
+
+    /**
+     * Save cam type in local variable
+     */
+    fun handleCamType(cam: Int){
+        camFollow = when(cam){
+            0 -> false
+            1 -> true
+            else -> false
+        }
+
+        loadCamFollowFabIcon()
     }
 
     /**
@@ -336,6 +366,22 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback,
     }
 
     /**
+     * Observe [MapViewModel] for updates on toastStrId [MutableLiveData]
+     */
+    fun observeToastStrId(){
+        viewModel?.toastStrId?.observe(this, Observer {
+            displayToast(it)
+        })
+    }
+
+    /**
+     * display Toast by resources id
+     */
+    fun displayToast(strId: Int){
+        Toast.makeText(context, strId, Toast.LENGTH_SHORT).show()
+    }
+
+    /**
      * Start loading map
      */
     override fun onCreate(p0: Bundle?) {
@@ -378,6 +424,17 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback,
         super.onDestroyView()
     }
 
+    /**
+     * Load camFollowFab icon based on camFollow field
+     */
+    private fun loadCamFollowFabIcon(){
+        when(camFollow){
+            true -> binding.mapCamFallowFab.setImageDrawable(
+                    context?.getDrawable(R.drawable.ic_follow))
+            false -> binding.mapCamFallowFab.setImageDrawable(
+                    context?.getDrawable(R.drawable.ic_follow_no))
+        }
+    }
 
     /**
      * Animate showing of MapTypeCard
@@ -385,6 +442,7 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback,
     @SuppressLint("RestrictedApi")
     fun onMapTypeFabClicked(){
         binding.mapTypeFab.visibility = View.GONE
+        binding.mapCamFallowFab.visibility = View.GONE
         binding.mapTypePopup.mapTypeCard.visibility = View.VISIBLE
         binding.mapTypePopup.mapTypeLayout.visibility = View.GONE
 
@@ -412,6 +470,7 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback,
     @SuppressLint("RestrictedApi")
     fun onMapInteraction(){
         binding.mapTypeFab.visibility = View.VISIBLE
+        binding.mapCamFallowFab.visibility = View.VISIBLE
         binding.mapTypePopup.mapTypeCard.visibility = View.GONE
     }
 

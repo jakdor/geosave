@@ -56,6 +56,8 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback,
     private var initCamZoom = false
     private var camFollow = false
     private var locationFormat = 0
+    private var mapGestureLock = false
+    private lateinit var lastCoordinates: LatLng
 
     private lateinit var markerLocationMap: MutableMap<Marker, Location>
     private lateinit var indexRepoNamePair: ArrayList<Pair<Int, String>>
@@ -167,16 +169,24 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback,
      * Handle new [UserLocation] object
      */
     fun handleUserLocation(location: UserLocation) {
+        lastCoordinates = LatLng(location.latitude, location.longitude)
+
         if(!initCamZoom) {
-            map?.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                    LatLng(location.latitude, location.longitude), DEFAULT_ZOOM))
+            map?.moveCamera(CameraUpdateFactory.newLatLngZoom(lastCoordinates, DEFAULT_ZOOM))
             initCamZoom = true
         }
 
         if(camFollow) {
-            val camUpdateFactory = CameraUpdateFactory.newLatLngZoom(
-                    LatLng(location.latitude, location.longitude), DEFAULT_ZOOM)
-            map?.animateCamera(camUpdateFactory)
+            val camUpdateFactory = CameraUpdateFactory.newLatLngZoom(lastCoordinates, DEFAULT_ZOOM)
+
+            mapGestureLock = true
+            map?.animateCamera(camUpdateFactory, 500, object : GoogleMap.CancelableCallback {
+                override fun onFinish() {
+                    mapGestureLock = false
+                }
+
+                override fun onCancel() {}
+            })
         }
 
         when(locationFormat){
@@ -397,7 +407,8 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback,
         initCamZoom = false
         map?.setOnMapClickListener { onMapInteraction() }
         map?.setOnMapLongClickListener { onMapInteraction() }
-        map?.setOnCameraMoveListener { onMapInteraction() }
+        map?.setOnCameraMoveListener { handleUserMapMove() }
+        map?.setOnMyLocationButtonClickListener { handleMyLocationButtonClick() }
         map?.setOnMarkerClickListener(this)
 
         //restore map type
@@ -462,6 +473,26 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback,
                 .setDuration(120)
                 .withEndAction { binding.mapTypePopup.mapTypeLayout.visibility = View.VISIBLE }
                 .start()
+    }
+
+    /**
+     * Override default my location button behaviour to not clash with user map move detection
+     */
+    fun handleMyLocationButtonClick(): Boolean{
+        if(::lastCoordinates.isInitialized){
+            map?.moveCamera(CameraUpdateFactory.newLatLngZoom(lastCoordinates, DEFAULT_ZOOM))
+        }
+        return true
+    }
+
+    /**
+     * Handle user map move gesture
+     */
+    fun handleUserMapMove(){
+        if(!mapGestureLock){
+            viewModel?.onCamUserMove()
+            onMapInteraction()
+        }
     }
 
     /**

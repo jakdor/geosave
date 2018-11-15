@@ -74,6 +74,13 @@ constructor(application: Application,
     }
 
     /**
+     * Disable camera follow if user moves map camera
+     */
+    fun onCamUserMove(){
+        if(camFollowType.value == 1) onCamFollowFabClicked()
+    }
+
+    /**
      * Load saved preferences
      */
     fun loadPreferences(){

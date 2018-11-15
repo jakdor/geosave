@@ -77,6 +77,7 @@ class SharedPreferencesRepository @Inject constructor(val context: Context) {
 
     companion object {
         const val mapTypeKey = "map_type"
+        const val mapCamTypeKey = "map_cam_type"
         lateinit var locationUnits: String
         lateinit var altUnits: String
         lateinit var accUnits: String

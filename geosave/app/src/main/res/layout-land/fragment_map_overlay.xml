@@ -66,6 +66,22 @@
             app:layout_constraintGuide_percent="0.75" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/map_cam_fallow_fab"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foregroundGravity="center"
+            android:scaleType="center"
+            android:onClick="@{() -> viewModel.onCamFollowFabClicked()}"
+            app:srcCompat="@drawable/ic_follow"
+            app:backgroundTint="@color/materialGrey"
+            app:layout_constraintBottom_toTopOf="@+id/map_type_fab"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/map_type_fab"
             android:layout_width="38dp"
             android:layout_height="38dp"

@@ -10,6 +10,7 @@ package com.jakdor.geosave.ui.map
 
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
+import com.jakdor.geosave.R
 import com.jakdor.geosave.arch.BaseViewModel
 import com.jakdor.geosave.common.model.UserLocation
 import com.jakdor.geosave.common.model.firebase.Location
@@ -34,9 +35,11 @@ constructor(application: Application,
     val location = MutableLiveData<UserLocation>()
     val mapType = MutableLiveData<Int>()
     val locationType = MutableLiveData<Int>()
+    val camFollowType = MutableLiveData<Int>()
     val currentRepoLocationsList = MutableLiveData<MutableList<Location>>()
     val repoIndexPairList = MutableLiveData<ArrayList<Pair<Int, String>>>()
     val chosenRepoIndex = MutableLiveData<Int>()
+    val toastStrId = MutableLiveData<Int>()
 
     private lateinit var repoDisposable: Disposable
 
@@ -52,6 +55,25 @@ constructor(application: Application,
     }
 
     /**
+     * Handle user changed cam follow mode
+     */
+    fun onCamFollowFabClicked(){
+        val newCamFollow: Int = when(camFollowType.value){
+            0 -> 1
+            1 -> 0
+            else -> 0
+        }
+
+        camFollowType.postValue(newCamFollow)
+        sharedPreferencesRepository.save(SharedPreferencesRepository.mapCamTypeKey, newCamFollow)
+
+        if(newCamFollow == 1) toastStrId.postValue(R.string.map_cam_follow_type_on)
+        else toastStrId.postValue(R.string.map_cam_follow_type_off)
+
+        Timber.i("Map cam follow mode changed, %d", newCamFollow)
+    }
+
+    /**
      * Load saved preferences
      */
     fun loadPreferences(){
@@ -59,8 +81,11 @@ constructor(application: Application,
                 SharedPreferencesRepository.mapTypeKey, 0)
         val locationTypeVal = sharedPreferencesRepository.getString(
                 SharedPreferencesRepository.locationUnits, "0").toInt()
+        val camTypeVal = sharedPreferencesRepository.getInt(
+                SharedPreferencesRepository.mapCamTypeKey, 1)
         mapType.postValue(mapTypeVal)
         locationType.postValue(locationTypeVal)
+        camFollowType.postValue(camTypeVal)
     }
 
     /**

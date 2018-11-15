@@ -187,4 +187,6 @@
     <string name="no_location_available">Location not yet determined</string>
     <string name="add_location_no_network_toast">Location will be uploaded when network becomes available</string>
     <string name="loading_repos_toast">Loading repos, please wait&#8230;</string>
+    <string name="map_cam_follow_type_on">Map is following you</string>
+    <string name="map_cam_follow_type_off">Map is not following you</string>
 </resources>

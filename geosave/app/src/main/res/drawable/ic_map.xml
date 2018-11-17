@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Icon made by Smashicons(https://smashicons.com/) from www.flaticon.com
+  ~ under Flaticon Basic License - full licence available at:
+  ~ https://file000.flaticon.com/downloads/license/license.pdf
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:viewportWidth="61.168"
+    android:viewportHeight="61.168"
+    android:width="64dp"
+    android:height="64dp">
+    <path
+        android:pathData="M50.216 37.584l-7.161 0 3.047 -4.4C51.857 25.513 51.024 12.904 44.321 6.202 40.7 2.58 35.884 0.585 30.761 0.585c-5.122 0 -9.938 1.995 -13.56 5.617 -6.703 6.702 -7.536 19.312 -1.804 26.952l3.068 4.431 -7.513 0L0 60.584l61.168 0 -10.952 -23zm-19.278 -25c3.859 0 7 3.141 7 7 0 3.859 -3.141 7 -7 7 -3.859 0 -7 -3.141 -7 -7 0 -3.859 3.14 -7 7 -7zm-18.722 27l7.634 0 10.911 15.757 10.91 -15.757 7.281 0 9.048 19 -54.832 0 9.048 -19z"
+        android:fillColor="@color/iconBlack" />
+</vector>

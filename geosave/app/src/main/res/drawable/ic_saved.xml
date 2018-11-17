@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Icon made by Freepik(www.freepik.com) from www.flaticon.com
+  ~ under Flaticon Basic License - full licence available at:
+  ~ https://file000.flaticon.com/downloads/license/license.pdf
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:viewportWidth="231"
+    android:viewportHeight="231"
+    android:width="64dp"
+    android:height="64dp">
+    <path
+        android:pathData="M198.5 0l-17 0 0 83 -132 0 0 -83 -49 0 0 231 230 0 0 -198.332L198.5 0Zm-1 199l-165 0 0 -83 165 0 0 83z"
+        android:fillColor="@color/iconBlack" />
+    <path
+        android:pathData="M131.5 0l33 0 0 66 -33 0z"
+        android:fillColor="@color/iconBlack" />
+</vector>

@@ -63,7 +63,8 @@
             android:layout_height="wrap_content"
             fab:fab_colorNormal="@color/white"
             fab:fab_colorPressed="@color/whitePressed"
-            fab:fab_size="mini" />
+            fab:fab_size="mini"
+            fab:fab_icon="@drawable/ic_key"/>
 
         <com.getbase.floatingactionbutton.FloatingActionButton
             android:id="@+id/repos_fab_public"
@@ -71,7 +72,8 @@
             android:layout_height="wrap_content"
             fab:fab_colorNormal="@color/white"
             fab:fab_colorPressed="@color/whitePressed"
-            fab:fab_size="mini" />
+            fab:fab_size="mini"
+            fab:fab_icon="@drawable/ic_key"/>
 
         <com.getbase.floatingactionbutton.FloatingActionButton
             android:id="@+id/repos_fab_new"
@@ -79,7 +81,8 @@
             android:layout_height="wrap_content"
             fab:fab_colorNormal="@color/white"
             fab:fab_colorPressed="@color/whitePressed"
-            fab:fab_size="mini" />
+            fab:fab_size="mini"
+            fab:fab_icon="@drawable/ic_add"/>
 
     </com.getbase.floatingactionbutton.FloatingActionsMenu>
 

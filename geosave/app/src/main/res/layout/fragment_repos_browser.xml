@@ -65,7 +65,8 @@
             fab:fab_colorNormal="@color/white"
             fab:fab_colorPressed="@color/whitePressed"
             fab:fab_size="mini"
-            fab:fab_title="@string/repos_fab_join_private" />
+            fab:fab_title="@string/repos_fab_join_private"
+            fab:fab_icon="@drawable/ic_key"/>
 
         <com.getbase.floatingactionbutton.FloatingActionButton
             android:id="@+id/repos_fab_public"
@@ -74,7 +75,8 @@
             fab:fab_colorNormal="@color/white"
             fab:fab_colorPressed="@color/whitePressed"
             fab:fab_size="mini"
-            fab:fab_title="@string/repos_fab_browse_public" />
+            fab:fab_title="@string/repos_fab_browse_public"
+            fab:fab_icon="@drawable/ic_find"/>
 
         <com.getbase.floatingactionbutton.FloatingActionButton
             android:id="@+id/repos_fab_new"
@@ -83,7 +85,8 @@
             fab:fab_colorNormal="@color/white"
             fab:fab_colorPressed="@color/whitePressed"
             fab:fab_size="mini"
-            fab:fab_title="@string/repos_fab_add_new" />
+            fab:fab_title="@string/repos_fab_add_new"
+            fab:fab_icon="@drawable/ic_add"/>
 
     </com.getbase.floatingactionbutton.FloatingActionsMenu>
 

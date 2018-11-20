@@ -34,6 +34,7 @@ import com.jakdor.geosave.common.model.firebase.Location
 import com.jakdor.geosave.common.repository.LocationConverter
 import com.jakdor.geosave.databinding.FragmentMapOverlayBinding
 import com.jakdor.geosave.di.InjectableFragment
+import com.jakdor.geosave.ui.elements.LocationDialog
 import com.jakdor.geosave.utils.GlideApp
 import kotlinx.android.synthetic.main.fragment_map_overlay.*
 import timber.log.Timber
@@ -43,7 +44,7 @@ import javax.inject.Inject
  * Fragment displaying google map with user position and locations
  */
 class MapFragment: SupportMapFragment(), OnMapReadyCallback,
-        GoogleMap.OnMarkerClickListener, InjectableFragment { //todo investigate screen rotation memory leak from maps api
+        GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener, InjectableFragment { //todo investigate screen rotation memory leak from maps api
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -410,6 +411,7 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback,
         map?.setOnCameraMoveListener { handleUserMapMove() }
         map?.setOnMyLocationButtonClickListener { handleMyLocationButtonClick() }
         map?.setOnMarkerClickListener(this)
+        map?.setOnInfoWindowClickListener(this)
 
         //restore map type
         handleMapTypeChange(viewModel?.mapType?.value)
@@ -428,6 +430,19 @@ class MapFragment: SupportMapFragment(), OnMapReadyCallback,
         val location = markerLocationMap[p0]
         Timber.i("clicked on marker: %s", location.toString())
         return false
+    }
+
+    /**
+     * Handle click on marker info window
+     */
+    override fun onInfoWindowClick(p0: Marker?) {
+        val location = markerLocationMap[p0]
+        Timber.i("clicked on marker info window: %s", location.toString())
+
+        if(context != null) {
+            val locationDialog = LocationDialog(context!!)
+            locationDialog.show()
+        }
     }
 
     override fun onDestroyView() {

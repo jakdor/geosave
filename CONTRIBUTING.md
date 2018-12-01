@@ -40,7 +40,7 @@ Open new issue with "enhancement" label to start discussion on your idea.
 
 Before you are able to compile GeoSave yourself there are couple steps you need to take:
 
-1. Create free Firebase account - [firebase.google.com](https://firebase.google.com/),
+1. create free Firebase account - [firebase.google.com](https://firebase.google.com/),
 2. in settings tab set package name to "com.jakdor.geosave",
 3. enable services: Authentication (email, Google, anonymous), Cloud Firestore, Storage
 4. follow guide on how to create debug keystore - [developers.google.com/android/guides/client-auth](https://developers.google.com/android/guides/client-auth),

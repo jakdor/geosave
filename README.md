@@ -12,7 +12,7 @@ My personal goals with this project are to practice Firebase services integratio
 
 ## Contributing guide / API keys
 
-[CONTRIBUTING.md](https://github.com/jakdor/geosave/CONTRIBUTING.md)
+[CONTRIBUTING.md](https://github.com/jakdor/geosave/blob/master/CONTRIBUTING.md)
 
 ## Licence
 

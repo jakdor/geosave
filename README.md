@@ -10,6 +10,10 @@ status: in-dev
 
 My personal goals with this project are to practice Firebase services integration and in the future create IOS and web versions of this app.
 
+## Contributing guide / API keys
+
+[https://github.com/jakdor/geosave/CONTRIBUTING.md](CONTRIBUTING.md)
+
 ## Licence
 
     GeoSave - app for easy sharing and collaborating on GPS related data

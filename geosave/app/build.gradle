@@ -53,7 +53,7 @@ android {
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
-        manifestPlaceholders = [crashlytics: getApiKey("crashlytics.key"), maps: getApiKey("maps.key")]
+        manifestPlaceholders = [maps: getApiKey("maps.key")]
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

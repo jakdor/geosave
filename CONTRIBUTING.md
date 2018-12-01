@@ -14,7 +14,7 @@ GeoSave is an open source project and we love to receive contributions from our 
 2. do the changes in your fork,
 3. add your name or nick in copyright header,
 4. send a pull request,
-5. discuss changes, make fixes
+5. discuss changes, make fixes,
 6. Bingo! Your code is now part of GeoSave, thank you!
 
 ## How to report a bug
@@ -34,22 +34,22 @@ Don't forget to mark issue with "Bug" label.
 
 ## How to suggest a feature or enhancement
 
-Open new issue with "Feature" label to start discussion on your idea.
+Open new issue with "enhancement" label to start discussion on your idea.
 
 # How do I compile GeoSave? - obtaining API keys
 
-Before you are able to compile GeoSave yourself there are couple steps you need to take.
+Before you are able to compile GeoSave yourself there are couple steps you need to take:
 
-1. Create free Firebase account - [firebase.google.com](https://firebase.google.com/)
-2. In settings tab set package name to "com.jakdor.geosave"
-3. Enable services: Authentication (email, Google, anonymous), Cloud Firestore, Storage
-4. Follow guide on how to create debug keystore - [developers.google.com/android/guides/client-auth](https://developers.google.com/android/guides/client-auth)
-5. Copy SHA1, SHA256 fingerprints to firebase app config - settings tab
-6. Copy "debug.keystore" to geosave/geosave/app/debug.keystore
-7. Download "google-service.json" from settings tab - place it in geosave/geosave/app/src/dev/google-service.json
-8. Obtain Google Maps SDK for Android API key, don't worry it's free as well - [developers.google.com/maps/documentation/android-sdk/signup](https://developers.google.com/maps/documentation/android-sdk/signup)
-9. Create new file "apikeys.properties" in geosave/geosave/apikeys.properties
-10. Your "apikeys.properties" should look like this:
+1. Create free Firebase account - [firebase.google.com](https://firebase.google.com/),
+2. in settings tab set package name to "com.jakdor.geosave",
+3. enable services: Authentication (email, Google, anonymous), Cloud Firestore, Storage
+4. follow guide on how to create debug keystore - [developers.google.com/android/guides/client-auth](https://developers.google.com/android/guides/client-auth),
+5. copy SHA1, SHA256 fingerprints to firebase app config - settings tab,
+6. copy "debug.keystore" to geosave/geosave/app/debug.keystore,
+7. download "google-service.json" from settings tab - place it in geosave/geosave/app/src/dev/google-service.json,
+8. obtain Google Maps SDK for Android API key, don't worry it's free as well - [developers.google.com/maps/documentation/android-sdk/signup](https://developers.google.com/maps/documentation/android-sdk/signup),
+9. create new file "apikeys.properties" in geosave/geosave/apikeys.properties,
+10. your "apikeys.properties" should look like this:
 ```
 maps.key=<Your maps sdk key>
 ```

@@ -11,7 +11,7 @@
 buildscript {
     ext.kotlin_version = '1.8.20'
     ext.gms_version = '4.3.10'
-    ext.fabric_version = '1.25.4'
+    ext.fabric_version = '1.28.0'
     repositories {
         google()
         jcenter()

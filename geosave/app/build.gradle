@@ -9,7 +9,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-parcelize'
 apply plugin: 'io.fabric'
 
 project.ext {
@@ -45,6 +45,7 @@ project.ext {
 }
 
 android {
+    namespace 'com.jakdor.geosave'
     compileSdkVersion 28
     buildToolsVersion '28.0.3'
     defaultConfig {
@@ -89,6 +90,9 @@ android {
             includeAndroidResources true
             returnDefaultValues true
         }
+    }
+    buildFeatures {
+        viewBinding true
     }
 }
 

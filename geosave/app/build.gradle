@@ -46,7 +46,7 @@ project.ext {
 
 android {
     namespace 'com.jakdor.geosave'
-    compileSdkVersion 28
+    compileSdkVersion 31
     defaultConfig {
         applicationId "com.jakdor.geosave"
         minSdkVersion 21
@@ -92,6 +92,13 @@ android {
     buildFeatures {
         viewBinding true
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
 }
 
 dependencies {
@@ -125,6 +132,7 @@ dependencies {
     //Dagger core
     kapt "com.google.dagger:dagger-compiler:$project.daggerVersion"
     implementation "com.google.dagger:dagger:$project.daggerVersion"
+    implementation "com.google.dagger:dagger-android-support:$project.daggerVersion"
 
     //Dagger Android
     kapt "com.google.dagger:dagger-android-processor:$project.daggerVersion"

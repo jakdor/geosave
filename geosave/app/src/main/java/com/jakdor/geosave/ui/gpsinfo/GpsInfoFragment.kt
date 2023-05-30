@@ -229,7 +229,7 @@ class GpsInfoFragment: Fragment(), InjectableFragment {
         if(text != null) {
             val clipboard = activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clip = ClipData.newPlainText(getString(R.string.clipboard_label), text)
-            clipboard.primaryClip = clip
+            clipboard.setPrimaryClip(clip)
 
             Toast.makeText(activity, getString(R.string.clipboard_toast), Toast.LENGTH_SHORT).show()
 

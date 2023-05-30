@@ -10,7 +10,7 @@
 
 buildscript {
     ext.kotlin_version = '1.8.20'
-    ext.gms_version = '3.2.1'
+    ext.gms_version = '4.3.10'
     ext.fabric_version = '1.25.4'
     repositories {
         google()
@@ -19,7 +19,7 @@ buildscript {
         maven { url 'https://jitpack.io' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.0.0'
+        classpath 'com.android.tools.build:gradle:8.0.2'
         classpath "com.google.gms:google-services:$gms_version"
         classpath "io.fabric.tools:gradle:$fabric_version"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"

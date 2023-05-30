@@ -22,7 +22,7 @@ project.ext {
     firebaseStorageVersion = "16.0.5"
     crashlyticsVersion = "2.9.6"
     firebaseUIVersion = "4.1.0"
-    daggerVersion = "2.13"
+    daggerVersion = "2.21"
     rxKotlinVersion = "2.2.0"
     rxAndroidVersion = "2.0.1"
     timberVersion = "4.7.0"
